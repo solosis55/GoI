@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "id": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
+      "username": "cristianfit",
+      "email": "cristian.c.s.2000@hotmail.com",
+      "password": "1234",
+      "createdAt": "2026-04-27T15:38:30.345Z",
+      "bio": "",
+      "goal": "",
+      "avatarUrl": "",
+      "updatedAt": "2026-04-27T15:38:30.345Z"
+    }
+  ],
+  "workouts": [
+    {
+      "id": "dcfb4cd4-152f-41e5-bf3e-d5fc9784eb4b",
+      "userId": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
+      "title": "dsa",
+      "description": "ads",
+      "exercises": [
+        "ad"
+      ],
+      "createdAt": "2026-04-27T15:44:01.702Z",
+      "updatedAt": "2026-04-27T15:44:01.702Z"
+    }
+  ],
+  "posts": [
+    {
+      "id": "13687171-3ea4-48af-8f7c-79e22b4c8acf",
+      "userId": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
+      "content": "das",
+      "workoutId": "dcfb4cd4-152f-41e5-bf3e-d5fc9784eb4b",
+      "createdAt": "2026-04-27T15:55:30.437Z",
+      "updatedAt": "2026-04-27T15:55:30.437Z"
+    }
+  ],
+  "likes": [],
+  "comments": []
+}

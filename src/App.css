@@ -1,0 +1,388 @@
+.app-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.social-shell {
+  min-height: 100vh;
+  background: #0b1220;
+  color: #e5e7eb;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.social-sidebar {
+  border-right: 1px solid #1f2937;
+  padding: 24px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.brand {
+  font-size: 28px;
+  margin: 0 0 8px;
+}
+
+.sidebar-user {
+  color: #9ca3af;
+  margin: 0;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 10px;
+}
+
+.nav-active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+}
+
+.sidebar-logout {
+  margin-top: 18px;
+}
+
+.social-content {
+  padding: 18px;
+}
+
+.social-content .card {
+  background: #111827;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.social-content .subtitle {
+  color: #9ca3af;
+}
+
+.social-content input,
+.social-content textarea,
+.social-content select {
+  background: #0b1220;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.social-content input::placeholder,
+.social-content textarea::placeholder {
+  color: #9ca3af;
+}
+
+.social-content .secondary {
+  background: #1f2937;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+.social-content .success {
+  color: #4ade80;
+}
+
+.feed-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 680px) minmax(240px, 320px);
+  gap: 18px;
+  align-items: start;
+}
+
+.feed-main {
+  display: grid;
+  gap: 14px;
+}
+
+.feed-right {
+  position: sticky;
+  top: 18px;
+}
+
+.layout {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.card-dark {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.auth-card {
+  max-width: 460px;
+  margin: 32px auto;
+}
+
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+button {
+  border: 1px solid #111827;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.link-btn {
+  margin-top: 12px;
+  width: 100%;
+  background: transparent;
+  color: #111827;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.error {
+  color: #dc2626;
+  margin: 0;
+}
+
+.success {
+  color: #15803d;
+  margin: 0;
+}
+
+.card-dark .success {
+  color: #4ade80;
+}
+
+.workouts-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.workout-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.post-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.secondary {
+  background: #ffffff;
+  color: #111827;
+}
+
+.danger {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.meta {
+  margin-top: 8px;
+  color: #4b5563;
+}
+
+.comments-list {
+  margin: 8px 0;
+  padding-left: 16px;
+}
+
+.stories-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.story-item {
+  min-width: 72px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}
+
+.story-ring {
+  border: 2px solid #ec4899;
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.story-ring img {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.inline-actions input {
+  flex: 1;
+}
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.suggestion-item img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .social-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .social-sidebar {
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid #1f2937;
+    padding: 12px 10px;
+  }
+
+  .sidebar-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .social-content {
+    padding: 10px;
+  }
+
+  .feed-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .feed-right {
+    position: static;
+  }
+
+  .app-shell {
+    padding: 16px 10px 24px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .auth-card {
+    margin: 16px auto;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .workout-item {
+    flex-direction: column;
+  }
+
+  .workout-item > .actions {
+    width: 100%;
+  }
+
+  .workout-item > .actions button {
+    flex: 1;
+  }
+
+  .inline-actions {
+    flex-direction: column;
+  }
+
+  .inline-actions button {
+    width: 100%;
+  }
+}
