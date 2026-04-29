@@ -5,7 +5,7 @@ Organizar el desarrollo de la app (red social + deporte) con pasos claros y acci
 
 ## Estado
 - Fecha de inicio: 2026-04-27
-- Fase actual: Ejecucion del MVP (backend + frontend base)
+- Fase actual: Cierre del MVP y estandarizacion de UI con Tailwind
 
 ## Recomendaciones MVP
 
@@ -105,6 +105,11 @@ Organizar el desarrollo de la app (red social + deporte) con pasos claros y acci
 33. Se implemento seguir usuarios (follow/unfollow) con persistencia en backend.
 34. Se añadio filtro de feed por "Todos" y "Seguidos".
 35. Se integraron botones de seguir en sugerencias de la Home.
+36. Se extrajeron y consolidaron componentes reutilizables en `ui`, `feed`, `workouts` y `profile`.
+37. Se documento arquitectura y componentes en `docs/design.md` y `docs/components.md`.
+38. Se instalo y configuro Tailwind CSS en Vite (`tailwindcss` + `@tailwindcss/vite`).
+39. Se migro la UI principal a Tailwind-first (botones, cards, formularios, layouts y listas de feed/workouts/perfil).
+40. Se limpio `src/App.css` dejando estilo legacy minimo tras la migracion.
 
 ## Proxima accion inmediata
-Probar flujo multiusuario completo (seguir -> publicar -> ver en feed de seguidos) y pulir detalles visuales.
+Implementar auth real (hash de password + middleware de token) y ejecutar pruebas del flujo principal multiusuario.

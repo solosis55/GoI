@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { getProfile, updateProfile } from "../api/authApi";
+import { ProfileForm } from "../components/profile/ProfileForm";
+import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
 
 export function ProfilePage() {
@@ -82,43 +84,23 @@ export function ProfilePage() {
   }
 
   return (
-    <section className="card">
+    <Card>
       <h2>Mi perfil</h2>
-      <p className="subtitle">Configura tu identidad deportiva para la parte social</p>
-
-      <form className="stack" onSubmit={handleSubmit}>
-        <label>
-          Usuario
-          <input required value={username} onChange={(event) => setUsername(event.target.value)} />
-        </label>
-        <label>
-          Objetivo deportivo
-          <input value={goal} onChange={(event) => setGoal(event.target.value)} placeholder="Ganar fuerza" />
-        </label>
-        <label>
-          URL foto de perfil
-          <input
-            value={avatarUrl}
-            onChange={(event) => setAvatarUrl(event.target.value)}
-            placeholder="https://..."
-          />
-        </label>
-        <label>
-          Bio
-          <textarea
-            value={bio}
-            onChange={(event) => setBio(event.target.value)}
-            placeholder="Entreno 5 dias por semana..."
-          />
-        </label>
-
-        {error && <p className="error">{error}</p>}
-        {message && <p className="success">{message}</p>}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Guardando..." : "Guardar perfil"}
-        </button>
-      </form>
-    </section>
+      <p className="mb-3 text-slate-500">Configura tu identidad deportiva para la parte social</p>
+      <ProfileForm
+        username={username}
+        goal={goal}
+        avatarUrl={avatarUrl}
+        bio={bio}
+        loading={loading}
+        error={error}
+        message={message}
+        onChangeUsername={setUsername}
+        onChangeGoal={setGoal}
+        onChangeAvatarUrl={setAvatarUrl}
+        onChangeBio={setBio}
+        onSubmit={handleSubmit}
+      />
+    </Card>
   );
 }

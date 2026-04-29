@@ -14,15 +14,13 @@
   ],
   "workouts": [
     {
-      "id": "dcfb4cd4-152f-41e5-bf3e-d5fc9784eb4b",
+      "id": "ab226580-31d2-4565-83cb-698a8b9c476d",
       "userId": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
-      "title": "dsa",
-      "description": "ads",
-      "exercises": [
-        "ad"
-      ],
-      "createdAt": "2026-04-27T15:44:01.702Z",
-      "updatedAt": "2026-04-27T15:44:01.702Z"
+      "title": "das",
+      "description": "asd",
+      "exercises": [],
+      "createdAt": "2026-04-29T17:35:38.863Z",
+      "updatedAt": "2026-04-29T17:35:38.863Z"
     }
   ],
   "posts": [
@@ -36,5 +34,6 @@
     }
   ],
   "likes": [],
-  "comments": []
+  "comments": [],
+  "follows": []
 }

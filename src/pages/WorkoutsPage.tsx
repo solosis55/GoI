@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../api/workoutsApi";
+import { WorkoutForm } from "../components/workouts/WorkoutForm";
+import { WorkoutItem } from "../components/workouts/WorkoutItem";
+import { Card } from "../components/ui/Card";
+import { EmptyState } from "../components/ui/EmptyState";
+import { StatusMessage } from "../components/ui/StatusMessage";
 import { useAuth } from "../context/AuthContext";
 import type { Workout } from "../types/workout";
 
@@ -138,88 +143,46 @@ export function WorkoutsPage() {
   }
 
   return (
-    <section className="layout">
-      <section className="card">
+    <section className="layout grid gap-4">
+      <Card>
         <h2>Crear entrenamiento</h2>
-        <form className="stack" onSubmit={handleCreateWorkout}>
-          <label>
-            Titulo
-            <input required value={title} onChange={(event) => setTitle(event.target.value)} />
-          </label>
-          <label>
-            Descripcion
-            <textarea value={description} onChange={(event) => setDescription(event.target.value)} />
-          </label>
-          <label>
-            Ejercicios (separados por coma)
-            <input
-              value={exercisesInput}
-              onChange={(event) => setExercisesInput(event.target.value)}
-              placeholder="Press banca, Sentadilla, Remo"
-            />
-          </label>
-          <button type="submit">Guardar entrenamiento</button>
-        </form>
-      </section>
+        <WorkoutForm
+          title={title}
+          description={description}
+          exercisesInput={exercisesInput}
+          onChangeTitle={setTitle}
+          onChangeDescription={setDescription}
+          onChangeExercisesInput={setExercisesInput}
+          onSubmit={handleCreateWorkout}
+          submitLabel="Guardar entrenamiento"
+        />
+      </Card>
 
-      <section className="card">
+      <Card>
         <h2>Mis entrenamientos</h2>
-        {loading && <p>Cargando...</p>}
-        {error && <p className="error">{error}</p>}
-        {message && <p className="success">{message}</p>}
-        {!loading && workouts.length === 0 && <p>Aun no tienes entrenamientos.</p>}
+        <StatusMessage loading={loading} error={error} success={message} />
+        {!loading && workouts.length === 0 && <EmptyState message="Aun no tienes entrenamientos." />}
 
-        <ul className="workouts-list">
+        <ul className="workouts-list mt-3 grid list-none gap-2.5 p-0">
           {workouts.map((workout) => (
-            <li key={workout.id} className="workout-item">
-              {editingWorkoutId === workout.id ? (
-                <form className="stack" onSubmit={handleUpdateWorkout}>
-                  <label>
-                    Titulo
-                    <input required value={editTitle} onChange={(event) => setEditTitle(event.target.value)} />
-                  </label>
-                  <label>
-                    Descripcion
-                    <textarea
-                      value={editDescription}
-                      onChange={(event) => setEditDescription(event.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Ejercicios (separados por coma)
-                    <input
-                      value={editExercisesInput}
-                      onChange={(event) => setEditExercisesInput(event.target.value)}
-                    />
-                  </label>
-                  <div className="actions">
-                    <button type="submit">Guardar cambios</button>
-                    <button type="button" className="secondary" onClick={cancelEditingWorkout}>
-                      Cancelar
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <div>
-                    <strong>{workout.title}</strong>
-                    <p>{workout.description || "Sin descripcion"}</p>
-                    <small>Ejercicios: {workout.exercises.join(", ") || "No definidos"}</small>
-                  </div>
-                  <div className="actions">
-                    <button type="button" onClick={() => startEditingWorkout(workout)}>
-                      Editar
-                    </button>
-                    <button type="button" className="danger" onClick={() => handleDeleteWorkout(workout.id)}>
-                      Eliminar
-                    </button>
-                  </div>
-                </>
-              )}
-            </li>
+            <WorkoutItem
+              key={workout.id}
+              workout={workout}
+              isEditing={editingWorkoutId === workout.id}
+              editTitle={editTitle}
+              editDescription={editDescription}
+              editExercisesInput={editExercisesInput}
+              onChangeEditTitle={setEditTitle}
+              onChangeEditDescription={setEditDescription}
+              onChangeEditExercisesInput={setEditExercisesInput}
+              onSubmitEdit={handleUpdateWorkout}
+              onStartEdit={() => startEditingWorkout(workout)}
+              onCancelEdit={cancelEditingWorkout}
+              onDelete={() => handleDeleteWorkout(workout.id)}
+            />
           ))}
         </ul>
-      </section>
+      </Card>
     </section>
   );
 }

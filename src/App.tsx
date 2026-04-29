@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import { Button } from "./components/ui/Button";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AuthPage } from "./pages/AuthPage";
 import { FeedPage } from "./pages/FeedPage";
@@ -11,45 +12,45 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState<"workouts" | "profile" | "feed">("feed");
 
   if (!isAuthenticated) {
-    return <main className="app-shell">{<AuthPage />}</main>;
+    return <main className="app-shell mx-auto w-full max-w-[920px] px-4 pb-10 pt-6">{<AuthPage />}</main>;
   }
 
   return (
-    <main className="social-shell">
-      <aside className="social-sidebar">
+    <main className="social-shell grid min-h-screen grid-cols-1 bg-slate-950 text-slate-200 md:grid-cols-[240px_minmax(0,1fr)]">
+      <aside className="social-sidebar sticky top-0 flex h-screen flex-col gap-5 border-r border-slate-800 px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3">
         <div>
-          <h1 className="brand">FitSocial</h1>
-          <p className="sidebar-user">@{user?.username}</p>
+          <h1 className="brand mb-2 text-[28px]">FitSocial</h1>
+          <p className="sidebar-user text-slate-400">@{user?.username}</p>
         </div>
-        <nav className="sidebar-nav">
-          <button
+        <nav className="sidebar-nav grid gap-2.5 max-md:grid-cols-2">
+          <Button
             type="button"
-            className={activeTab === "feed" ? "nav-active" : "secondary"}
+            variant={activeTab === "feed" ? "navActive" : "secondary"}
             onClick={() => setActiveTab("feed")}
           >
             Inicio
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className={activeTab === "workouts" ? "nav-active" : "secondary"}
+            variant={activeTab === "workouts" ? "navActive" : "secondary"}
             onClick={() => setActiveTab("workouts")}
           >
             Entrenamientos
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className={activeTab === "profile" ? "nav-active" : "secondary"}
+            variant={activeTab === "profile" ? "navActive" : "secondary"}
             onClick={() => setActiveTab("profile")}
           >
             Perfil
-          </button>
-          <button type="button" className="danger sidebar-logout" onClick={logout}>
+          </Button>
+          <Button type="button" variant="danger" className="sidebar-logout mt-4" onClick={logout}>
             Cerrar sesion
-          </button>
+          </Button>
         </nav>
       </aside>
 
-      <section className="social-content">
+      <section className="social-content p-4 max-md:p-2.5">
         {activeTab === "workouts" && <WorkoutsPage />}
         {activeTab === "profile" && <ProfilePage />}
         {activeTab === "feed" && <FeedPage />}

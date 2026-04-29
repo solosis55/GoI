@@ -3,6 +3,15 @@ import type { FormEvent } from "react";
 import { getFollowing, getUsers, toggleFollow } from "../api/authApi";
 import { createComment, createPost, deletePost, getPosts, toggleLike } from "../api/postsApi";
 import { getWorkouts } from "../api/workoutsApi";
+import { CreatePostForm } from "../components/feed/CreatePostForm";
+import { FeedModeTabs } from "../components/feed/FeedModeTabs";
+import { FollowSuggestionItem } from "../components/feed/FollowSuggestionItem";
+import { PostItem } from "../components/feed/PostItem";
+import { StoriesRow } from "../components/feed/StoriesRow";
+import { UserSummaryCard } from "../components/feed/UserSummaryCard";
+import { Card } from "../components/ui/Card";
+import { EmptyState } from "../components/ui/EmptyState";
+import { StatusMessage } from "../components/ui/StatusMessage";
 import { useAuth } from "../context/AuthContext";
 import type { DiscoverUser } from "../types/auth";
 import type { Post } from "../types/post";
@@ -167,149 +176,76 @@ export function FeedPage() {
   }
 
   return (
-    <section className="feed-layout">
-      <section className="feed-main">
-        <section className="card card-dark">
+    <section className="feed-layout grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,680px)_minmax(240px,320px)]">
+      <section className="feed-main grid gap-3.5">
+        <Card tone="dark">
           <h2>Historias del gym</h2>
-          <div className="actions">
-            <button
-              type="button"
-              className={feedMode === "all" ? "nav-active" : "secondary"}
-              onClick={() => setFeedMode("all")}
-            >
-              Todos
-            </button>
-            <button
-              type="button"
-              className={feedMode === "following" ? "nav-active" : "secondary"}
-              onClick={() => setFeedMode("following")}
-            >
-              Seguidos
-            </button>
-          </div>
-          <div className="stories-row">
-            {posts.slice(0, 8).map((post) => (
-              <div key={`story-${post.id}`} className="story-item">
-                <div className="story-ring">
-                  <img
-                    src={post.authorAvatarUrl || "https://via.placeholder.com/40x40"}
-                    alt={post.authorUsername}
-                  />
-                </div>
-                <small>{post.authorUsername}</small>
-              </div>
-            ))}
-          </div>
-        </section>
+          <FeedModeTabs mode={feedMode} onChangeMode={setFeedMode} />
+          <StoriesRow posts={posts} />
+        </Card>
 
-        <section className="card card-dark">
+        <Card tone="dark">
           <h2>Crear publicacion</h2>
-          <form className="stack" onSubmit={handleCreatePost}>
-            <label>
-              Contenido
-              <textarea
-                required
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                placeholder="Hoy rompi PR en sentadilla..."
-              />
-            </label>
+          <CreatePostForm
+            content={content}
+            selectedWorkoutId={selectedWorkoutId}
+            workouts={workouts}
+            onChangeContent={setContent}
+            onChangeWorkoutId={setSelectedWorkoutId}
+            onSubmit={handleCreatePost}
+          />
+        </Card>
 
-            <label>
-              Entrenamiento vinculado (opcional)
-              <select value={selectedWorkoutId} onChange={(event) => setSelectedWorkoutId(event.target.value)}>
-                <option value="">Sin entrenamiento</option>
-                {workouts.map((workout) => (
-                  <option key={workout.id} value={workout.id}>
-                    {workout.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <button type="submit">Publicar</button>
-          </form>
-        </section>
-
-        {loading && <p>Cargando...</p>}
-        {error && <p className="error">{error}</p>}
-        {message && <p className="success">{message}</p>}
+        <StatusMessage loading={loading} error={error} success={message} />
         {!loading && visiblePosts.length === 0 && (
-          <p>{feedMode === "following" ? "Aun no hay publicaciones de usuarios seguidos." : "Aun no hay publicaciones en la comunidad."}</p>
+          <EmptyState
+            message={
+              feedMode === "following"
+                ? "Aun no hay publicaciones de usuarios seguidos."
+                : "Aun no hay publicaciones en la comunidad."
+            }
+          />
         )}
 
-        <ul className="workouts-list">
+        <ul className="workouts-list mt-3 grid list-none gap-2.5 p-0">
           {visiblePosts.map((post) => (
-            <li key={post.id} className="workout-item post-card">
-              <div>
-                <strong>
-                  {post.authorUsername}
-                  {post.userId === user?.id ? " (tu)" : ""}
-                </strong>
-                <p className="meta">{formatDate(post.createdAt)}</p>
-                <p>{post.content}</p>
-                {post.workoutId && <small>Entrenamiento: {getWorkoutTitle(post.workoutId)}</small>}
-                <p className="meta">Likes: {post.likesCount}</p>
-                <ul className="comments-list">
-                  {post.comments.map((comment) => (
-                    <li key={comment.id}>
-                      <small>
-                        {comment.authorUsername}
-                        {comment.userId === user?.id ? " (tu)" : ""}: {comment.content}
-                      </small>
-                    </li>
-                  ))}
-                </ul>
-                <div className="inline-actions">
-                  <input
-                    value={commentByPostId[post.id] ?? ""}
-                    onChange={(event) =>
-                      setCommentByPostId((current) => ({ ...current, [post.id]: event.target.value }))
-                    }
-                    placeholder="Escribe un comentario"
-                  />
-                  <button type="button" className="secondary" onClick={() => handleCreateComment(post.id)}>
-                    Comentar
-                  </button>
-                </div>
-              </div>
-              <div className="actions">
-                <button type="button" className="secondary" onClick={() => handleToggleLike(post.id)}>
-                  Like
-                </button>
-                {post.userId === user?.id && (
-                  <button type="button" className="danger" onClick={() => handleDeletePost(post.id)}>
-                    Eliminar
-                  </button>
-                )}
-              </div>
-            </li>
+            <PostItem
+              key={post.id}
+              post={post}
+              isOwner={post.userId === user?.id}
+              currentUserId={user?.id}
+              commentValue={commentByPostId[post.id] ?? ""}
+              onChangeComment={(value) =>
+                setCommentByPostId((current) => ({
+                  ...current,
+                  [post.id]: value,
+                }))
+              }
+              onLike={() => handleToggleLike(post.id)}
+              onDelete={() => handleDeletePost(post.id)}
+              onComment={() => handleCreateComment(post.id)}
+              getWorkoutTitle={getWorkoutTitle}
+              formatDate={formatDate}
+            />
           ))}
         </ul>
       </section>
 
-      <aside className="feed-right card card-dark">
-        <h3>Tu cuenta</h3>
-        <p className="meta">
-          @{user?.username} | Publicaciones: {myPostsCount}
-        </p>
+      <Card as="aside" tone="dark" className="feed-right sticky top-4 max-lg:static">
+        <UserSummaryCard username={user?.username} myPostsCount={myPostsCount} />
         <h3>Sugerencias para ti</h3>
-        {suggestedUsers.length === 0 && <p className="meta">Aun no hay sugerencias.</p>}
-        <ul className="suggestions-list">
+        {suggestedUsers.length === 0 && <EmptyState message="Aun no hay sugerencias." className="mt-2 text-slate-400" />}
+        <ul className="suggestions-list mt-2 grid list-none gap-2.5 p-0">
           {suggestedUsers.map((suggested) => (
-            <li key={suggested.id} className="suggestion-item">
-              <img
-                src={suggested.avatarUrl || "https://via.placeholder.com/32x32"}
-                alt={suggested.username}
-              />
-              <span>{suggested.username}</span>
-              <button type="button" className="secondary" onClick={() => handleToggleFollow(suggested.id)}>
-                {followingIds.includes(suggested.id) ? "Siguiendo" : "Seguir"}
-              </button>
-            </li>
+            <FollowSuggestionItem
+              key={suggested.id}
+              user={suggested}
+              isFollowing={followingIds.includes(suggested.id)}
+              onToggleFollow={handleToggleFollow}
+            />
           ))}
         </ul>
-      </aside>
+      </Card>
     </section>
   );
 }

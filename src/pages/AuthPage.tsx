@@ -1,6 +1,9 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { login, register } from "../api/authApi";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { StatusMessage } from "../components/ui/StatusMessage";
 import { useAuth } from "../context/AuthContext";
 
 export function AuthPage() {
@@ -43,15 +46,16 @@ export function AuthPage() {
   }
 
   return (
-    <section className="card auth-card">
+    <Card className="mx-auto my-8 w-full max-w-[460px] max-md:my-4">
       <h1>{isRegisterMode ? "Crear cuenta" : "Iniciar sesion"}</h1>
-      <p className="subtitle">MVP social + deporte (localStorage + API)</p>
+      <p className="mb-3 text-slate-500">MVP social + deporte (localStorage + API)</p>
 
-      <form className="stack" onSubmit={handleSubmit}>
+      <form className="grid gap-2.5" onSubmit={handleSubmit}>
         {isRegisterMode && (
-          <label>
+          <label className="grid gap-1.5 font-semibold">
             Usuario
             <input
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-500"
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
@@ -60,9 +64,10 @@ export function AuthPage() {
           </label>
         )}
 
-        <label>
+        <label className="grid gap-1.5 font-semibold">
           Email
           <input
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-500"
             required
             type="email"
             value={email}
@@ -71,9 +76,10 @@ export function AuthPage() {
           />
         </label>
 
-        <label>
+        <label className="grid gap-1.5 font-semibold">
           Password
           <input
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-500"
             required
             type="password"
             minLength={4}
@@ -83,23 +89,23 @@ export function AuthPage() {
           />
         </label>
 
-        {error && <p className="error">{error}</p>}
+        <StatusMessage error={error} />
 
-        <button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? "Procesando..." : isRegisterMode ? "Crear cuenta" : "Entrar"}
-        </button>
+        </Button>
       </form>
 
-      <button
+      <Button
         type="button"
-        className="link-btn"
+        variant="link"
         onClick={() => {
           setError("");
           setIsRegisterMode((value) => !value);
         }}
       >
         {isRegisterMode ? "Ya tengo cuenta" : "No tengo cuenta aun"}
-      </button>
-    </section>
+      </Button>
+    </Card>
   );
 }
