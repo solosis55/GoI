@@ -6,7 +6,7 @@
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
   "functions": {
     "api/index.mjs": {
-      "includeFiles": ["server/dist/**", "server/data/store.json"]
+      "includeFiles": "server/dist/**"
     }
   }
 }

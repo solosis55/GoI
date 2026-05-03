@@ -86,7 +86,7 @@ Pasos en Vercel:
 
 **Persistencia en serverless:** Vercel define **`VERCEL=1`**. El código usa **`/tmp/fitsocial-store.json`** como fichero de trabajo y, si no existe, copia el **`server/data/store.json`** empaquetado con la función (solo lectura en el bundle). Los datos pueden **perderse** al crear nuevas instancias o tras cierto tiempo; no sustituye una base de datos.
 
-**Archivos incluidos en la función:** `vercel.json` lista `server/dist/**` y `server/data/store.json` en **`includeFiles`** para que existan en runtime.
+**Archivos incluidos en la función:** en `vercel.json`, **`includeFiles` debe ser un solo glob (cadena ≤256 caracteres)** según el esquema de Vercel; usamos **`"server/dist/**"`**. Tras compilar el servidor, el script **`server/scripts/copy-store-for-dist.mjs`** copia **`server/data/store.json`** a **`server/dist/data/store.json`** para que el seed viaje dentro de `dist/`.
 
 ### Si solo desplegaste el front (sin `api/` ni build de servidor)
 

@@ -87,7 +87,10 @@ export const store = {
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = dirname(currentFile);
+/** JSON versionado en repo (`server/data/store.json`). */
 const defaultRepoStorePath = resolve(currentDir, "../../data/store.json");
+/** Tras el build, copia del seed dentro de `server/dist/data/` (para Vercel + `includeFiles`). */
+const distBundledSeedPath = resolve(currentDir, "../data/store.json");
 
 /** Ruta del JSON persistido. En Vercel las funciones solo escriben bien en `/tmp` (ver `docs/deploy.md`). */
 function getDataFilePath(): string {
@@ -115,7 +118,9 @@ export function initializeStore() {
   const dataFilePath = getDataFilePath();
   if (!existsSync(dataFilePath)) {
     mkdirSync(dirname(dataFilePath), { recursive: true });
-    if (process.env.VERCEL && existsSync(defaultRepoStorePath)) {
+    if (process.env.VERCEL && existsSync(distBundledSeedPath)) {
+      copyFileSync(distBundledSeedPath, dataFilePath);
+    } else if (process.env.VERCEL && existsSync(defaultRepoStorePath)) {
       copyFileSync(defaultRepoStorePath, dataFilePath);
     } else {
       writeFileSync(dataFilePath, JSON.stringify(store, null, 2), "utf-8");
