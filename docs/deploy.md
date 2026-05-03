@@ -80,7 +80,7 @@ El repo incluye **`vercel.json`** y **`api/index.mjs`**: las peticiones a **`/ap
 Pasos en Vercel:
 
 1. Importa el repositorio y deja el **directorio raíz** en la raíz del monorepo (donde están `package.json`, `vercel.json` y `api/`).
-2. Variables de entorno del proyecto (**Settings → Environment variables**): define al menos **`JWT_SECRET`** (obligatoria para emitir JWT en runtime; el servidor la lee al arrancar la función). Opcional: **`NODE_ENV=production`**.
+2. Variables de entorno (**recomendado**): define **`JWT_SECRET`** (string largo y aleatorio) para dominio propio o datos reales; tras cambiarla, **redeploy**. Si **no** la defines, en despliegues con **`VERCEL=1`** el backend usa un secreto automático basado en `VERCEL_URL` / `VERCEL_GIT_COMMIT_SHA` para que el login funcione en Hobby sin tocar el dashboard (solo adecuado para demos).
 3. **No** hace falta **`VITE_API_URL`** si front y API comparten el mismo dominio de Vercel (el cliente ya usa `/api` en producción).
 4. Tras el deploy, prueba **`GET /api/health`** y login desde la SPA.
 

@@ -58,6 +58,8 @@ En el fichero **`server/data/store.json`** del repo hay cuentas pensadas para **
 
 Si borras o sustituyes `store.json`, estas cuentas dejan de existir hasta que vuelvas a registrar usuarios o restaures el fichero.
 
+**Vercel:** si no configuras **`JWT_SECRET`**, el servidor usa un secreto automático derivado de variables que Vercel inyecta (`VERCEL_URL`, etc.) para que el login funcione en demos. Para **dominio propio o datos sensibles**, define siempre **`JWT_SECRET`** en el dashboard y redeploy. Detalle en **`docs/deploy.md`**.
+
 ## Scripts útiles (raíz)
 
 | Script | Descripción |

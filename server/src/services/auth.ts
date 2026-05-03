@@ -8,8 +8,20 @@ type AuthTokenPayload = {
   sub: string;
 };
 
+/**
+ * En Vercel (`VERCEL`), si no defines `JWT_SECRET` en el dashboard, usamos un secreto
+ * derivado de variables que Vercel inyecta (`VERCEL_URL`, etc.) para que el login funcione
+ * en demos Hobby. **No sustituye** definir `JWT_SECRET` para datos reales o dominio propio.
+ */
+function vercelAutoJwtSecret(): string {
+  const url = process.env.VERCEL_URL ?? "";
+  const sha = process.env.VERCEL_GIT_COMMIT_SHA ?? "";
+  return `fitsocial-vercel-auto|${url}|${sha}`;
+}
+
 function getJwtSecret() {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+  if (process.env.VERCEL) return vercelAutoJwtSecret();
   if (process.env.NODE_ENV === "production") {
     throw new Error("JWT_SECRET is required in production");
   }

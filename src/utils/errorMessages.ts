@@ -10,6 +10,8 @@ const codeMessageMap: Record<string, string> = {
   AUTH_FORBIDDEN: "No tienes permisos para realizar esta acción.",
   AUTH_PROFILE_INVALID_INPUT: "Revisa los datos del perfil y vuelve a intentarlo.",
   AUTH_RATE_LIMITED: "Demasiados intentos. Espera unos minutos antes de reintentar.",
+  AUTH_JWT_NOT_CONFIGURED:
+    "El servidor no tiene configurada la variable JWT_SECRET (en Vercel: Settings → Environment Variables). Añádela y vuelve a desplegar.",
   AUTH_FORGOT_PASSWORD_INVALID_INPUT: "Introduce un correo electrónico válido.",
   AUTH_RESET_INVALID_INPUT: "La contraseña debe tener al menos 6 caracteres y el enlace debe ser válido.",
   AUTH_RESET_TOKEN_INVALID: "El enlace de restablecimiento no es válido o ha caducado. Solicita uno nuevo.",

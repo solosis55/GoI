@@ -3,13 +3,14 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import dotenv from "dotenv";
-import express from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/authRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import postsRoutes from "./routes/postsRoutes.js";
 import workoutSessionsRoutes from "./routes/workoutSessionsRoutes.js";
 import workoutsRoutes from "./routes/workoutsRoutes.js";
+import { sendError } from "./services/http.js";
 import { initializeStore } from "./services/store.js";
 
 dotenv.config();
@@ -82,5 +83,23 @@ if (serveProductionClient) {
     });
   });
 }
+
+app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
+  if (err instanceof Error && err.message === "JWT_SECRET is required in production") {
+    sendError(
+      res,
+      503,
+      "AUTH_JWT_NOT_CONFIGURED",
+      "Set JWT_SECRET in your host environment (e.g. Vercel Project Settings → Environment Variables), then redeploy.",
+    );
+    return;
+  }
+  console.error(err);
+  sendError(res, 500, "INTERNAL_SERVER_ERROR", "unexpected server error");
+});
 
 export default app;
