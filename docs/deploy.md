@@ -21,14 +21,16 @@ La **salud** del servicio: `GET /api/health`.
 | `JWT_SECRET` | Servidor | **Obligatoria** antes de login/registro en produccion (emisión del JWT falla sin ella; ver `server/src/services/auth.ts`) |
 | `PORT` | Servidor | La asigna casi todo PaaS (Render, Fly, Railway). Por defecto local `4000`. |
 | `VITE_API_URL` | **Build** del cliente | Solo si front y API van en **hosts distintos**; entonces `https://api.tudominio.com/api` y el build debe hacerse con esa variable definida. |
+| `FITSOCIAL_STORE_PATH` | Servidor (opcional) | Ruta absoluta al `store.json` en runtime. Si no se define, en **Vercel** se usa `/tmp/fitsocial-store.json` (ver arriba). |
 
 Consulta `server/.env.example` para variables adicionales opcionales (`AUTH_RESET_RETURN_TOKEN`, etc.).
 
 ## Persistencia (importante)
 
-Los datos viven en **`server/data/store.json`**. En contenedores/PaaS sin **volumen persistente**, el fichero se pierde al redesplegar o recrear la instancia.
+Los datos viven en **`server/data/store.json`** (o en la ruta definida por **`FITSOCIAL_STORE_PATH`**). En contenedores/PaaS sin **volumen persistente**, el fichero se pierde al redesplegar o recrear la instancia.
 
 - **MVP**: aceptable para pruebas.
+- **Vercel (serverless)**: con `VERCEL=1` el store por defecto se escribe en **`/tmp/fitsocial-store.json`** (copia inicial desde `server/data/store.json` del despliegue). Los datos **no** son duraderos entre instancias ni equivalentes a un disco persistente; sirve para demos. Producción seria: base de datos o almacen gestionado.
 - **Siguiente paso**: volumen Docker, disco persistente en el proveedor, o base de datos.
 
 ## Build y arranque manual (sin Docker)
@@ -71,24 +73,29 @@ Pasos típicos:
 
 Si la plataforma solo permite `WORKDIR` dentro de `server/`, mueve este flujo o ajusta rutas en `app.ts`; el diseño actual asume **`dist`** en **padre de `server/`**.
 
-## Vercel (solo frontend estático)
+## Vercel (frontend + API en el mismo proyecto)
 
-Vercel sirve habitualmente **solo los estáticos** del `npm run build` de Vite. Las peticiones del cliente van a **`/api/...`** en el **mismo dominio** (`import.meta.env.PROD` sin `VITE_API_URL`). Si **no** hay ningún backend detrás de ese dominio, esas rutas **no existen**: obtendrás **404** o una respuesta que **no es JSON**, y en la UI aparecía el mensaje genérico *"Unexpected API error"* (ahora el cliente muestra un texto más claro).
+El repo incluye **`vercel.json`** y **`api/index.mjs`**: las peticiones a **`/api/*`** se enrutan a una **función serverless** que exporta la misma app **Express** compilada en `server/dist/`. El build usa **`npm run vercel-build`** (equivale a `npm run build:deploy`): Vite genera **`dist/`** y TypeScript compila el **`server/`**.
 
-**Opciones coherentes con este repo:**
+Pasos en Vercel:
 
-1. **API en otro host (recomendado con Vercel)**  
-   - Despliega el servidor Express en Render, Railway, Fly.io, etc. (ver sección anterior: `npm run build:deploy`, `node server/dist/server.js`, `JWT_SECRET`).  
-   - En **Vercel → Settings → Environment variables**, define **`VITE_API_URL`** con la URL base de la API, por ejemplo `https://tu-api.onrender.com/api` (sin barra final extra; debe coincidir con cómo montas las rutas en Express).  
-   - **Importante:** Vite sustituye `import.meta.env.VITE_*` en **tiempo de build**. Tras cambiar la variable, haz un **nuevo deploy** / rebuild del proyecto.
+1. Importa el repositorio y deja el **directorio raíz** en la raíz del monorepo (donde están `package.json`, `vercel.json` y `api/`).
+2. Variables de entorno del proyecto (**Settings → Environment variables**): define al menos **`JWT_SECRET`** (obligatoria para emitir JWT en runtime; el servidor la lee al arrancar la función). Opcional: **`NODE_ENV=production`**.
+3. **No** hace falta **`VITE_API_URL`** si front y API comparten el mismo dominio de Vercel (el cliente ya usa `/api` en producción).
+4. Tras el deploy, prueba **`GET /api/health`** y login desde la SPA.
 
-2. **Un solo origen (sin Vercel para la API)**  
-   - Un único proceso Node en producción sirve `/api` + estáticos (`docs/deploy.md` ya lo describe). Eso no es el modelo “solo Vercel estático”.
+**Persistencia en serverless:** Vercel define **`VERCEL=1`**. El código usa **`/tmp/fitsocial-store.json`** como fichero de trabajo y, si no existe, copia el **`server/data/store.json`** empaquetado con la función (solo lectura en el bundle). Los datos pueden **perderse** al crear nuevas instancias o tras cierto tiempo; no sustituye una base de datos.
 
-3. **Proxy en Vercel (avanzado)**  
-   - Puedes usar `rewrites` en `vercel.json` para enviar `/api/:path*` a tu backend externo. La URL de destino suele ser fija en el fichero o gestionada según documentación de Vercel.
+**Archivos incluidos en la función:** `vercel.json` lista `server/dist/**` y `server/data/store.json` en **`includeFiles`** para que existan en runtime.
 
-Mientras no exista una API alcanzable desde el navegador con la URL que usa el build, login y el resto de llamadas fallarán.
+### Si solo desplegaste el front (sin `api/` ni build de servidor)
+
+Si el proyecto en Vercel **no** usa este `vercel.json` o el build no ejecuta `npm run vercel-build`, las peticiones a **`/api`** no llegarán a Express.
+
+**Alternativas:**
+
+- **API en otro host:** despliega Express en Render, Railway, Fly, etc., y define **`VITE_API_URL`** en el build de Vercel (rebuild obligatorio).
+- **Proxy:** reescribe `/api/:path*` hacia un backend externo (URL fija o según documentación de Vercel).
 
 ## Checklist antes de abrir al publico
 

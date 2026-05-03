@@ -81,7 +81,7 @@ Cualquier cambio sustancial debe dejarse reflejado en los docs del repo: **`READ
 
 ## Despliegue
 
-Guía detallada (variables, Docker, persistencia de `store.json`, checklist): **[docs/deploy.md](./docs/deploy.md)**.
+Guía detallada (variables, Docker, persistencia de `store.json`, checklist): **[docs/deploy.md](./docs/deploy.md)**. Incluye **Vercel** con `vercel.json` + función `api/index.mjs` (mismo dominio para SPA y `/api`).
 
 ## Documentación en el repo
 

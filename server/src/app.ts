@@ -15,6 +15,11 @@ import { initializeStore } from "./services/store.js";
 dotenv.config();
 
 const app = express();
+
+if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+  app.set("trust proxy", 1);
+}
+
 initializeStore();
 
 const moduleDir = dirname(fileURLToPath(import.meta.url));

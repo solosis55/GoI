@@ -173,7 +173,7 @@ Registro de que el usuario realizo una **plantilla** (`workoutId`) en un instant
 
 ## 5) Persistencia: servidor vs cliente
 
-Servidor (persistido en `server/data/store.json`):
+Servidor (persistido en `server/data/store.json`, o ruta `FITSOCIAL_STORE_PATH`; en **Vercel** serverless el valor por defecto es un JSON en **`/tmp`** copiado del seed del repo — ver `docs/deploy.md`):
 - `users` (incluye campos opcionales internos `passwordResetTokenHash` y `passwordResetExpires` mientras un reset este pendiente; no se exponen en respuestas `user` publicas), `workouts`, **`workoutSessions`**, `posts`, `likes`, `comments`, `follows`.
 - Fuente de verdad de negocio.
 

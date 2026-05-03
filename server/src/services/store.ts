@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { sanitizeWorkoutTags } from "./validation.js";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export type User = {
@@ -87,7 +87,15 @@ export const store = {
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = dirname(currentFile);
-const dataFilePath = resolve(currentDir, "../../data/store.json");
+const defaultRepoStorePath = resolve(currentDir, "../../data/store.json");
+
+/** Ruta del JSON persistido. En Vercel las funciones solo escriben bien en `/tmp` (ver `docs/deploy.md`). */
+function getDataFilePath(): string {
+  const fromEnv = process.env.FITSOCIAL_STORE_PATH?.trim();
+  if (fromEnv) return resolve(fromEnv);
+  if (process.env.VERCEL) return join("/tmp", "fitsocial-store.json");
+  return defaultRepoStorePath;
+}
 
 export function createId() {
   return randomUUID();
@@ -104,10 +112,14 @@ type PersistedStore = {
 };
 
 export function initializeStore() {
+  const dataFilePath = getDataFilePath();
   if (!existsSync(dataFilePath)) {
     mkdirSync(dirname(dataFilePath), { recursive: true });
-    writeFileSync(dataFilePath, JSON.stringify(store, null, 2), "utf-8");
-    return;
+    if (process.env.VERCEL && existsSync(defaultRepoStorePath)) {
+      copyFileSync(defaultRepoStorePath, dataFilePath);
+    } else {
+      writeFileSync(dataFilePath, JSON.stringify(store, null, 2), "utf-8");
+    }
   }
 
   const raw = readFileSync(dataFilePath, "utf-8");
@@ -135,6 +147,7 @@ export function initializeStore() {
 }
 
 export function saveStore() {
+  const dataFilePath = getDataFilePath();
   mkdirSync(dirname(dataFilePath), { recursive: true });
   writeFileSync(dataFilePath, JSON.stringify(store, null, 2), "utf-8");
 }
