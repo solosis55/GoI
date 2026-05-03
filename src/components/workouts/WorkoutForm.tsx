@@ -24,8 +24,13 @@ export function WorkoutForm({
   submitLabel,
   onCancel,
 }: WorkoutFormProps) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onSubmit(event);
+  }
+
   return (
-    <form className="stack grid gap-3" onSubmit={onSubmit}>
+    <form className="stack grid gap-3" onSubmit={handleSubmit}>
       <label className="grid gap-1.5 font-semibold">
         Titulo
         <input

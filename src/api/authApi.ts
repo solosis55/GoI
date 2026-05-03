@@ -2,8 +2,10 @@ import { apiFetch } from "./client";
 import type {
   AuthResponse,
   DiscoverUser,
+  ForgotPasswordResponse,
   LoginInput,
   RegisterInput,
+  ResetPasswordInput,
   SafeUser,
   UpdateProfileInput,
 } from "../types/auth";
@@ -22,6 +24,20 @@ export function login(input: LoginInput) {
   });
 }
 
+export function requestPasswordReset(email: string) {
+  return apiFetch<ForgotPasswordResponse>("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPasswordWithToken(input: ResetPasswordInput) {
+  return apiFetch<{ message: string }>("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
 export function getProfile(userId: string) {
   return apiFetch<{ user: SafeUser }>(`/auth/profile/${userId}`);
 }
@@ -33,17 +49,16 @@ export function updateProfile(userId: string, input: UpdateProfileInput) {
   });
 }
 
-export function getUsers(currentUserId: string) {
-  return apiFetch<{ users: DiscoverUser[] }>(`/auth/users?currentUserId=${currentUserId}`);
+export function getUsers() {
+  return apiFetch<{ users: DiscoverUser[] }>("/auth/users");
 }
 
 export function getFollowing(userId: string) {
   return apiFetch<{ followingIds: string[] }>(`/auth/following/${userId}`);
 }
 
-export function toggleFollow(targetUserId: string, followerId: string) {
+export function toggleFollow(targetUserId: string) {
   return apiFetch<{ following: boolean }>(`/auth/follow/${targetUserId}`, {
     method: "POST",
-    body: JSON.stringify({ followerId }),
   });
 }

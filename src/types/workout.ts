@@ -9,10 +9,9 @@ export type Workout = {
 };
 
 export type CreateWorkoutInput = {
-  userId: string;
   title: string;
   description: string;
   exercises: string[];
 };
 
-export type UpdateWorkoutInput = Partial<Omit<CreateWorkoutInput, "userId">>;
+export type UpdateWorkoutInput = Partial<CreateWorkoutInput>;

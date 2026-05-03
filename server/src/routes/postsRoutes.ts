@@ -6,13 +6,14 @@ import {
   listPosts,
   toggleLike,
 } from "../controllers/postsController.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const postsRoutes = Router();
 
 postsRoutes.get("/", listPosts);
-postsRoutes.post("/", createPost);
-postsRoutes.delete("/:id", deletePost);
-postsRoutes.post("/:id/likes", toggleLike);
-postsRoutes.post("/:id/comments", createComment);
+postsRoutes.post("/", requireAuth, createPost);
+postsRoutes.delete("/:id", requireAuth, deletePost);
+postsRoutes.post("/:id/likes", requireAuth, toggleLike);
+postsRoutes.post("/:id/comments", requireAuth, createComment);
 
 export default postsRoutes;

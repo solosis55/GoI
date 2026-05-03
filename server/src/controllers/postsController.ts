@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
 import { createId, saveStore, store, Post } from "../services/store.js";
+import { sendError } from "../services/http.js";
+import { isLengthBetween, sanitizeText } from "../services/validation.js";
 
 type PostPayload = {
-  userId?: string;
   content?: string;
   workoutId?: string | null;
 };
 
-type ToggleLikePayload = {
-  userId?: string;
-};
-
 type CommentPayload = {
-  userId?: string;
   content?: string;
 };
 
@@ -45,31 +41,33 @@ export function listPosts(_req: Request, res: Response) {
 }
 
 export function createPost(req: Request, res: Response) {
-  const { userId, content, workoutId = null } = req.body as PostPayload;
+  const authUserId = String(res.locals.authUserId ?? "");
+  const { content, workoutId = null } = req.body as PostPayload;
+  const normalizedContent = sanitizeText(content);
 
-  if (!userId || !content?.trim()) {
-    res.status(400).json({ message: "userId and content are required" });
+  if (!authUserId || !isLengthBetween(normalizedContent, 4, 280)) {
+    sendError(res, 400, "POST_INVALID_INPUT", "content is required");
     return;
   }
 
-  const userExists = store.users.some((user) => user.id === userId);
+  const userExists = store.users.some((user) => user.id === authUserId);
   if (!userExists) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "POST_USER_NOT_FOUND", "user not found");
     return;
   }
 
   if (workoutId) {
     const workoutExists = store.workouts.some((workout) => workout.id === workoutId);
     if (!workoutExists) {
-      res.status(404).json({ message: "workout not found" });
+      sendError(res, 404, "POST_WORKOUT_NOT_FOUND", "workout not found");
       return;
     }
   }
 
   const post: Post = {
     id: createId(),
-    userId,
-    content: content.trim(),
+    userId: authUserId,
+    content: normalizedContent,
     workoutId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -81,11 +79,17 @@ export function createPost(req: Request, res: Response) {
 }
 
 export function deletePost(req: Request, res: Response) {
+  const authUserId = String(res.locals.authUserId ?? "");
   const { id } = req.params;
   const index = store.posts.findIndex((post) => post.id === id);
 
   if (index === -1) {
-    res.status(404).json({ message: "post not found" });
+    sendError(res, 404, "POST_NOT_FOUND", "post not found");
+    return;
+  }
+
+  if (store.posts[index].userId !== authUserId) {
+    sendError(res, 403, "POST_FORBIDDEN", "forbidden");
     return;
   }
 
@@ -99,22 +103,21 @@ export function deletePost(req: Request, res: Response) {
 
 export function toggleLike(req: Request, res: Response) {
   const postId = String(req.params.id);
-  const { userId } = req.body as ToggleLikePayload;
-
+  const userId = String(res.locals.authUserId ?? "");
   if (!userId) {
-    res.status(400).json({ message: "userId is required" });
+    sendError(res, 401, "AUTH_UNAUTHORIZED", "unauthorized");
     return;
   }
 
   const postExists = store.posts.some((post) => post.id === postId);
   if (!postExists) {
-    res.status(404).json({ message: "post not found" });
+    sendError(res, 404, "POST_NOT_FOUND", "post not found");
     return;
   }
 
   const userExists = store.users.some((user) => user.id === userId);
   if (!userExists) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "POST_USER_NOT_FOUND", "user not found");
     return;
   }
 
@@ -139,22 +142,24 @@ export function toggleLike(req: Request, res: Response) {
 
 export function createComment(req: Request, res: Response) {
   const postId = String(req.params.id);
-  const { userId, content } = req.body as CommentPayload;
+  const userId = String(res.locals.authUserId ?? "");
+  const { content } = req.body as CommentPayload;
+  const normalizedContent = sanitizeText(content);
 
-  if (!userId || !content?.trim()) {
-    res.status(400).json({ message: "userId and content are required" });
+  if (!userId || !isLengthBetween(normalizedContent, 1, 180)) {
+    sendError(res, 400, "COMMENT_INVALID_INPUT", "content is required");
     return;
   }
 
   const postExists = store.posts.some((post) => post.id === postId);
   if (!postExists) {
-    res.status(404).json({ message: "post not found" });
+    sendError(res, 404, "POST_NOT_FOUND", "post not found");
     return;
   }
 
   const userExists = store.users.some((user) => user.id === userId);
   if (!userExists) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "COMMENT_USER_NOT_FOUND", "user not found");
     return;
   }
 
@@ -162,7 +167,7 @@ export function createComment(req: Request, res: Response) {
     id: createId(),
     postId,
     userId,
-    content: content.trim(),
+    content: normalizedContent,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

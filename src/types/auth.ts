@@ -26,6 +26,17 @@ export type LoginInput = {
   password: string;
 };
 
+export type ForgotPasswordResponse = {
+  message: string;
+  /** Solo si el servidor tiene `AUTH_RESET_RETURN_TOKEN=true` (desarrollo). */
+  devResetToken?: string;
+};
+
+export type ResetPasswordInput = {
+  token: string;
+  password: string;
+};
+
 export type UpdateProfileInput = {
   username: string;
   bio: string;

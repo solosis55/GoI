@@ -4,6 +4,7 @@ import { getProfile, updateProfile } from "../api/authApi";
 import { ProfileForm } from "../components/profile/ProfileForm";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
+import { getErrorMessage } from "../utils/errorMessages";
 
 export function ProfilePage() {
   const { user, updateUser } = useAuth();
@@ -29,7 +30,7 @@ export function ProfilePage() {
         setAvatarUrl(response.user.avatarUrl);
         updateUser(response.user);
       } catch (loadError) {
-        setError(loadError instanceof Error ? loadError.message : "No se pudo cargar el perfil");
+        setError(getErrorMessage(loadError, "No se pudo cargar el perfil"));
       } finally {
         setLoading(false);
       }
@@ -77,7 +78,7 @@ export function ProfilePage() {
       updateUser(response.user);
       setMessage("Perfil actualizado correctamente");
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "No se pudo actualizar el perfil");
+      setError(getErrorMessage(submitError, "No se pudo actualizar el perfil"));
     } finally {
       setLoading(false);
     }

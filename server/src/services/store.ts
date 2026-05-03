@@ -13,6 +13,10 @@ export type User = {
   avatarUrl: string;
   createdAt: string;
   updatedAt: string;
+  /** SHA-256 hex del token de un solo uso; no se expone por API. */
+  passwordResetTokenHash?: string;
+  /** ISO 8601; caducidad del token de restablecimiento. */
+  passwordResetExpires?: string;
 };
 
 export type Workout = {

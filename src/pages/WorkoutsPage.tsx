@@ -8,6 +8,7 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { StatusMessage } from "../components/ui/StatusMessage";
 import { useAuth } from "../context/AuthContext";
 import type { Workout } from "../types/workout";
+import { getErrorMessage } from "../utils/errorMessages";
 
 export function WorkoutsPage() {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ export function WorkoutsPage() {
       const ownWorkouts = user ? response.filter((workout) => workout.userId === user.id) : [];
       setWorkouts(ownWorkouts);
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "No se pudo cargar entrenamientos");
+      setError(getErrorMessage(loadError, "No se pudo cargar entrenamientos"));
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,7 @@ export function WorkoutsPage() {
 
   useEffect(() => {
     void loadWorkouts();
-  }, []);
+  }, [user?.id]);
 
   async function handleCreateWorkout(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,7 +66,6 @@ export function WorkoutsPage() {
 
     try {
       await createWorkout({
-        userId: user.id,
         title,
         description,
         exercises,
@@ -76,7 +76,7 @@ export function WorkoutsPage() {
       await loadWorkouts();
       setMessage("Entrenamiento creado");
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : "No se pudo crear el entrenamiento");
+      setError(getErrorMessage(createError, "No se pudo crear el entrenamiento"));
     }
   }
 
@@ -89,7 +89,7 @@ export function WorkoutsPage() {
       await loadWorkouts();
       setMessage("Entrenamiento eliminado");
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "No se pudo eliminar");
+      setError(getErrorMessage(deleteError, "No se pudo eliminar"));
     }
   }
 
@@ -138,7 +138,7 @@ export function WorkoutsPage() {
       await loadWorkouts();
       setMessage("Entrenamiento actualizado");
     } catch (updateError) {
-      setError(updateError instanceof Error ? updateError.message : "No se pudo actualizar");
+      setError(getErrorMessage(updateError, "No se pudo actualizar"));
     }
   }
 

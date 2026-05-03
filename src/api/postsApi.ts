@@ -18,10 +18,9 @@ export function deletePost(id: string) {
   });
 }
 
-export function toggleLike(postId: string, userId: string) {
+export function toggleLike(postId: string) {
   return apiFetch<{ liked: boolean }>(`/posts/${postId}/likes`, {
     method: "POST",
-    body: JSON.stringify({ userId }),
   });
 }
 

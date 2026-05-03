@@ -22,12 +22,10 @@ export type PostComment = {
 };
 
 export type CreatePostInput = {
-  userId: string;
   content: string;
   workoutId: string | null;
 };
 
 export type CreateCommentInput = {
-  userId: string;
   content: string;
 };

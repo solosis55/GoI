@@ -5,18 +5,23 @@ import {
   listUsers,
   login,
   register,
+  requestPasswordReset,
+  resetPasswordWithToken,
   toggleFollow,
   updateProfile,
 } from "../controllers/authController.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const authRoutes = Router();
 
 authRoutes.post("/register", register);
 authRoutes.post("/login", login);
-authRoutes.get("/users", listUsers);
+authRoutes.post("/forgot-password", requestPasswordReset);
+authRoutes.post("/reset-password", resetPasswordWithToken);
+authRoutes.get("/users", requireAuth, listUsers);
 authRoutes.get("/profile/:userId", getProfile);
-authRoutes.put("/profile/:userId", updateProfile);
-authRoutes.get("/following/:userId", getFollowing);
-authRoutes.post("/follow/:targetUserId", toggleFollow);
+authRoutes.put("/profile/:userId", requireAuth, updateProfile);
+authRoutes.get("/following/:userId", requireAuth, getFollowing);
+authRoutes.post("/follow/:targetUserId", requireAuth, toggleFollow);
 
 export default authRoutes;

@@ -1,36 +1,106 @@
 {
   "users": [
     {
-      "id": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
-      "username": "cristianfit",
-      "email": "cristian.c.s.2000@hotmail.com",
-      "password": "1234",
-      "createdAt": "2026-04-27T15:38:30.345Z",
+      "id": "ae92b9be-6f44-41dd-9b28-4b73b227db21",
+      "username": "alice",
+      "email": "alice@test.com",
+      "password": "$2b$10$eqOnQWISyAuhMDFAfoBjtO2HRFdbL9m91dWtzGMkADrvURHjs2xzC",
       "bio": "",
       "goal": "",
       "avatarUrl": "",
-      "updatedAt": "2026-04-27T15:38:30.345Z"
+      "createdAt": "2026-04-29T18:39:23.014Z",
+      "updatedAt": "2026-05-03T20:00:00.000Z"
+    },
+    {
+      "id": "d27a0820-c0c1-4327-afd0-9940a07dae0e",
+      "username": "bob",
+      "email": "bob@test.com",
+      "password": "$2b$10$eqOnQWISyAuhMDFAfoBjtO2HRFdbL9m91dWtzGMkADrvURHjs2xzC",
+      "bio": "adsd",
+      "goal": "",
+      "avatarUrl": "",
+      "createdAt": "2026-04-29T18:39:23.119Z",
+      "updatedAt": "2026-05-03T17:27:44.176Z",
+      "passwordResetTokenHash": "013cf050e1060051cba922c60ec5cdddb93dc6e0dea420c29d725176faf88455",
+      "passwordResetExpires": "2026-05-03T18:27:44.176Z"
+    },
+    {
+      "id": "1d32cc6d-0e14-4aa1-ad12-43ce30374084",
+      "username": "cristian",
+      "email": "cristian@test.com",
+      "password": "$2b$10$eqOnQWISyAuhMDFAfoBjtO2HRFdbL9m91dWtzGMkADrvURHjs2xzC",
+      "bio": "",
+      "goal": "",
+      "avatarUrl": "",
+      "createdAt": "2026-05-03T17:01:58.449Z",
+      "updatedAt": "2026-05-03T20:00:00.000Z"
+    },
+    {
+      "id": "6e0b2dfa-fd9a-4786-b93c-f781295cd3c2",
+      "username": "dana",
+      "email": "dana@test.com",
+      "password": "$2b$10$eqOnQWISyAuhMDFAfoBjtO2HRFdbL9m91dWtzGMkADrvURHjs2xzC",
+      "bio": "",
+      "goal": "",
+      "avatarUrl": "",
+      "createdAt": "2026-05-03T17:02:20.500Z",
+      "updatedAt": "2026-05-03T20:00:00.000Z"
     }
   ],
   "workouts": [
     {
-      "id": "ab226580-31d2-4565-83cb-698a8b9c476d",
+      "id": "ca995da0-c5d6-4c1e-8d3c-1428adf0d008",
+      "userId": "d27a0820-c0c1-4327-afd0-9940a07dae0e",
+      "title": "dasd",
+      "description": "asdsad",
+      "exercises": [
+        "asdad"
+      ],
+      "createdAt": "2026-05-03T17:10:02.431Z",
+      "updatedAt": "2026-05-03T17:10:02.431Z"
+    },
+    {
+      "id": "9ffeb975-3407-4173-bfbc-c127190afdbe",
       "userId": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
-      "title": "das",
-      "description": "asd",
-      "exercises": [],
-      "createdAt": "2026-04-29T17:35:38.863Z",
-      "updatedAt": "2026-04-29T17:35:38.863Z"
+      "title": "asd",
+      "description": "adsd",
+      "exercises": [
+        "ads"
+      ],
+      "createdAt": "2026-05-03T17:12:13.272Z",
+      "updatedAt": "2026-05-03T17:12:13.272Z"
+    },
+    {
+      "id": "edd4d123-24b8-4cee-8436-e7617d916ec1",
+      "userId": "d27a0820-c0c1-4327-afd0-9940a07dae0e",
+      "title": "adssadas",
+      "description": "asdasd",
+      "exercises": [
+        "adsadsas"
+      ],
+      "createdAt": "2026-05-03T17:13:20.451Z",
+      "updatedAt": "2026-05-03T17:13:20.451Z"
+    },
+    {
+      "id": "34971d14-2697-40c4-9b53-cd65710c4f15",
+      "userId": "d27a0820-c0c1-4327-afd0-9940a07dae0e",
+      "title": "dasasdsa",
+      "description": "asdasd",
+      "exercises": [
+        "asdasd"
+      ],
+      "createdAt": "2026-05-03T17:15:43.119Z",
+      "updatedAt": "2026-05-03T17:15:43.119Z"
     }
   ],
   "posts": [
     {
-      "id": "13687171-3ea4-48af-8f7c-79e22b4c8acf",
-      "userId": "f26a4d59-2d18-4063-a475-7c6d43826e7c",
-      "content": "das",
-      "workoutId": "dcfb4cd4-152f-41e5-bf3e-d5fc9784eb4b",
-      "createdAt": "2026-04-27T15:55:30.437Z",
-      "updatedAt": "2026-04-27T15:55:30.437Z"
+      "id": "fb748bdb-a770-449e-b56c-9a848c534a16",
+      "userId": "ae92b9be-6f44-41dd-9b28-4b73b227db21",
+      "content": "Publicacion de Alice",
+      "workoutId": null,
+      "createdAt": "2026-04-29T18:39:23.173Z",
+      "updatedAt": "2026-05-03T20:00:00.000Z"
     }
   ],
   "likes": [],

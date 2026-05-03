@@ -5,7 +5,7 @@
 ### Frontend (`src`)
 - `App.tsx`: shell principal, control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`).
 - `context/AuthContext.tsx`: estado global de autenticacion (token, user, login/logout, persistencia local).
-- `pages/AuthPage.tsx`: registro e inicio de sesion.
+- `pages/AuthPage.tsx`: registro, inicio de sesion, solicitud de recuperacion de contraseña y pantalla de nueva contraseña (`?reset=token`).
 - `pages/FeedPage.tsx`: timeline, crear post, likes, comentarios, seguir usuarios.
 - `pages/WorkoutsPage.tsx`: CRUD de entrenamientos.
 - `pages/ProfilePage.tsx`: ver/editar perfil deportivo.
@@ -65,8 +65,11 @@ Regla de arquitectura:
 
 ## 4) Diseno de API REST (backend)
 
-Base URL:
-- `http://localhost:4000/api`
+Base URL (cliente):
+
+- Desarrollo: `http://localhost:4000/api` (valor por defecto si no existe `VITE_API_URL`).
+- Produccion mismo host que la SPA: rutas relativas `/api` (build sin `VITE_API_URL`).
+- Produccion dominio API distinto: definir `VITE_API_URL` en el momento del build (`https://api.ejemplo.com/api`).
 
 Recursos:
 - `auth`
@@ -81,6 +84,13 @@ Recursos:
 - `POST /login`
   - body: `{ email, password }`
   - 200: `{ message, user, token }`
+- `POST /forgot-password`
+  - body: `{ email }`
+  - 200: `{ message }` (misma forma si el email existe o no, para no filtrar cuentas)
+  - Solo desarrollo: si `AUTH_RESET_RETURN_TOKEN=true` en el servidor **y** el email existe, respuesta adicional `{ message, devResetToken }` para probar sin servicio de correo (no usar en produccion).
+- `POST /reset-password`
+  - body: `{ token, password }` (password minimo 6 caracteres, igual que registro)
+  - 200: `{ message }` — el token es de un solo uso y caduca a la hora; se guarda solo el hash SHA-256 en el usuario persistido.
 - `GET /users?currentUserId=<id>`
   - 200: `{ users: SafeUserWithFollow[] }`
 - `GET /profile/:userId`
@@ -128,7 +138,7 @@ Recursos:
 ## 5) Persistencia: servidor vs cliente
 
 Servidor (persistido en `server/data/store.json`):
-- `users`, `workouts`, `posts`, `likes`, `comments`, `follows`.
+- `users` (incluye campos opcionales internos `passwordResetTokenHash` y `passwordResetExpires` mientras un reset este pendiente; no se exponen en respuestas `user` publicas), `workouts`, `posts`, `likes`, `comments`, `follows`.
 - Fuente de verdad de negocio.
 
 Cliente (persistencia local):
@@ -164,8 +174,8 @@ Flujo tipico:
 
 ## 7) Pendiente inmediato para cerrar arquitectura
 
-- Definir auth real (hash de password + validacion de token en middleware).
-- Estandarizar errores API (`{ message, code }`).
+- Integrar envio de email para enlaces reales de recuperacion de contraseña (el flujo API + UI ya existe).
+- Estandarizar errores API (`{ message, code }`) donde aun falte cobertura.
 - Opcional: extraer sidebar completo del feed.
 - Mantener convención Tailwind-first para nuevos componentes y reducir CSS legacy a `src/index.css` únicamente.
 - Anadir diagrama de entidades (Users, Posts, Workouts, Likes, Comments, Follows).

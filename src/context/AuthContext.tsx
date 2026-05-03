@@ -1,5 +1,6 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { AUTH_EXPIRED_EVENT } from "../api/client";
 import type { SafeUser } from "../types/auth";
 
 type AuthState = {
@@ -33,6 +34,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const stored = getStoredAuth();
   const [token, setToken] = useState<string | null>(stored.token);
   const [user, setUser] = useState<SafeUser | null>(stored.user);
+
+  useEffect(() => {
+    function handleAuthExpired() {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    return () => {
+      window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    };
+  }, []);
 
   const value = useMemo<AuthState>(
     () => ({

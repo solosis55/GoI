@@ -1,5 +1,9 @@
+import { createHash, randomBytes } from "node:crypto";
 import { Request, Response } from "express";
 import { createId, saveStore, store, User } from "../services/store.js";
+import { hashPassword, signAuthToken, verifyPassword } from "../services/auth.js";
+import { sendError } from "../services/http.js";
+import { isLengthBetween, normalizeEmail, sanitizeText } from "../services/validation.js";
 
 type AuthPayload = {
   email?: string;
@@ -14,34 +18,102 @@ type UpdateProfilePayload = {
   avatarUrl?: string;
 };
 
-type ToggleFollowPayload = {
-  followerId?: string;
-};
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000;
 
 function sanitizeUser(user: User) {
-  const { password: _password, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete (safeUser as Partial<User>).password;
+  delete (safeUser as Partial<User>).passwordResetTokenHash;
+  delete (safeUser as Partial<User>).passwordResetExpires;
   return safeUser;
 }
 
-export function register(req: Request, res: Response) {
+function hashResetToken(token: string) {
+  return createHash("sha256").update(token, "utf8").digest("hex");
+}
+
+export async function requestPasswordReset(req: Request, res: Response) {
+  const { email } = req.body as { email?: string };
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!normalizedEmail) {
+    sendError(res, 400, "AUTH_FORGOT_PASSWORD_INVALID_INPUT", "email is required");
+    return;
+  }
+
+  const user = store.users.find((item) => item.email.toLowerCase() === normalizedEmail);
+  const message =
+    "Si el correo está registrado, puedes completar el cambio de contraseña siguiendo las instrucciones enviadas (revisa también spam).";
+
+  if (user) {
+    const token = randomBytes(32).toString("hex");
+    user.passwordResetTokenHash = hashResetToken(token);
+    user.passwordResetExpires = new Date(Date.now() + PASSWORD_RESET_TTL_MS).toISOString();
+    user.updatedAt = new Date().toISOString();
+    saveStore();
+
+    if (process.env.AUTH_RESET_RETURN_TOKEN === "true") {
+      res.json({ message, devResetToken: token });
+      return;
+    }
+  }
+
+  res.json({ message });
+}
+
+export async function resetPasswordWithToken(req: Request, res: Response) {
+  const { token, password } = req.body as { token?: string; password?: string };
+
+  if (!token || typeof token !== "string" || !password || password.length < 6) {
+    sendError(res, 400, "AUTH_RESET_INVALID_INPUT", "token and password (min 6 chars) are required");
+    return;
+  }
+
+  const tokenHash = hashResetToken(token);
+  const now = new Date();
+  const user = store.users.find(
+    (item) =>
+      item.passwordResetTokenHash === tokenHash &&
+      item.passwordResetExpires &&
+      new Date(item.passwordResetExpires) > now
+  );
+
+  if (!user) {
+    sendError(res, 400, "AUTH_RESET_TOKEN_INVALID", "invalid or expired reset link");
+    return;
+  }
+
+  user.password = await hashPassword(password);
+  delete user.passwordResetTokenHash;
+  delete user.passwordResetExpires;
+  user.updatedAt = new Date().toISOString();
+  saveStore();
+
+  res.json({ message: "password updated" });
+}
+
+export async function register(req: Request, res: Response) {
   const { email, password, username } = req.body as AuthPayload;
+  const normalizedEmail = normalizeEmail(email);
+  const normalizedUsername = sanitizeText(username);
 
-  if (!email || !password || !username) {
-    res.status(400).json({ message: "username, email and password are required" });
+  if (!normalizedEmail || !password || !isLengthBetween(normalizedUsername, 3, 24) || password.length < 6) {
+    sendError(res, 400, "AUTH_REGISTER_INVALID_INPUT", "username, email and password are required");
     return;
   }
 
-  const exists = store.users.some((user) => user.email.toLowerCase() === email.toLowerCase());
+  const exists = store.users.some((user) => user.email.toLowerCase() === normalizedEmail);
   if (exists) {
-    res.status(409).json({ message: "email already in use" });
+    sendError(res, 409, "AUTH_EMAIL_IN_USE", "email already in use");
     return;
   }
 
+  const passwordHash = await hashPassword(password);
   const user: User = {
     id: createId(),
-    username,
-    email,
-    password,
+    username: normalizedUsername,
+    email: normalizedEmail,
+    password: passwordHash,
     bio: "",
     goal: "",
     avatarUrl: "",
@@ -57,24 +129,37 @@ export function register(req: Request, res: Response) {
   });
 }
 
-export function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response) {
   const { email, password } = req.body as AuthPayload;
+  const normalizedEmail = normalizeEmail(email);
 
-  if (!email || !password) {
-    res.status(400).json({ message: "email and password are required" });
+  if (!normalizedEmail || !password) {
+    sendError(res, 400, "AUTH_LOGIN_INVALID_INPUT", "email and password are required");
     return;
   }
 
-  const user = store.users.find((item) => item.email.toLowerCase() === email.toLowerCase());
-  if (!user || user.password !== password) {
-    res.status(401).json({ message: "invalid credentials" });
+  const user = store.users.find((item) => item.email.toLowerCase() === normalizedEmail);
+  if (!user) {
+    sendError(res, 401, "AUTH_INVALID_CREDENTIALS", "invalid credentials");
+    return;
+  }
+
+  let isValid = await verifyPassword(password, user.password);
+  // Backward compatibility for users created before hashing migration.
+  if (!isValid && user.password === password) {
+    user.password = await hashPassword(password);
+    saveStore();
+    isValid = true;
+  }
+  if (!isValid) {
+    sendError(res, 401, "AUTH_INVALID_CREDENTIALS", "invalid credentials");
     return;
   }
 
   res.json({
     message: "login successful",
     user: sanitizeUser(user),
-    token: `dev-token-${user.id}`,
+    token: signAuthToken(user.id),
   });
 }
 
@@ -83,7 +168,7 @@ export function getProfile(req: Request, res: Response) {
   const user = store.users.find((item) => item.id === userId);
 
   if (!user) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "AUTH_USER_NOT_FOUND", "user not found");
     return;
   }
 
@@ -94,18 +179,54 @@ export function getProfile(req: Request, res: Response) {
 
 export function updateProfile(req: Request, res: Response) {
   const { userId } = req.params;
+  const authUserId = String(res.locals.authUserId ?? "");
+  if (!authUserId || authUserId !== userId) {
+    sendError(res, 403, "AUTH_FORBIDDEN", "forbidden");
+    return;
+  }
   const { username, bio, goal, avatarUrl } = req.body as UpdateProfilePayload;
   const user = store.users.find((item) => item.id === userId);
 
   if (!user) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "AUTH_USER_NOT_FOUND", "user not found");
     return;
   }
 
-  if (username !== undefined) user.username = username;
-  if (bio !== undefined) user.bio = bio;
-  if (goal !== undefined) user.goal = goal;
-  if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
+  if (username !== undefined) {
+    const normalizedUsername = sanitizeText(username);
+    if (!isLengthBetween(normalizedUsername, 3, 24)) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "username must have 3 to 24 characters");
+      return;
+    }
+    user.username = normalizedUsername;
+  }
+
+  if (bio !== undefined) {
+    const normalizedBio = sanitizeText(bio);
+    if (normalizedBio.length > 200) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "bio is too long");
+      return;
+    }
+    user.bio = normalizedBio;
+  }
+
+  if (goal !== undefined) {
+    const normalizedGoal = sanitizeText(goal);
+    if (normalizedGoal.length > 60) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "goal is too long");
+      return;
+    }
+    user.goal = normalizedGoal;
+  }
+
+  if (avatarUrl !== undefined) {
+    const normalizedAvatarUrl = sanitizeText(avatarUrl);
+    if (normalizedAvatarUrl && !/^https?:\/\//i.test(normalizedAvatarUrl)) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "avatar must start with http:// or https://");
+      return;
+    }
+    user.avatarUrl = normalizedAvatarUrl;
+  }
   user.updatedAt = new Date().toISOString();
 
   saveStore();
@@ -116,7 +237,11 @@ export function updateProfile(req: Request, res: Response) {
 }
 
 export function listUsers(req: Request, res: Response) {
-  const currentUserId = typeof req.query.currentUserId === "string" ? req.query.currentUserId : "";
+  const currentUserId = String(res.locals.authUserId ?? "");
+  if (!currentUserId) {
+    sendError(res, 401, "AUTH_UNAUTHORIZED", "unauthorized");
+    return;
+  }
   const users = store.users
     .filter((user) => user.id !== currentUserId)
     .map((user) => {
@@ -134,6 +259,11 @@ export function listUsers(req: Request, res: Response) {
 
 export function getFollowing(req: Request, res: Response) {
   const { userId } = req.params;
+  const authUserId = String(res.locals.authUserId ?? "");
+  if (!authUserId || authUserId !== userId) {
+    sendError(res, 403, "AUTH_FORBIDDEN", "forbidden");
+    return;
+  }
   const followingIds = store.follows
     .filter((follow) => follow.followerId === userId)
     .map((follow) => follow.followingId);
@@ -142,21 +272,20 @@ export function getFollowing(req: Request, res: Response) {
 
 export function toggleFollow(req: Request, res: Response) {
   const targetUserId = String(req.params.targetUserId);
-  const { followerId } = req.body as ToggleFollowPayload;
-
+  const followerId = String(res.locals.authUserId ?? "");
   if (!followerId) {
-    res.status(400).json({ message: "followerId is required" });
+    sendError(res, 401, "AUTH_UNAUTHORIZED", "unauthorized");
     return;
   }
   if (followerId === targetUserId) {
-    res.status(400).json({ message: "cannot follow yourself" });
+    sendError(res, 400, "AUTH_CANNOT_FOLLOW_SELF", "cannot follow yourself");
     return;
   }
 
   const followerExists = store.users.some((user) => user.id === followerId);
   const targetExists = store.users.some((user) => user.id === targetUserId);
   if (!followerExists || !targetExists) {
-    res.status(404).json({ message: "user not found" });
+    sendError(res, 404, "AUTH_USER_NOT_FOUND", "user not found");
     return;
   }
 

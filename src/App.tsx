@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./components/ui/Button";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AuthPage } from "./pages/AuthPage";
@@ -7,9 +7,46 @@ import { FeedPage } from "./pages/FeedPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { WorkoutsPage } from "./pages/WorkoutsPage";
 
+const TAB_STORAGE_KEY = "fitsocial:activeTab";
+type ActiveTab = "feed" | "profile" | "workouts";
+
+function readStoredTab(): ActiveTab | null {
+  try {
+    const raw = sessionStorage.getItem(TAB_STORAGE_KEY);
+    if (raw === "feed" || raw === "profile" || raw === "workouts") return raw;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+function persistActiveTab(tab: ActiveTab) {
+  try {
+    sessionStorage.setItem(TAB_STORAGE_KEY, tab);
+  } catch {
+    /* ignore */
+  }
+}
+
 function AppContent() {
   const { isAuthenticated, logout, user } = useAuth();
-  const [activeTab, setActiveTab] = useState<"workouts" | "profile" | "feed">("feed");
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => readStoredTab() ?? "feed");
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      try {
+        sessionStorage.removeItem(TAB_STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+      setActiveTab("feed");
+    }
+  }, [isAuthenticated]);
+
+  function goTo(tab: ActiveTab) {
+    persistActiveTab(tab);
+    setActiveTab(tab);
+  }
 
   if (!isAuthenticated) {
     return <main className="app-shell mx-auto w-full max-w-[920px] px-4 pb-10 pt-6">{<AuthPage />}</main>;
@@ -26,21 +63,21 @@ function AppContent() {
           <Button
             type="button"
             variant={activeTab === "feed" ? "navActive" : "secondary"}
-            onClick={() => setActiveTab("feed")}
+            onClick={() => goTo("feed")}
           >
             Inicio
           </Button>
           <Button
             type="button"
             variant={activeTab === "workouts" ? "navActive" : "secondary"}
-            onClick={() => setActiveTab("workouts")}
+            onClick={() => goTo("workouts")}
           >
             Entrenamientos
           </Button>
           <Button
             type="button"
             variant={activeTab === "profile" ? "navActive" : "secondary"}
-            onClick={() => setActiveTab("profile")}
+            onClick={() => goTo("profile")}
           >
             Perfil
           </Button>

@@ -16,6 +16,7 @@ import { useAuth } from "../context/AuthContext";
 import type { DiscoverUser } from "../types/auth";
 import type { Post } from "../types/post";
 import type { Workout } from "../types/workout";
+import { getErrorMessage } from "../utils/errorMessages";
 
 export function FeedPage() {
   const { user } = useAuth();
@@ -52,7 +53,7 @@ export function FeedPage() {
       const [postsResponse, workoutsResponse, usersResponse, followingResponse] = await Promise.all([
         getPosts(),
         getWorkouts(),
-        getUsers(user.id),
+        getUsers(),
         getFollowing(user.id),
       ]);
       setPosts(postsResponse);
@@ -61,7 +62,7 @@ export function FeedPage() {
       setDiscoverUsers(usersResponse.users);
       setFollowingIds(followingResponse.followingIds);
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "No se pudo cargar el feed");
+      setError(getErrorMessage(loadError, "No se pudo cargar el feed"));
     } finally {
       setLoading(false);
     }
@@ -71,10 +72,10 @@ export function FeedPage() {
     if (!user) return;
     setError("");
     try {
-      await toggleFollow(targetUserId, user.id);
+      await toggleFollow(targetUserId);
       await loadFeed();
     } catch (followError) {
-      setError(followError instanceof Error ? followError.message : "No se pudo actualizar seguimiento");
+      setError(getErrorMessage(followError, "No se pudo actualizar seguimiento"));
     }
   }
 
@@ -100,7 +101,6 @@ export function FeedPage() {
 
     try {
       await createPost({
-        userId: user.id,
         content: trimmed,
         workoutId: selectedWorkoutId || null,
       });
@@ -109,7 +109,7 @@ export function FeedPage() {
       await loadFeed();
       setMessage("Publicacion creada");
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : "No se pudo crear la publicacion");
+      setError(getErrorMessage(createError, "No se pudo crear la publicación"));
     }
   }
 
@@ -122,7 +122,7 @@ export function FeedPage() {
       await loadFeed();
       setMessage("Publicacion eliminada");
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "No se pudo eliminar la publicacion");
+      setError(getErrorMessage(deleteError, "No se pudo eliminar la publicación"));
     }
   }
 
@@ -131,10 +131,10 @@ export function FeedPage() {
     setError("");
     setMessage("");
     try {
-      await toggleLike(postId, user.id);
+      await toggleLike(postId);
       await loadFeed();
     } catch (likeError) {
-      setError(likeError instanceof Error ? likeError.message : "No se pudo actualizar el like");
+      setError(getErrorMessage(likeError, "No se pudo actualizar el like"));
     }
   }
 
@@ -151,14 +151,13 @@ export function FeedPage() {
 
     try {
       await createComment(postId, {
-        userId: user.id,
         content: contentValue,
       });
       setCommentByPostId((current) => ({ ...current, [postId]: "" }));
       await loadFeed();
       setMessage("Comentario publicado");
     } catch (commentError) {
-      setError(commentError instanceof Error ? commentError.message : "No se pudo comentar");
+      setError(getErrorMessage(commentError, "No se pudo comentar"));
     }
   }
 
