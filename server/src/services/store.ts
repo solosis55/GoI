@@ -2,6 +2,11 @@ import { randomUUID } from "node:crypto";
 import { EXERCISE_DETAILS_BY_ID } from "../data/exerciseDetails.js";
 import { DEFAULT_EXERCISE_SEED } from "../data/defaultExercises.js";
 import { sanitizeText, sanitizeWorkoutTags } from "./validation.js";
+import {
+  blocksFromExerciseIdsOnly,
+  sanitizeExerciseBlocksPayload,
+} from "./workoutExerciseSanitize.js";
+import type { WorkoutExerciseBlock } from "../workoutExerciseTypes.js";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,11 +50,15 @@ export type Workout = {
   description: string;
   /** IDs del catálogo `store.exercises`, orden = orden en la rutina. */
   exerciseIds: string[];
+  /** Material y series por ejercicio (rutinas nuevas o migradas). */
+  exerciseBlocks: WorkoutExerciseBlock[];
   /** Etiquetas libres (p. ej. "pecho", "tiron") para filtrar y organizar. */
   tags: string[];
   createdAt: string;
   updatedAt: string;
 };
+
+export type { WorkoutExerciseBlock, WorkoutSetRow } from "../workoutExerciseTypes.js";
 
 /** Registro de que el usuario realizo un entrenamiento (plantilla) en una fecha. */
 export type WorkoutSession = {
@@ -265,12 +274,22 @@ function migrateWorkoutFromDisk(w: Record<string, unknown>, dirty: { value: bool
     }
   }
 
+  const fromPayload = sanitizeExerciseBlocksPayload(w.exerciseBlocks);
+  let exerciseBlocks: WorkoutExerciseBlock[];
+  if (fromPayload && fromPayload.length > 0) {
+    exerciseBlocks = fromPayload;
+    exerciseIds = exerciseBlocks.map((b) => b.exerciseId);
+  } else {
+    exerciseBlocks = blocksFromExerciseIdsOnly(exerciseIds);
+  }
+
   return {
     id: String(w.id ?? ""),
     userId: String(w.userId ?? ""),
     title: String(w.title ?? ""),
     description: String(w.description ?? ""),
     exerciseIds,
+    exerciseBlocks,
     tags,
     createdAt: String(w.createdAt ?? ""),
     updatedAt: String(w.updatedAt ?? ""),

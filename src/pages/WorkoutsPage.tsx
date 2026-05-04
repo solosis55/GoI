@@ -13,6 +13,7 @@ import type { Exercise } from "../types/exercise";
 import type { Workout } from "../types/workout";
 import type { WorkoutSessionWithTitle } from "../types/workoutSession";
 import { getErrorMessage } from "../utils/errorMessages";
+import { blocksFromLegacy, cloneBlocks } from "../utils/workoutBlocks";
 
 const TITLE_MAX = 80;
 const DUPLICATE_SUFFIX = " (copia)";
@@ -156,7 +157,7 @@ export function WorkoutsPage({ onCreateWorkout, onEditWorkout }: WorkoutsPagePro
       await createWorkout({
         title: newTitle,
         description: workout.description,
-        exerciseIds: [...(workout.exerciseIds ?? [])],
+        exerciseBlocks: cloneBlocks(blocksFromLegacy(workout.exerciseIds, workout.exerciseBlocks)),
         tags: [...(workout.tags ?? [])],
       });
       await loadData();

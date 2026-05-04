@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { getExercises } from "../api/exercisesApi";
 import { createWorkout, updateWorkout } from "../api/workoutsApi";
+import { CATALOG_EQUIPMENT_OPTIONS } from "../data/exerciseEquipmentFilters";
+import { CATALOG_MUSCLE_OPTIONS } from "../data/exerciseMuscleFilters";
 import { WorkoutForm } from "../components/workouts/WorkoutForm";
 import {
   WORKOUT_DESCRIPTION_MAX,
@@ -12,13 +14,22 @@ import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { StatusMessage } from "../components/ui/StatusMessage";
 import type { Exercise } from "../types/exercise";
-import type { Workout } from "../types/workout";
+import type { Workout, WorkoutExerciseBlock } from "../types/workout";
 import { getErrorMessage } from "../utils/errorMessages";
+import { blocksFromLegacy, createBlockForExercise } from "../utils/workoutBlocks";
 import {
   clearWorkoutCreateDraft,
   readWorkoutCreateDraft,
   writeWorkoutCreateDraft,
 } from "../utils/workoutCreateDraft";
+
+const EQUIPMENT_PREVIEW = Object.fromEntries(
+  CATALOG_EQUIPMENT_OPTIONS.map((o) => [o.slug, o.label] as const),
+) as Record<string, string>;
+
+const MUSCLE_PREVIEW = Object.fromEntries(
+  CATALOG_MUSCLE_OPTIONS.map((o) => [o.slug, o.label] as const),
+) as Record<string, string>;
 
 export type WorkoutEditorMode =
   | { mode: "create"; initialExerciseIds?: string[] }
@@ -39,7 +50,7 @@ function normalizeNonEmptyLines(lines: string[]) {
 export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: WorkoutEditorPageProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [exerciseIds, setExerciseIds] = useState<string[]>([]);
+  const [exerciseBlocks, setExerciseBlocks] = useState<WorkoutExerciseBlock[]>([]);
   const [tags, setTags] = useState<string[]>([""]);
   const [exerciseCatalog, setExerciseCatalog] = useState<Exercise[]>([]);
   const [catalogError, setCatalogError] = useState<string | null>(null);
@@ -75,7 +86,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
       const w = mode.workout;
       setTitle(w.title);
       setDescription(w.description);
-      setExerciseIds([...(w.exerciseIds ?? [])]);
+      setExerciseBlocks(blocksFromLegacy(w.exerciseIds, w.exerciseBlocks));
       setTags((w.tags ?? []).length > 0 ? [...(w.tags ?? [])] : [""]);
       setCreateDraftReady(false);
       return;
@@ -85,19 +96,21 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
     const d = readWorkoutCreateDraft();
     let nextTitle = d?.title ?? "";
     let nextDesc = d?.description ?? "";
-    let nextIds = [...(d?.exerciseIds ?? [])].slice(0, WORKOUT_EXERCISES_MAX);
+    let nextBlocks = blocksFromLegacy(d?.exerciseIds, d?.exerciseBlocks).slice(0, WORKOUT_EXERCISES_MAX);
     const rawTags = d?.tags?.length ? [...d.tags] : [""];
 
     if (mode.initialExerciseIds?.length) {
       for (const id of mode.initialExerciseIds) {
-        if (nextIds.length >= WORKOUT_EXERCISES_MAX) break;
-        if (!nextIds.includes(id)) nextIds.push(id);
+        if (nextBlocks.length >= WORKOUT_EXERCISES_MAX) break;
+        if (!nextBlocks.some((b) => b.exerciseId === id)) {
+          nextBlocks = [...nextBlocks, createBlockForExercise(id)];
+        }
       }
     }
 
     setTitle(nextTitle);
     setDescription(nextDesc);
-    setExerciseIds(nextIds);
+    setExerciseBlocks(nextBlocks);
     setTags(rawTags.length ? rawTags : [""]);
     setCreateDraftReady(true);
   }, [mode.mode, editWorkoutId, appendExerciseIdsKey]);
@@ -107,10 +120,10 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
     writeWorkoutCreateDraft({
       title,
       description,
-      exerciseIds,
+      exerciseBlocks,
       tags,
     });
-  }, [mode.mode, createDraftReady, title, description, exerciseIds, tags]);
+  }, [mode.mode, createDraftReady, title, description, exerciseBlocks, tags]);
 
   const exerciseById = useMemo(() => new Map(exerciseCatalog.map((e) => [e.id, e])), [exerciseCatalog]);
 
@@ -119,8 +132,25 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
     [tags],
   );
   const previewExerciseNames = useMemo(
-    () => exerciseIds.map((id) => exerciseById.get(id)?.name ?? "…"),
-    [exerciseIds, exerciseById],
+    () =>
+      exerciseBlocks.map((b) => {
+        const ex = exerciseById.get(b.exerciseId);
+        const name = ex?.name ?? "…";
+        const n = b.sets?.length ?? 0;
+        const mat = b.equipmentSlug ? EQUIPMENT_PREVIEW[b.equipmentSlug] ?? b.equipmentSlug : null;
+        const muscleStr =
+          (ex?.muscles ?? []).length > 0
+            ? (ex?.muscles ?? []).map((s) => MUSCLE_PREVIEW[s] ?? s).join(", ")
+            : null;
+        const lat = (b.laterality ?? "bilateral") === "unilateral" ? "Unilateral" : "Bilateral";
+        const bits = [name];
+        bits.push(lat);
+        if (n > 0) bits.push(`${n} serie${n === 1 ? "" : "s"}`);
+        if (mat) bits.push(mat);
+        if (muscleStr) bits.push(muscleStr);
+        return bits.join(" · ");
+      }),
+    [exerciseBlocks, exerciseById],
   );
 
   const isEdit = mode.mode === "edit";
@@ -162,7 +192,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
 
     const tagList = normalizeNonEmptyLines(tags);
 
-    if (exerciseIds.length > WORKOUT_EXERCISES_MAX) {
+    if (exerciseBlocks.length > WORKOUT_EXERCISES_MAX) {
       setLoading(false);
       setError(`Como maximo ${WORKOUT_EXERCISES_MAX} ejercicios`);
       return;
@@ -173,11 +203,11 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
         await updateWorkout(mode.workout.id, {
           title,
           description,
-          exerciseIds,
+          exerciseBlocks,
           tags: tagList,
         });
       } else {
-        await createWorkout({ title, description, exerciseIds, tags: tagList });
+        await createWorkout({ title, description, exerciseBlocks, tags: tagList });
         clearWorkoutCreateDraft();
       }
       onSaved();
@@ -229,14 +259,14 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
           <WorkoutForm
             title={title}
             description={description}
-            exerciseIds={exerciseIds}
+            exerciseBlocks={exerciseBlocks}
             tags={tags}
             exerciseCatalog={exerciseCatalog}
             exerciseCatalogError={catalogError}
             exerciseCatalogLoading={catalogLoading}
             onChangeTitle={setTitle}
             onChangeDescription={setDescription}
-            onChangeExerciseIds={setExerciseIds}
+            onChangeExerciseBlocks={setExerciseBlocks}
             onChangeTags={setTags}
             onSubmit={handleSubmit}
             submitLabel={loading ? "Guardando..." : isEdit ? "Guardar cambios" : "Guardar rutina"}

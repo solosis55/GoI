@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import type { Exercise } from "../../types/exercise";
+import type { WorkoutExerciseBlock } from "../../types/workout";
 import { Button } from "../ui/Button";
 import { ExercisePicker } from "./ExercisePicker";
 import {
@@ -13,14 +14,14 @@ import {
 type WorkoutFormProps = {
   title: string;
   description: string;
-  exerciseIds: string[];
+  exerciseBlocks: WorkoutExerciseBlock[];
   tags: string[];
   exerciseCatalog: Exercise[];
   exerciseCatalogError?: string | null;
   exerciseCatalogLoading?: boolean;
   onChangeTitle: (value: string) => void;
   onChangeDescription: (value: string) => void;
-  onChangeExerciseIds: (value: string[]) => void;
+  onChangeExerciseBlocks: (value: WorkoutExerciseBlock[]) => void;
   onChangeTags: (value: string[]) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   submitLabel: string;
@@ -33,14 +34,14 @@ type WorkoutFormProps = {
 export function WorkoutForm({
   title,
   description,
-  exerciseIds,
+  exerciseBlocks,
   tags,
   exerciseCatalog,
   exerciseCatalogError,
   exerciseCatalogLoading,
   onChangeTitle,
   onChangeDescription,
-  onChangeExerciseIds,
+  onChangeExerciseBlocks,
   onChangeTags,
   onSubmit,
   submitLabel,
@@ -135,9 +136,9 @@ export function WorkoutForm({
             : "Elige del catalogo. Puedes repetir el mismo ejercicio en distintos puntos de la rutina añadiendolo otra vez. El orden importa."}
         </p>
         <ExercisePicker
-          exerciseIds={exerciseIds}
+          exerciseBlocks={exerciseBlocks}
           catalog={exerciseCatalog}
-          onChange={onChangeExerciseIds}
+          onChange={onChangeExerciseBlocks}
           disabled={disabled}
           catalogError={exerciseCatalogError}
           catalogLoading={exerciseCatalogLoading}

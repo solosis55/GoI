@@ -462,15 +462,39 @@
     {
       "id": "b122e76e-9b5b-40bf-ae80-1794f72f3951",
       "userId": "d951d632-446d-43a9-bb88-4e823a289d3b",
-      "title": "Prueba",
-      "description": "",
+      "title": "Prueba rutina 1",
+      "description": "Comprobar la edición de rutinas",
       "exerciseIds": [
         "c0187cb8-ea17-4a16-bfd0-fbeac822c170",
         "33d02938-22b2-41ed-a106-aec6a0482635"
       ],
+      "exerciseBlocks": [
+        {
+          "exerciseId": "c0187cb8-ea17-4a16-bfd0-fbeac822c170",
+          "sets": [
+            {
+              "reps": "",
+              "weight": "",
+              "setType": "normal"
+            }
+          ],
+          "laterality": "bilateral"
+        },
+        {
+          "exerciseId": "33d02938-22b2-41ed-a106-aec6a0482635",
+          "sets": [
+            {
+              "reps": "",
+              "weight": "",
+              "setType": "normal"
+            }
+          ],
+          "laterality": "bilateral"
+        }
+      ],
       "tags": [],
       "createdAt": "2026-05-04T20:40:28.999Z",
-      "updatedAt": "2026-05-04T20:40:35.099Z"
+      "updatedAt": "2026-05-04T21:06:47.795Z"
     }
   ],
   "workoutSessions": [],

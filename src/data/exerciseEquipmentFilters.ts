@@ -6,7 +6,7 @@ export const CATALOG_EQUIPMENT_OPTIONS = [
   { slug: "maquina", label: "Maquina" },
   { slug: "maquina_palanca", label: "Maquina de palanca" },
   { slug: "cable", label: "Cable" },
-  { slug: "peso_libre", label: "Peso libre" },
+  { slug: "peso_libre", label: "Mancuernas" },
   { slug: "bandas", label: "Bandas elasticas" },
   { slug: "barra", label: "Barra" },
 ] as const;
