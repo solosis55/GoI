@@ -17,7 +17,7 @@ type WorkoutSessionsHistoryProps = {
   title?: string;
   description?: ReactNode;
   emptyMessage?: string;
-  /** Si es true, muestra boton para borrar cada sesion (pantalla Entrenamientos). */
+  /** Si es true, muestra boton para borrar cada entrenamiento del historial (pantalla Rutinas). */
   showDelete?: boolean;
   onDeleteSession?: (id: string) => void;
 };
@@ -25,14 +25,14 @@ type WorkoutSessionsHistoryProps = {
 export function WorkoutSessionsHistory({
   sessions,
   loading,
-  title = "Historial de sesiones",
+  title = "Historial de entrenamientos",
   description,
-  emptyMessage = "Aun no has registrado ninguna sesion.",
+  emptyMessage = "Aun no has registrado ningun entrenamiento.",
   showDelete = false,
   onDeleteSession,
 }: WorkoutSessionsHistoryProps) {
   return (
-    <Card>
+    <Card tone="dark">
       <h2>{title}</h2>
       {description ? <div className="mb-3 text-sm text-neutral-500">{description}</div> : null}
       {!loading && sessions.length === 0 && <EmptyState className="mt-2" message={emptyMessage} />}
@@ -54,7 +54,7 @@ export function WorkoutSessionsHistory({
                 className="shrink-0 self-start sm:self-center"
                 onClick={() => onDeleteSession(session.id)}
               >
-                Quitar del historial
+                Quitar entrenamiento
               </Button>
             ) : null}
           </li>

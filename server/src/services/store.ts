@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { sanitizeWorkoutTags } from "./validation.js";
+import { EXERCISE_DETAILS_BY_ID } from "../data/exerciseDetails.js";
+import { DEFAULT_EXERCISE_SEED } from "../data/defaultExercises.js";
+import { sanitizeText, sanitizeWorkoutTags } from "./validation.js";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,12 +22,29 @@ export type User = {
   passwordResetExpires?: string;
 };
 
+/** Ejercicio del catálogo global (semilla + creados al migrar textos libres). */
+export type Exercise = {
+  id: string;
+  name: string;
+  /** Slugs de grupo muscular para filtros en el cliente. */
+  muscles?: string[];
+  /** Slugs de tipo de material (maquina, cable, barra, peso_libre, …). */
+  equipmentTags?: string[];
+  /** Equipamiento habitual (texto libre breve). */
+  equipment?: string;
+  /** Resumen del movimiento y objetivo. */
+  description?: string;
+  /** Cómo ejecutarlo (puede ser varias frases o líneas). */
+  instructions?: string;
+};
+
 export type Workout = {
   id: string;
   userId: string;
   title: string;
   description: string;
-  exercises: string[];
+  /** IDs del catálogo `store.exercises`, orden = orden en la rutina. */
+  exerciseIds: string[];
   /** Etiquetas libres (p. ej. "pecho", "tiron") para filtrar y organizar. */
   tags: string[];
   createdAt: string;
@@ -77,6 +96,7 @@ export type Follow = {
 
 export const store = {
   users: [] as User[],
+  exercises: [] as Exercise[],
   workouts: [] as Workout[],
   workoutSessions: [] as WorkoutSession[],
   posts: [] as Post[],
@@ -106,13 +126,156 @@ export function createId() {
 
 type PersistedStore = {
   users: User[];
-  workouts: Workout[];
+  exercises?: Exercise[];
+  workouts: unknown[];
   workoutSessions?: WorkoutSession[];
   posts: Post[];
   likes: Like[];
   comments: Comment[];
   follows: Follow[];
 };
+
+const EXERCISE_EQUIPMENT_MAX = 160;
+const EXERCISE_DESCRIPTION_MAX = 900;
+const EXERCISE_INSTRUCTIONS_MAX = 2800;
+
+function mergeExerciseCatalog(parsedExercises: unknown): Exercise[] {
+  const byId = new Map<string, Exercise>();
+  for (const s of DEFAULT_EXERCISE_SEED) {
+    const extra = EXERCISE_DETAILS_BY_ID[s.id];
+    const base: Exercise = {
+      id: s.id,
+      name: s.name,
+      muscles: [...s.muscles],
+      equipmentTags: [...s.equipmentTags],
+    };
+    if (extra) {
+      base.equipment = extra.equipment;
+      base.description = extra.description;
+      base.instructions = extra.instructions;
+    }
+    byId.set(s.id, base);
+  }
+  if (Array.isArray(parsedExercises)) {
+    for (const e of parsedExercises) {
+      const row = e as Partial<Exercise> & { muscles?: unknown; equipmentTags?: unknown };
+      if (row && typeof row.id === "string" && typeof row.name === "string") {
+        const prev = byId.get(row.id);
+        const seedEntry = DEFAULT_EXERCISE_SEED.find((x) => x.id === row.id);
+
+        const eqRaw = typeof row.equipment === "string" ? sanitizeText(row.equipment) : "";
+        const descRaw = typeof row.description === "string" ? sanitizeText(row.description) : "";
+        const instRaw = typeof row.instructions === "string" ? sanitizeText(row.instructions) : "";
+
+        const nameSanitized = sanitizeText(row.name);
+
+        if (prev && seedEntry) {
+          const equipment = eqRaw ? eqRaw.slice(0, EXERCISE_EQUIPMENT_MAX) : prev.equipment;
+          const description = descRaw ? descRaw.slice(0, EXERCISE_DESCRIPTION_MAX) : prev.description;
+          const instructions = instRaw ? instRaw.slice(0, EXERCISE_INSTRUCTIONS_MAX) : prev.instructions;
+
+          const merged: Exercise = {
+            id: seedEntry.id,
+            name: seedEntry.name,
+            muscles: [...seedEntry.muscles],
+            equipmentTags: [...seedEntry.equipmentTags],
+          };
+          if (equipment) merged.equipment = equipment;
+          if (description) merged.description = description;
+          if (instructions) merged.instructions = instructions;
+          byId.set(row.id, merged);
+          continue;
+        }
+
+        if (!nameSanitized) continue;
+
+        const fromFileM = Array.isArray(row.muscles)
+          ? row.muscles.filter((m): m is string => typeof m === "string")
+          : null;
+        const fromFileEt = Array.isArray(row.equipmentTags)
+          ? row.equipmentTags.filter((t): t is string => typeof t === "string")
+          : null;
+
+        if (prev && !seedEntry) {
+          const muscles =
+            fromFileM && fromFileM.length > 0 ? fromFileM : prev.muscles?.length ? [...prev.muscles] : [];
+          const equipmentTags =
+            fromFileEt && fromFileEt.length > 0
+              ? fromFileEt
+              : prev.equipmentTags?.length
+                ? [...prev.equipmentTags]
+                : [];
+
+          const equipment = eqRaw ? eqRaw.slice(0, EXERCISE_EQUIPMENT_MAX) : prev.equipment;
+          const description = descRaw ? descRaw.slice(0, EXERCISE_DESCRIPTION_MAX) : prev.description;
+          const instructions = instRaw ? instRaw.slice(0, EXERCISE_INSTRUCTIONS_MAX) : prev.instructions;
+
+          const merged: Exercise = { id: row.id, name: nameSanitized, muscles, equipmentTags };
+          if (equipment) merged.equipment = equipment;
+          if (description) merged.description = description;
+          if (instructions) merged.instructions = instructions;
+          byId.set(row.id, merged);
+          continue;
+        }
+
+        if (!prev) {
+          const muscles = fromFileM ?? [];
+          const equipmentTags = fromFileEt ?? [];
+          const nu: Exercise = { id: row.id, name: nameSanitized, muscles, equipmentTags };
+          const equipment = eqRaw ? eqRaw.slice(0, EXERCISE_EQUIPMENT_MAX) : undefined;
+          const description = descRaw ? descRaw.slice(0, EXERCISE_DESCRIPTION_MAX) : undefined;
+          const instructions = instRaw ? instRaw.slice(0, EXERCISE_INSTRUCTIONS_MAX) : undefined;
+          if (equipment) nu.equipment = equipment;
+          if (description) nu.description = description;
+          if (instructions) nu.instructions = instructions;
+          byId.set(row.id, nu);
+        }
+      }
+    }
+  }
+  return [...byId.values()];
+}
+
+function findOrCreateExerciseIdByName(raw: string, dirty: { value: boolean }): string | null {
+  const name = sanitizeText(raw);
+  if (!name) return null;
+  const lower = name.toLowerCase();
+  const existing = store.exercises.find((ex) => ex.name.toLowerCase() === lower);
+  if (existing) return existing.id;
+  const nu: Exercise = { id: createId(), name, muscles: [], equipmentTags: [] };
+  store.exercises.push(nu);
+  dirty.value = true;
+  return nu.id;
+}
+
+function migrateWorkoutFromDisk(w: Record<string, unknown>, dirty: { value: boolean }): Workout {
+  const tags = sanitizeWorkoutTags(Array.isArray(w.tags) ? w.tags : []);
+  let exerciseIds: string[] = [];
+
+  const rawIds = w.exerciseIds;
+  if (Array.isArray(rawIds) && rawIds.length > 0) {
+    exerciseIds = rawIds
+      .filter((x): x is string => typeof x === "string" && x.trim().length > 0)
+      .map((id) => id.trim());
+  } else if (Array.isArray(w.exercises)) {
+    dirty.value = true;
+    for (const line of w.exercises as unknown[]) {
+      const id = findOrCreateExerciseIdByName(String(line ?? ""), dirty);
+      if (id) exerciseIds.push(id);
+    }
+  }
+
+  return {
+    id: String(w.id ?? ""),
+    userId: String(w.userId ?? ""),
+    title: String(w.title ?? ""),
+    description: String(w.description ?? ""),
+    exerciseIds,
+    tags,
+    createdAt: String(w.createdAt ?? ""),
+    updatedAt: String(w.updatedAt ?? ""),
+  };
+}
 
 export function initializeStore() {
   const dataFilePath = getDataFilePath();
@@ -129,6 +292,11 @@ export function initializeStore() {
 
   const raw = readFileSync(dataFilePath, "utf-8");
   const parsed = JSON.parse(raw) as Partial<PersistedStore>;
+
+  store.exercises = mergeExerciseCatalog(parsed.exercises);
+
+  const migrationDirty = { value: false };
+
   store.users = Array.isArray(parsed.users)
     ? parsed.users.map((user) => ({
         ...user,
@@ -138,17 +306,29 @@ export function initializeStore() {
         updatedAt: user.updatedAt ?? user.createdAt ?? new Date().toISOString(),
       }))
     : [];
+
   store.workouts = Array.isArray(parsed.workouts)
-    ? parsed.workouts.map((w) => ({
-        ...w,
-        tags: sanitizeWorkoutTags(Array.isArray(w.tags) ? w.tags : []),
-      }))
+    ? parsed.workouts.map((w) => migrateWorkoutFromDisk(w as Record<string, unknown>, migrationDirty))
     : [];
+
   store.workoutSessions = Array.isArray(parsed.workoutSessions) ? parsed.workoutSessions : [];
   store.posts = Array.isArray(parsed.posts) ? parsed.posts : [];
   store.likes = Array.isArray(parsed.likes) ? parsed.likes : [];
   store.comments = Array.isArray(parsed.comments) ? parsed.comments : [];
   store.follows = Array.isArray(parsed.follows) ? parsed.follows : [];
+
+  if (migrationDirty.value) {
+    saveStore();
+  }
+
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.NODE_ENV !== "test" &&
+    !process.env.VERCEL &&
+    !process.env.VITEST
+  ) {
+    console.log(`[store] ${store.users.length} user(s) loaded from ${dataFilePath}`);
+  }
 }
 
 export function saveStore() {

@@ -20,14 +20,17 @@
 ## 1) Estructura de componentes principales
 
 ### Frontend (`src`)
-- `App.tsx`: shell principal (`div` flex columna + `main.social-shell`), control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`); sidebar con logotipo GoI; **`SiteFooter`** (`components/layout/SiteFooter.tsx`) en invitado y logueado.
+- `App.tsx`: shell principal (`div` flex columna + `main.social-shell`), control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`). En **Rutinas**, subvistas internas sin router URL: `workoutsView` = `overview` | `editor` | `catalog` | `exerciseDetail`. Cambiar a Inicio/Perfil **no** resetea la subvista de rutinas (se conserva editor/catalogo/ficha al volver a la pestaña). Estado auxiliar: `catalogFromEditor`, `exerciseDetailFromEditor`, `catalogExerciseId`, modo del editor (`WorkoutEditorMode`). Persistencia de pestaña activa: `sessionStorage` `fitsocial:activeTab`. Borrador crear rutina: ver `workoutCreateDraft` en seccion cliente. Sidebar con logotipo GoI; **`SiteFooter`** en invitado y logueado.
 - `components/branding/GoISidebarBadge.tsx`: imagen de marca + rótulo FitSocial + subtítulo (login o `@usuario`).
 - `components/layout/SiteFooter.tsx`: pie global — copyright dinámico, texto MVP, enlace **Roadmap** (Trello del README), placeholders Aviso legal / Privacidad / Contacto (`title` “Página en preparación”).
 - `context/AuthContext.tsx`: estado global de autenticacion (token, user, login/logout, persistencia local).
 - `pages/AuthPage.tsx`: registro, inicio de sesion, solicitud de recuperacion de contraseña y pantalla de nueva contraseña (`?reset=token`); card **`tone="dark"`**, campos **`.goi-field`**, `StatusMessage` con **`tone="dark"`**.
 - `pages/FeedPage.tsx`: **encabezado Inicio** (`<header>`: rótulo FitSocial, titulo, texto de contexto y `@usuario`); rejilla feed **columna principal flexible** (`minmax(0,1fr)` + lateral sugerencias); **Historias del gym** en tarjeta **compacta centrada** (`max-w-sm`); `FeedModeTabs` / `StoriesRow` con prop **`compact`** en ese bloque; timeline, crear post, likes, comentarios, seguir usuarios.
-- `pages/WorkoutsPage.tsx`: CRUD de entrenamientos; ejercicios por lineas en UI; **busqueda por titulo** y **ordenar** lista (ultima sesion, conteo de sesiones, fecha de creacion de plantilla, titulo A-Z), combinado con filtro por etiqueta; duplicacion de rutina llamando **`createWorkout`** desde la lista (sin endpoint dedicado); **sesiones** (registro + historial) via **`/api/workout-sessions`** en panel **debajo** de la lista (scroll `#registrar-sesion` hacia abajo desde **Registrar sesion** en **`WorkoutItem`**, boton **`primary`**); estadisticas de sesiones por entreno en cliente para cada **`WorkoutItem`**.
-- `pages/ProfilePage.tsx`: ver/editar perfil deportivo; bloque **Sesiones registradas** (`WorkoutSessionsHistory`, solo lectura, datos de `GET /api/workout-sessions`).
+- `pages/WorkoutsPage.tsx`: dashboard de **Rutinas** (rutina = plantilla). Resumen, calendario (`WorkoutSessionCalendar`), CTA **Ir al editor de rutinas** (sin enlace directo al catalogo), lista **Mis rutinas** (buscar/filtrar/ordenar + editar/duplicar/eliminar). Panel registrar/historial no integrado en esta pantalla.
+- `pages/WorkoutEditorPage.tsx`: crear o editar rutina; carga catalogo en cliente (`getExercises`). **Miga de pan:** `Rutinas` (vuelve al overview) / texto **Editor de rutinas** / pill **Nueva rutina** o **Editar rutina**. Acceso al catalogo con **Ver catalogo** y formulario con **`ExercisePicker`** + `onOpenCatalog`.
+- `pages/ExerciseCatalogPage.tsx`: listado filtrable del catalogo de ejercicios; enlaces a ficha; seleccion para llevar ejercicios al editor. **Miga de pan (desde editor):** `Rutinas` / `Editor de rutinas` / `Nueva rutina`|`Editar rutina` (`routineFormCrumb`) / pill **Catalogo**. Sin editor: `Rutinas` / **Catalogo**.
+- `pages/ExerciseDetailPage.tsx`: ficha de un ejercicio (`GET /api/exercises/:id`). **Miga de pan:** flujo completo `Rutinas` → `Editor de rutinas` → formulario → `Catalogo` → nombre; rotulo **Ficha del ejercicio**.
+- `pages/ProfilePage.tsx`: ver/editar perfil deportivo; bloque **Entrenamientos registrados** (`WorkoutSessionsHistory`, solo lectura, datos de `GET /api/workout-sessions`).
 - `api/*.ts`: cliente HTTP y funciones por dominio (`authApi`, `postsApi`, `workoutsApi`).
 - `types/*.ts`: contratos TypeScript del cliente.
 
@@ -37,6 +40,10 @@
 - `controllers/*.ts`: logica de negocio por endpoint.
 - `services/store.ts`: almacenamiento y persistencia local en JSON.
 - `server.ts`: arranque del servidor.
+
+Utilidades frontend relacionadas con rutinas:
+- `src/utils/workoutCreateDraft.ts` — leer/escribir/limpiar borrador de creacion en `sessionStorage`.
+- `src/utils/errorMessages.ts` — incluye codigos del catalogo (p. ej. ejercicio no encontrado) ademas de auth/posts/workouts.
 
 ## 2) Componentes reutilizables (decision)
 
@@ -77,7 +84,7 @@ Estado global:
 
 Estado local de pagina:
 - Feed: posts, comentarios en borrador, sugerencias, modo **Todos/Seguidos**, estados UX.
-- Workouts: formulario, lista, edicion, **filtro por titulo** (`titleQuery`), **orden** (`sortKey`), filtro por etiqueta, sesion en borrador y mensajes.
+- Workouts: overview de rutinas (lista, edicion, **filtro por titulo** `titleQuery`, **orden** `sortKey`, filtro por etiqueta, contadores/calendario) + editor separado para crear rutina.
 - Profile: formulario y feedback.
 
 Regla de arquitectura:
@@ -96,6 +103,7 @@ Base URL (cliente):
 Recursos:
 - `auth`
 - `workouts`
+- `exercises` (catalogo)
 - `posts`
 - `health`
 
@@ -128,15 +136,24 @@ Recursos:
 
 ### Workouts (`/api/workouts`)
 - `GET /`
-  - 200: `Workout[]` (cada entreno incluye **`tags: string[]`**)
+  - 200: `Workout[]` — cada rutina incluye **`tags: string[]`** y **`exerciseIds: string[]`** (IDs del catalogo de ejercicios).
 - `POST /`
-  - body: `{ title, description?, exercises?, tags? }` (el `userId` lo fija el JWT; **`tags`** opcional, max 12 cadenas de hasta 20 caracteres, sin duplicados ignorando mayusculas; se normalizan en servidor)
+  - body: `{ title, description?, exerciseIds?, tags? }` (el `userId` lo fija el JWT; **`tags`** opcional con las mismas reglas que antes; **`exerciseIds`** referencias a ejercicios existentes en `store.exercises`)
   - 201: `Workout`
 - `PUT /:id`
-  - body parcial: `{ title?, description?, exercises?, tags? }`
+  - body parcial: `{ title?, description?, exerciseIds?, tags? }`
   - 200: `Workout`
 - `DELETE /:id`
   - 200: `{ message, workout }`
+
+### Ejercicios / catalogo (`/api/exercises`, JWT obligatorio)
+
+Catalogo global en `store.json` (`exercises`). Campos: `id`, `name`, `muscles?` (slugs), `equipment?`, `description?`, `instructions?` (texto multilinea). La semilla de nombres/IDs/musculos esta en `defaultExercises.ts`; los textos de ficha por ID en `exerciseDetails.ts` (`EXERCISE_DETAILS_BY_ID`), fusionados en `mergeExerciseCatalog`. Valores en `store.json` pueden sobreescribir longitudes acotadas.
+
+- `GET /`
+  - 200: lista de ejercicios (incluye detalles cuando existan).
+- `GET /:id`
+  - 200: ejercicio; errores tipicos `404` + codigo p. ej. `EXERCISE_NOT_FOUND`.
 
 ### Sesiones de entreno (`/api/workout-sessions`, JWT obligatorio)
 
@@ -174,12 +191,13 @@ Registro de que el usuario realizo una **plantilla** (`workoutId`) en un instant
 ## 5) Persistencia: servidor vs cliente
 
 Servidor (persistido en `server/data/store.json`, o ruta `FITSOCIAL_STORE_PATH`; en **Vercel** serverless el valor por defecto es un JSON en **`/tmp`** copiado del seed del repo — ver `docs/deploy.md`):
-- `users` (incluye campos opcionales internos `passwordResetTokenHash` y `passwordResetExpires` mientras un reset este pendiente; no se exponen en respuestas `user` publicas), `workouts`, **`workoutSessions`**, `posts`, `likes`, `comments`, `follows`.
+- `users` (incluye campos opcionales internos `passwordResetTokenHash` y `passwordResetExpires` mientras un reset este pendiente; no se exponen en respuestas `user` publicas), `workouts` (**`exerciseIds`** hacia el catalogo), **`exercises`** (catalogo global), **`workoutSessions`**, `posts`, `likes`, `comments`, `follows`.
 - Fuente de verdad de negocio.
 
 Cliente (persistencia local):
 - Sesion autenticada (`token`, `user`) en `localStorage`.
-- Resto del estado se recalcula desde API en cada carga de pantalla.
+- Pestaña activa (`fitsocial:activeTab`) y borrador **crear rutina** (`fitsocial:workoutCreateDraft` en `sessionStorage`: titulo, descripcion, `exerciseIds`, lineas de etiquetas) — utilidad `src/utils/workoutCreateDraft.ts`.
+- Resto del estado de pantalla se recalcula desde API cuando aplica.
 
 Decision:
 - Mantener JSON-file store en MVP.

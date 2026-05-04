@@ -1,7 +1,10 @@
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import app from "../app.js";
+import { DEFAULT_EXERCISE_SEED } from "../data/defaultExercises.js";
 import { store } from "../services/store.js";
+
+const SAMPLE_EXERCISE_ID = DEFAULT_EXERCISE_SEED[0]!.id;
 
 async function registerAndLogin(email: string, username: string, password: string) {
   await request(app).post("/api/auth/register").send({ email, username, password }).expect(201);
@@ -12,6 +15,7 @@ async function registerAndLogin(email: string, username: string, password: strin
 describe("workout sessions API", () => {
   beforeEach(() => {
     store.users = [];
+    store.exercises = DEFAULT_EXERCISE_SEED.map((e) => ({ ...e }));
     store.workouts = [];
     store.workoutSessions = [];
     store.posts = [];
@@ -35,7 +39,7 @@ describe("workout sessions API", () => {
       .send({
         title: "Rutina A",
         description: "",
-        exercises: ["Press"],
+        exerciseIds: [SAMPLE_EXERCISE_ID],
       })
       .expect(201);
 
@@ -71,7 +75,7 @@ describe("workout sessions API", () => {
       .send({
         title: "Privado",
         description: "",
-        exercises: [],
+        exerciseIds: [],
       })
       .expect(201);
 
@@ -91,7 +95,7 @@ describe("workout sessions API", () => {
     const created = await request(app)
       .post("/api/workouts")
       .set("Authorization", `Bearer ${ownerToken}`)
-      .send({ title: "Para sesion", description: "", exercises: ["a"] })
+      .send({ title: "Para sesion", description: "", exerciseIds: [SAMPLE_EXERCISE_ID] })
       .expect(201);
 
     const sessionRes = await request(app)

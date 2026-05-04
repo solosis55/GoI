@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/authRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import postsRoutes from "./routes/postsRoutes.js";
+import exercisesRoutes from "./routes/exercisesRoutes.js";
 import workoutSessionsRoutes from "./routes/workoutSessionsRoutes.js";
 import workoutsRoutes from "./routes/workoutsRoutes.js";
 import { sendError } from "./services/http.js";
@@ -50,6 +51,7 @@ if (!serveProductionClient) {
         health: "/api/health",
         auth: "/api/auth",
         workouts: "/api/workouts",
+        exercises: "/api/exercises",
         workoutSessions: "/api/workout-sessions",
         posts: "/api/posts",
       },
@@ -64,6 +66,7 @@ app.use("/api/auth/forgot-password", authRateLimiter);
 app.use("/api/auth/reset-password", authRateLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutsRoutes);
+app.use("/api/exercises", exercisesRoutes);
 app.use("/api/workout-sessions", workoutSessionsRoutes);
 app.use("/api/posts", postsRoutes);
 

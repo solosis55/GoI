@@ -3,7 +3,10 @@ import { resolve } from "node:path";
 import request from "supertest";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import app from "../app.js";
+import { DEFAULT_EXERCISE_SEED } from "../data/defaultExercises.js";
 import { store } from "../services/store.js";
+
+const SAMPLE_EXERCISE_ID = DEFAULT_EXERCISE_SEED[0]!.id;
 
 const storeFilePath = resolve(process.cwd(), "data/store.json");
 
@@ -22,6 +25,7 @@ describe("auth + workouts security flow", () => {
 
   beforeEach(() => {
     store.users = [];
+    store.exercises = DEFAULT_EXERCISE_SEED.map((e) => ({ ...e }));
     store.workouts = [];
     store.workoutSessions = [];
     store.posts = [];
@@ -49,7 +53,7 @@ describe("auth + workouts security flow", () => {
     const response = await request(app).post("/api/workouts").send({
       title: "No token",
       description: "x",
-      exercises: [],
+      exerciseIds: [],
     });
 
     expect(response.status).toBe(401);
@@ -64,7 +68,7 @@ describe("auth + workouts security flow", () => {
       .send({
         title: "Secure workout",
         description: "test",
-        exercises: ["press"],
+        exerciseIds: [SAMPLE_EXERCISE_ID],
       });
 
     expect(response.status).toBe(201);
@@ -83,7 +87,7 @@ describe("auth + workouts security flow", () => {
       .send({
         title: "Owner workout",
         description: "private",
-        exercises: ["squat"],
+        exerciseIds: [SAMPLE_EXERCISE_ID],
       })
       .expect(201);
 

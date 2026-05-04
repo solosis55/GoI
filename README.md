@@ -10,7 +10,8 @@ Web tipo **red social + deporte**: publicar progreso en un feed comunitario, lle
 - Recuperación de contraseña preparada en API y flujo en pantalla de auth (en producción falta integrar envío de correo; en local ver `server/.env.example` y `AUTH_RESET_RETURN_TOKEN`).
 - Feed con publicaciones, filtro “Todos / Seguidos”, likes y comentarios; **Inicio** con encabezado de pagina, historias en tarjeta compacta y columna principal del feed que aprovecha el ancho en pantallas grandes.
 - **Pie de pagina** global (`SiteFooter`): copyright FitSocial · GoI, enlace al roadmap en Trello y textos legales/contacto reservados para futuras paginas.
-- CRUD de entrenamientos por usuario (ejercicios y **etiquetas** por lineas, **busqueda por titulo**, **ordenar** la lista, filtro por etiqueta, duplicar rutina).
+- CRUD de **rutinas** por usuario: ejercicios enlazados al **catalogo** (`exerciseIds`), **etiquetas** por lineas, **busqueda por titulo**, **ordenar** la lista, filtro por etiqueta, duplicar rutina.
+- **Catalogo de ejercicios** en API (`GET /api/exercises`, `GET /api/exercises/:id`): datos en `store.json` (`exercises`), JWT obligatorio; cada ejercicio puede incluir **equipamiento**, **descripcion** y **instrucciones de ejecucion** (semilla en `server/src/data/exerciseDetails.ts`). Flujo UX lineal: **Rutinas → Editor de rutinas → Nueva rutina (o Editar rutina) → Catalogo → ejercicio** (sin boton de catalogo en el listado de rutinas). Borrador de creacion de rutina en **`sessionStorage`** (`fitsocial:workoutCreateDraft`) para no perder titulo, descripcion, ejercicios y etiquetas al cambiar de pestaña o vista.
 - **Sesiones de entreno:** registrar cuando se hizo una plantilla (fecha/hora, notas) y ver historial; API `GET|POST /api/workout-sessions`, `DELETE /api/workout-sessions/:id` (JWT). El historial también se muestra en **Perfil** (solo lectura).
 - Perfil deportivo (usuario, bio, objetivo, avatar).
 - API con validación, rate limit en auth y tests de seguridad básicos (`server`).
@@ -56,7 +57,7 @@ En el fichero **`server/data/store.json`** del repo hay cuentas pensadas para **
 | `cristian`| `cristian@test.com` | `123456`     |
 | `dana`    | `dana@test.com`     | `123456`     |
 
-Si borras o sustituyes `store.json`, estas cuentas dejan de existir hasta que vuelvas a registrar usuarios o restaures el fichero.
+Si borras o sustituyes `store.json`, estas cuentas dejan de existir hasta que vuelvas a registrar usuarios o restaures el fichero. Para recrearlas: en la raíz del repo, `npm run seed:demo-users` (o dentro de `server/`, `npm run seed:demo-users`); el script solo añade emails que aún no estén en el store. **Tras el seed o al editar `store.json` a mano, reinicia el servidor de la API** (`npm run dev` en `server/`): el fichero solo se lee al arrancar. Si el login sigue fallando, en la consola del backend (modo desarrollo) verás cuántos usuarios se cargaron y desde qué ruta; comprueba también que el front apunte a esa API (por defecto `http://localhost:4000/api` en desarrollo, o la URL de `VITE_API_URL` si la definiste al construir el cliente).
 
 **Vercel:** si no configuras **`JWT_SECRET`**, el servidor usa un secreto automático derivado de variables que Vercel inyecta (`VERCEL_URL`, etc.) para que el login funcione en demos. Para **dominio propio o datos sensibles**, define siempre **`JWT_SECRET`** en el dashboard y redeploy. Detalle en **`docs/deploy.md`**.
 
@@ -70,6 +71,7 @@ Si borras o sustituyes `store.json`, estas cuentas dejan de existir hasta que vu
 | `npm run build:deploy` | Build frontend + backend (listo para un solo proceso o Docker). |
 | `npm run start:deploy` | Ejecuta `node server/dist/server.js` (**desde la raíz del repo**, con `NODE_ENV=production` y frontend ya construido). |
 | `npm run lint` | ESLint sobre el frontend. |
+| `npm run seed:demo-users` | Crea en `server/data/store.json` las cuentas de prueba del README (si faltan). |
 
 En `server/`: `npm test` ejecuta Vitest.
 

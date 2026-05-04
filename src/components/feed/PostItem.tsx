@@ -37,7 +37,7 @@ export function PostItem({
         </strong>
         <p className="mt-2 text-neutral-500">{formatDate(post.createdAt)}</p>
         <p className="text-goi-steel">{post.content}</p>
-        {post.workoutId && <small className="text-neutral-400">Entrenamiento: {getWorkoutTitle(post.workoutId)}</small>}
+        {post.workoutId && <small className="text-neutral-400">Rutina: {getWorkoutTitle(post.workoutId)}</small>}
         <p className="mt-2 text-neutral-500">Likes: {post.likesCount}</p>
         <CommentList comments={post.comments} currentUserId={currentUserId} />
         <PostComposer value={commentValue} onChange={onChangeComment} onSubmit={onComment} />

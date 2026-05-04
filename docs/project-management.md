@@ -15,7 +15,7 @@ Cualquier cambio relevante de **producto, UX, API, despliegue o convenciones de 
 ## Estado
 - Fecha de inicio: 2026-04-27
 - Fase actual: Cierre del MVP y estandarizacion de UI con Tailwind
-- Ultimo refinamiento UX + marca: shell **negro**, marca **GoI** (logo circular centrado en sidebar, tokens **oro/acero**), paneles **zinc** con acentos dorados, formularios con **`.goi-field`**, pulido global (**seleccion de texto**, **scrollbars** oscuros, **`prefers-reduced-motion`**, **focus-visible** en enlaces y botones). **Inicio**: encabezado de pagina, feed a ancho util, historias compactas. **Entrenamientos**: busqueda/orden/lista + sesiones debajo. **Pie** global `SiteFooter`. Detalle en pasos 54–56, 63–68 y en `docs/design.md`.
+- Ultimo refinamiento UX + marca: shell **negro**, marca **GoI** (logo circular centrado en sidebar, tokens **oro/acero**), paneles **zinc** con acentos dorados, formularios con **`.goi-field`**, pulido global (**seleccion de texto**, **scrollbars** oscuros, **`prefers-reduced-motion`**, **focus-visible** en enlaces y botones). **Inicio**: encabezado de pagina, feed a ancho util, historias compactas. **Rutinas**: dashboard con resumen + calendario + lista, editor dedicado y breadcrumb visual; sin bloque de registro/historial en esa pestaña para reducir saturacion. **Pie** global `SiteFooter`.
 
 ## Recomendaciones MVP
 
@@ -33,7 +33,7 @@ Cualquier cambio relevante de **producto, UX, API, despliegue o convenciones de 
 - [ ] Recomendaciones con IA.
 
 ### Criterios de exito del MVP
-- [ ] El usuario completa el flujo: crear entrenamiento -> registrar sesion -> publicar progreso.
+- [ ] El usuario completa el flujo principal: crear rutina -> publicarla/vincularla en el feed -> revisar progreso.
 - [ ] El usuario entiende la app sin tutorial largo.
 - [ ] El usuario repite uso al menos 2 veces por semana en pruebas iniciales.
 
@@ -208,6 +208,16 @@ Actualizacion reciente:
 67. **Entrenamientos — lista y sesion:** **`WorkoutsPage`** — campo **buscar por titulo** (case-insensitive, combinable con etiqueta), **ordenar lista** (ultima sesion, mas sesiones, plantilla mas reciente, titulo A-Z); **`WorkoutSessionsPanel`** (registrar + historial) **debajo** de la card **Mis entrenamientos**; **`WorkoutItem`** boton **Registrar sesion** en variante **`primary`** y **`title`** de ayuda; mensaje vacio unificado si filtro titulo+etiqueta no devuelve filas.
 68. **Documentacion:** sincronizados **`README.md`**, **`docs/design.md`**, **`docs/components.md`**, **`src/pages/README.md`** y esta seccion con los puntos 63–67.
 69. **Vercel (API serverless):** **`vercel.json`** (`installCommand`, `buildCommand` → **`npm run vercel-build`**, `outputDirectory` `dist`, rewrite `/api/*` → funcion **`api/index.mjs`** que importa **`server/dist/app.js`**); **`includeFiles`** como **cadena** **`"server/dist/**"`** (el esquema de Vercel no admite array). Tras **`tsc`**, **`server/scripts/copy-store-for-dist.mjs`** copia **`store.json`** a **`server/dist/data/`** para el seed en serverless. En **`store.ts`**, si **`VERCEL`**, el JSON de trabajo va a **`/tmp/fitsocial-store.json`** con copia inicial desde **`dist/data/store.json`**; variable opcional **`FITSOCIAL_STORE_PATH`**. **`app.ts`** aplica **`trust proxy`** en produccion o Vercel. En **`auth.ts`**, si hay **`VERCEL`** y no hay **`JWT_SECRET`**, se usa un secreto JWT automatico derivado de **`VERCEL_URL`** / **`VERCEL_GIT_COMMIT_SHA`** (demo Hobby; seguir recomendando `JWT_SECRET` para datos reales). Documentacion en **`docs/deploy.md`** y **`server/.env.example`**.
+70. **Rutinas: nuevo flujo de edicion + nomenclatura UX.** Se separa creacion de rutina en pantalla dedicada `WorkoutEditorPage` (overview -> editor -> volver), con breadcrumb visual `Rutinas / Crear`. En la UI: **rutina** = plantilla (`workout`) y **entrenamiento** = registro (`workout-session`). `WorkoutsPage` mantiene resumen + calendario + lista de rutinas y elimina temporalmente el bloque de registrar/historial para mejorar foco del flujo.
+
+71. **Rutinas + catalogo + migas de pan (2026).**
+    - **Flujo de navegacion:** panel **Rutinas** (`WorkoutsPage`) → **Editor de rutinas** (`WorkoutEditorPage`, crear o editar) → **Catalogo** (`ExerciseCatalogPage`) → opcional **Ficha del ejercicio** (`ExerciseDetailPage`). El catalogo solo se alcanza desde el editor (botones **Ver catalogo** / **Elegir ejercicios en el catalogo**); se elimino el acceso directo al catalogo desde la card "Crear rutina" del panel.
+    - **`App.tsx`:** subvistas `workoutsView`: `overview` | `editor` | `catalog` | `exerciseDetail`. Estado `catalogFromEditor` y `exerciseDetailFromEditor` para textos de botones y **miga de pan** (segmento intermedio **Editor de rutinas** cuando el usuario llego desde el editor). Al cerrar sesion se limpian flags y borrador de rutina.
+    - **Miga de pan:** Editor `Rutinas / Editor de rutinas / Nueva rutina | Editar rutina`; Catalogo (desde editor) `Rutinas / Editor de rutinas / Nueva rutina | Editar rutina / Catalogo`; Ficha `Rutinas / Editor de rutinas / Nueva rutina | Editar rutina / Catalogo / <ejercicio>`.
+    - **Persistencia creacion:** `src/utils/workoutCreateDraft.ts` escribe en `sessionStorage` durante modo crear; se fusionan ejercicios elegidos al volver del catalogo con `initialExerciseIds`; se borra el borrador al **guardar** rutina nueva o al **logout** (no al pulsar Volver al panel).
+    - **Documentacion** sincronizada: `README.md`, `docs/design.md`, `docs/components.md`, `src/pages/README.md`, esta entrada.
+
+72. **Detalle por ejercicio en catalogo:** modelo `Exercise` ampliado con `equipment`, `description`, `instructions` (backend `store.ts` + semilla `server/src/data/exerciseDetails.ts`). Fusion en `mergeExerciseCatalog`; UI: lista del catalogo muestra resumen (`line-clamp-2`); ficha (`ExerciseDetailPage`) muestra equipamiento, ejecucion multilinea y grupos musculares. Tests `exercises.test.ts` comprueban respuesta con texto.
 
 ## Recuperacion de contraseña (resumen operativo)
 

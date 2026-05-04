@@ -18,5 +18,11 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // La regla recomendada prohíbe setState en efectos; nuestro patrón (carga con useEffect, reset al desloguear) es válido.
+      'react-hooks/set-state-in-effect': 'off',
+      // Exportamos hooks, contexto y utilidades junto a componentes (Vite HMR sigue siendo util en la práctica).
+      'react-refresh/only-export-components': 'off',
+    },
   },
 ])

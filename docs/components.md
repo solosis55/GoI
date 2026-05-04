@@ -69,17 +69,23 @@
 
 ### Workouts (`src/components/workouts`)
 - `WorkoutForm`
-  - Props: `title`, `description`, **`exercises: string[]`**, **`tags: string[]`**, cambios campo a campo (`onChangeExercises`, `onChangeTags`), `onSubmit`, `submitLabel`, `onCancel`.
-  - Uso: crear y editar entrenamientos; **etiquetas** y **ejercicios** como lineas editables (**Añadir** / **Quitar**); etiquetas opcionales (max 20 caracteres por linea en UI; el servidor recorta y deduplica).
+  - Props: `title`, `description`, **`exerciseIds: string[]`**, **`exerciseCatalog: Exercise[]`**, `exerciseCatalogError?`, `exerciseCatalogLoading?`, handlers de titulo/descripcion/**`onChangeExerciseIds`**/etiquetas, `onSubmit`, `submitLabel`, `onCancel`, **`onOpenCatalog?`** (si esta definido, añadir ejercicios delega en navegar al catalogo en lugar del buscador embebido).
+  - Uso: crear y editar **rutinas**; etiquetas como lineas (**Añadir** / **Quitar**); ejercicios mediante **`ExercisePicker`** (orden subir/bajar/quitar; IDs del catalogo).
+- `ExercisePicker`
+  - Props: `exerciseIds`, `catalog`, `onChange`, **`onOpenCatalog?`**, `catalogError`, `catalogLoading`, `disabled`.
+  - Uso: si **`onOpenCatalog`** existe, muestra CTA **Elegir ejercicios en el catalogo** y la lista ordenada de la rutina; si no, modo legacy con busqueda embebida en mini lista (max ~40 resultados).
 - `WorkoutItem`
-  - Props: `workout`, **`sessionCount`**, **`lastSessionPerformedAt`** (ISO o `null`, derivados en `WorkoutsPage` desde `sessions`), estado de edicion, handlers de edicion (**`editExercises`**, **`editTags`**), `onSubmitEdit`, `onStartEdit`, `onCancelEdit`, `onDelete`, **`onDuplicate`**, **`onLogSession`** (preselecciona el entreno, refresca fecha/hora por defecto y hace scroll a **`#registrar-sesion`** debajo de la lista).
-  - Uso: item de lista con vista (titulo, descripcion, **chips de etiquetas**, **resumen de sesiones**, **lista ordenada de ejercicios**) o formulario embutido; **Registrar sesion** como **`Button` `primary`** (CTA visible); **Duplicar**, **Editar**, **Eliminar**.
+  - Props: `workout`, **`exerciseLabels`** (nombres resueltos desde el catalogo en `WorkoutsPage`), **`sessionCount`**, **`lastSessionPerformedAt`**, estado de edicion, callbacks de edicion/borrado/duplicar segun implementacion actual.
+  - Uso: item de lista con titulo, descripcion, chips de etiquetas, resumen de sesiones, **lista de nombres de ejercicios**; acciones **Duplicar**, **Editar**, **Eliminar** (mas detalle en `WorkoutItem.tsx`).
+- `WorkoutSessionCalendar`
+  - Props: `sessions`.
+  - Uso: mini calendario mensual (lun-dom) con dias de entrenamiento resaltados; navegacion de mes y boton Hoy. Se usa en cabecera de `WorkoutsPage`.
 - `WorkoutSessionsHistory`
   - Props: `sessions`, `loading`, `title`, `description` (opcional), `emptyMessage`, `showDelete`, `onDeleteSession`.
-  - Uso: lista de sesiones (misma forma en **Perfil** sin borrar y en **Entrenamientos** con `showDelete` + `onDeleteSession`).
+  - Uso: lista de entrenamientos registrados; actualmente visible en **Perfil** (solo lectura). Puede reutilizarse en otras pantallas.
 - `WorkoutSessionsPanel`
   - Props: `workouts`, `sessions` (con `workoutTitle`), `loading`, estado del formulario de sesion (`sessionWorkoutId`, `sessionPerformedAt`, `sessionNotes` + `onChange*`), `onSubmitSession`, `onDeleteSession`.
-  - Uso: bloque **Registrar sesion** (`#registrar-sesion`) + **`WorkoutSessionsHistory`** con borrado en **`WorkoutsPage`**; en layout de pagina va **debajo** de la lista **Mis entrenamientos** para alinear el scroll del atajo desde cada **`WorkoutItem`**.
+  - Uso: bloque de registro + historial (reutilizable). En el estado actual **no** se renderiza en `WorkoutsPage` para no saturar el flujo.
 
 ### Profile (`src/components/profile`)
 - `ProfileForm`

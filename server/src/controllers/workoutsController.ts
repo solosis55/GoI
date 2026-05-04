@@ -3,7 +3,6 @@ import { createId, saveStore, store, Workout } from "../services/store.js";
 import { sendError } from "../services/http.js";
 import {
   isLengthBetween,
-  sanitizeStringArray,
   sanitizeText,
   sanitizeWorkoutTags,
 } from "../services/validation.js";
@@ -11,9 +10,27 @@ import {
 type WorkoutPayload = {
   title?: string;
   description?: string;
-  exercises?: string[];
+  exerciseIds?: string[];
   tags?: string[];
 };
+
+const MAX_EXERCISES = 30;
+
+function sanitizeExerciseIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const id = item.trim();
+    if (id) out.push(id);
+  }
+  return out;
+}
+
+function allExerciseIdsExist(ids: string[]): boolean {
+  const valid = new Set(store.exercises.map((e) => e.id));
+  return ids.every((id) => valid.has(id));
+}
 
 export function listWorkouts(_req: Request, res: Response) {
   res.json(store.workouts);
@@ -21,10 +38,10 @@ export function listWorkouts(_req: Request, res: Response) {
 
 export function createWorkout(req: Request, res: Response) {
   const authUserId = String(res.locals.authUserId ?? "");
-  const { title, description = "", exercises = [], tags: rawTags } = req.body as WorkoutPayload;
+  const { title, description = "", exerciseIds: rawIds = [], tags: rawTags } = req.body as WorkoutPayload;
   const normalizedTitle = sanitizeText(title);
   const normalizedDescription = sanitizeText(description);
-  const normalizedExercises = sanitizeStringArray(exercises);
+  const normalizedIds = sanitizeExerciseIds(rawIds);
   const normalizedTags = sanitizeWorkoutTags(rawTags ?? []);
 
   if (!authUserId || !isLengthBetween(normalizedTitle, 3, 80)) {
@@ -35,8 +52,12 @@ export function createWorkout(req: Request, res: Response) {
     sendError(res, 400, "WORKOUT_INVALID_INPUT", "description is too long");
     return;
   }
-  if (normalizedExercises.length > 30) {
+  if (normalizedIds.length > MAX_EXERCISES) {
     sendError(res, 400, "WORKOUT_INVALID_INPUT", "too many exercises");
+    return;
+  }
+  if (!allExerciseIdsExist(normalizedIds)) {
+    sendError(res, 400, "WORKOUT_INVALID_EXERCISE_IDS", "invalid exercise id");
     return;
   }
 
@@ -45,7 +66,7 @@ export function createWorkout(req: Request, res: Response) {
     userId: authUserId,
     title: normalizedTitle,
     description: normalizedDescription,
-    exercises: normalizedExercises,
+    exerciseIds: normalizedIds,
     tags: normalizedTags,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -89,13 +110,17 @@ export function updateWorkout(req: Request, res: Response) {
     workout.description = normalizedDescription;
   }
 
-  if (payload.exercises !== undefined) {
-    const normalizedExercises = sanitizeStringArray(payload.exercises);
-    if (normalizedExercises.length > 30) {
+  if (payload.exerciseIds !== undefined) {
+    const normalizedIds = sanitizeExerciseIds(payload.exerciseIds);
+    if (normalizedIds.length > MAX_EXERCISES) {
       sendError(res, 400, "WORKOUT_INVALID_INPUT", "too many exercises");
       return;
     }
-    workout.exercises = normalizedExercises;
+    if (!allExerciseIdsExist(normalizedIds)) {
+      sendError(res, 400, "WORKOUT_INVALID_EXERCISE_IDS", "invalid exercise id");
+      return;
+    }
+    workout.exerciseIds = normalizedIds;
   }
 
   if (payload.tags !== undefined) {

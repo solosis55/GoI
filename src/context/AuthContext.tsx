@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AUTH_EXPIRED_EVENT } from "../api/client";
 import type { SafeUser } from "../types/auth";
@@ -48,29 +48,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const setAuth = useCallback((nextToken: string, nextUser: SafeUser) => {
+    setToken(nextToken);
+    setUser(nextUser);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: nextToken, user: nextUser }));
+  }, []);
+
+  const updateUser = useCallback((nextUser: SafeUser) => {
+    setUser(nextUser);
+    setToken((currentToken) => {
+      if (currentToken) {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: currentToken, user: nextUser }));
+      }
+      return currentToken;
+    });
+  }, []);
+
+  const logout = useCallback(() => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+  }, []);
+
   const value = useMemo<AuthState>(
     () => ({
       token,
       user,
       isAuthenticated: Boolean(token && user),
-      setAuth(nextToken, nextUser) {
-        setToken(nextToken);
-        setUser(nextUser);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: nextToken, user: nextUser }));
-      },
-      updateUser(nextUser) {
-        setUser(nextUser);
-        if (token) {
-          localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token, user: nextUser }));
-        }
-      },
-      logout() {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-      },
+      setAuth,
+      updateUser,
+      logout,
     }),
-    [token, user]
+    [token, user, setAuth, updateUser, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -35,17 +35,17 @@ export function WorkoutSessionsPanel({
 }: WorkoutSessionsPanelProps) {
   return (
     <>
-      <Card id="registrar-sesion">
-        <h2>Registrar sesión</h2>
+      <Card id="registrar-sesion" tone="dark">
+        <h2>Registrar entrenamiento</h2>
         <p className="mb-3 text-sm text-neutral-500">
-          Anota cuándo hiciste un entrenamiento guardado como plantilla. No sustituye al feed; sirve para seguimiento personal.
+          Anota cuándo hiciste un entrenamiento siguiendo una rutina guardada. No sustituye al feed; sirve para seguimiento personal.
         </p>
         {workouts.length === 0 ? (
-          <EmptyState message="Crea un entrenamiento antes de poder registrar sesiones." />
+          <EmptyState message="Crea una rutina antes de poder registrar entrenamientos." />
         ) : (
           <form className="grid gap-3" onSubmit={onSubmitSession}>
             <label className="grid gap-1.5 font-semibold">
-              Entrenamiento
+              Rutina
               <select
                 className="goi-field"
                 required
@@ -81,7 +81,7 @@ export function WorkoutSessionsPanel({
               />
             </label>
             <Button type="submit" disabled={loading}>
-              Guardar sesión
+              Guardar entrenamiento
             </Button>
           </form>
         )}

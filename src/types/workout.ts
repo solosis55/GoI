@@ -3,7 +3,8 @@ export type Workout = {
   userId: string;
   title: string;
   description: string;
-  exercises: string[];
+  /** IDs del catalogo /api/exercises, orden = orden en la rutina. */
+  exerciseIds: string[];
   tags: string[];
   createdAt: string;
   updatedAt: string;
@@ -12,7 +13,7 @@ export type Workout = {
 export type CreateWorkoutInput = {
   title: string;
   description: string;
-  exercises: string[];
+  exerciseIds: string[];
   tags?: string[];
 };
 

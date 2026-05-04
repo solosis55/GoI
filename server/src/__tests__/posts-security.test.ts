@@ -1,6 +1,7 @@
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import app from "../app.js";
+import { DEFAULT_EXERCISE_SEED } from "../data/defaultExercises.js";
 import { store } from "../services/store.js";
 
 async function registerAndLogin(email: string, username: string, password: string) {
@@ -12,6 +13,7 @@ async function registerAndLogin(email: string, username: string, password: strin
 describe("posts security flow", () => {
   beforeEach(() => {
     store.users = [];
+    store.exercises = DEFAULT_EXERCISE_SEED.map((e) => ({ ...e }));
     store.workouts = [];
     store.workoutSessions = [];
     store.posts = [];

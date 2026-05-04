@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { getProfile, updateProfile } from "../api/authApi";
 import { getWorkoutSessions } from "../api/workoutSessionsApi";
@@ -22,31 +22,33 @@ export function ProfilePage() {
   const [sessionsLoading, setSessionsLoading] = useState(false);
   const [sessionsError, setSessionsError] = useState("");
 
-  useEffect(() => {
-    async function loadProfile() {
-      if (!user) return;
+  const userId = user?.id;
 
-      setLoading(true);
-      setError("");
-      try {
-        const response = await getProfile(user.id);
-        setUsername(response.user.username);
-        setBio(response.user.bio);
-        setGoal(response.user.goal);
-        setAvatarUrl(response.user.avatarUrl);
-        updateUser(response.user);
-      } catch (loadError) {
-        setError(getErrorMessage(loadError, "No se pudo cargar el perfil"));
-      } finally {
-        setLoading(false);
-      }
+  const loadProfile = useCallback(async () => {
+    if (!userId) return;
+
+    setLoading(true);
+    setError("");
+    try {
+      const response = await getProfile(userId);
+      setUsername(response.user.username);
+      setBio(response.user.bio);
+      setGoal(response.user.goal);
+      setAvatarUrl(response.user.avatarUrl);
+      updateUser(response.user);
+    } catch (loadError) {
+      setError(getErrorMessage(loadError, "No se pudo cargar el perfil"));
+    } finally {
+      setLoading(false);
     }
-
-    void loadProfile();
-  }, [user?.id]);
+  }, [userId, updateUser]);
 
   useEffect(() => {
-    if (!user) return;
+    void loadProfile();
+  }, [loadProfile]);
+
+  useEffect(() => {
+    if (!userId) return;
     let cancelled = false;
 
     async function loadSessions() {
@@ -68,7 +70,7 @@ export function ProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, [user?.id]);
+  }, [userId]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -139,11 +141,11 @@ export function ProfilePage() {
       {sessionsError ? <p className="m-0 text-sm text-red-400">{sessionsError}</p> : null}
 
       <WorkoutSessionsHistory
-        title="Sesiones registradas"
-        description="Lo que anotas en Entrenamientos aparece aqui. Para registrar nuevas sesiones o quitarlas del historial, usa la pestaña Entrenamientos."
+        title="Entrenamientos registrados"
+        description="Lo que anotas en Rutinas aparece aqui. Para registrar nuevos entrenamientos o quitarlos del historial, usa la pestaña Rutinas."
         sessions={sessions}
         loading={sessionsLoading}
-        emptyMessage="Aun no hay sesiones. Registralas en la pestaña Entrenamientos."
+        emptyMessage="Aun no hay entrenamientos. Registralos en la pestaña Rutinas."
         showDelete={false}
       />
     </section>

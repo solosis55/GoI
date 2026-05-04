@@ -33,13 +33,13 @@ export function CreatePostForm({
       </label>
 
       <label className="grid gap-1.5 font-semibold">
-        Entrenamiento vinculado (opcional)
+        Rutina vinculada (opcional)
         <select
           className="goi-field"
           value={selectedWorkoutId}
           onChange={(event) => onChangeWorkoutId(event.target.value)}
         >
-          <option value="">Sin entrenamiento</option>
+          <option value="">Sin rutina</option>
           {workouts.map((workout) => {
             const tagHint = (workout.tags ?? []).filter(Boolean);
             const hint =

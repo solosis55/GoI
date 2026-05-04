@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { getFollowing, getUsers, toggleFollow } from "../api/authApi";
 import { createComment, createPost, deletePost, getPosts, toggleLike } from "../api/postsApi";
@@ -44,7 +44,7 @@ export function FeedPage() {
     return posts.filter((post) => followingIds.includes(post.userId) || post.userId === user?.id);
   }, [feedMode, followingIds, posts, user?.id]);
 
-  async function loadFeed() {
+  const loadFeed = useCallback(async () => {
     setLoading(true);
     setError("");
     setMessage("");
@@ -57,7 +57,7 @@ export function FeedPage() {
         getFollowing(user.id),
       ]);
       setPosts(postsResponse);
-      const mine = user ? workoutsResponse.filter((workout) => workout.userId === user.id) : [];
+      const mine = workoutsResponse.filter((workout) => workout.userId === user.id);
       setWorkouts(mine);
       setDiscoverUsers(usersResponse.users);
       setFollowingIds(followingResponse.followingIds);
@@ -66,7 +66,7 @@ export function FeedPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [user]);
 
   async function handleToggleFollow(targetUserId: string) {
     if (!user) return;
@@ -81,7 +81,7 @@ export function FeedPage() {
 
   useEffect(() => {
     void loadFeed();
-  }, [user?.id]);
+  }, [loadFeed]);
 
   async function handleCreatePost(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -164,7 +164,7 @@ export function FeedPage() {
   function getWorkoutTitle(workoutId: string | null) {
     if (!workoutId) return null;
     const workout = workouts.find((item) => item.id === workoutId);
-    return workout?.title ?? "Entrenamiento vinculado";
+    return workout?.title ?? "Rutina vinculada";
   }
 
   function formatDate(value: string) {
