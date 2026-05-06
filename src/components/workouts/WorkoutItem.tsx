@@ -22,10 +22,10 @@ export function WorkoutItem({
   onDuplicate,
 }: WorkoutItemProps) {
   return (
-    <li className="flex items-start justify-between gap-3 rounded-lg border border-neutral-800 bg-black/30 p-3 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.05)] max-md:flex-col">
+    <li className="fs-panel-elevated flex max-md:flex-col items-start justify-between gap-3 p-3">
       <div className="min-w-0">
-        <strong className="text-neutral-100">{workout.title}</strong>
-        <p className="text-goi-steel">{workout.description || "Sin descripcion"}</p>
+        <strong className="text-neutral-100 light:text-zinc-900">{workout.title}</strong>
+        <p className="text-goi-steel light:text-zinc-700">{workout.description || "Sin descripcion"}</p>
         {(workout.tags ?? []).filter(Boolean).length > 0 ? (
           <>
             <p className="mt-2 text-xs uppercase tracking-wide text-neutral-600">Etiquetas</p>
@@ -34,7 +34,7 @@ export function WorkoutItem({
                 .filter(Boolean)
                 .map((tag) => (
                   <li key={`${workout.id}-tag-${tag}`}>
-                    <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel">
+                    <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel light:bg-white light:text-yellow-950">
                       {tag}
                     </span>
                   </li>
@@ -56,7 +56,7 @@ export function WorkoutItem({
         </p>
         <p className="mt-2 text-xs uppercase tracking-wide text-neutral-600">Ejercicios</p>
         {exerciseLabels.length > 0 ? (
-          <ol className="mt-1 max-w-xl list-inside list-decimal space-y-1 pl-0.5 text-sm text-goi-steel">
+          <ol className="mt-1 max-w-xl list-inside list-decimal space-y-1 pl-0.5 text-sm text-goi-steel light:text-zinc-800">
             {exerciseLabels.map((name, idx) => (
               <li key={`${workout.id}-ex-${idx}`} className="break-words pl-1">
                 {name}

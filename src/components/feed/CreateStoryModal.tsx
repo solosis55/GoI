@@ -75,11 +75,11 @@ export function CreateStoryModal({ open, onClose, onCreated }: CreateStoryModalP
   const slotsLeft = Math.max(0, STORY_IMAGE_MAX_FILES - slides.length);
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/70 p-4 sm:items-center" role="dialog" aria-modal>
-      <div className="grid w-full max-w-md gap-4 rounded-xl border border-neutral-700 bg-zinc-950 p-4 shadow-2xl">
+    <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/70 p-4 sm:items-center light:bg-zinc-900/40" role="dialog" aria-modal>
+      <div className="grid w-full max-w-md gap-4 rounded-xl border border-neutral-700 bg-zinc-950 p-4 shadow-2xl light:border-zinc-200 light:bg-white">
         <header className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-neutral-100">Nueva historia</h2>
+            <h2 className="text-lg font-semibold text-neutral-100 light:text-zinc-900">Nueva historia</h2>
             <p className="mt-1 text-xs text-neutral-500">
               Visible ~24 horas para quien te sigue. Máximo {STORY_IMAGE_MAX_FILES} fotos.
             </p>
@@ -125,11 +125,11 @@ export function CreateStoryModal({ open, onClose, onCreated }: CreateStoryModalP
           {slides.length > 0 ? (
             <ul className="grid list-none grid-cols-3 gap-2 p-0 sm:grid-cols-4">
               {slides.map((s) => (
-                <li key={s.id} className="relative aspect-square overflow-hidden rounded-lg border border-neutral-700">
+                <li key={s.id} className="relative aspect-square overflow-hidden rounded-lg border border-neutral-700 light:border-zinc-300">
                   <img src={s.dataUrl} alt="" className="size-full object-cover" />
                   <button
                     type="button"
-                    className="absolute right-1 top-1 rounded bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white"
+                    className="absolute right-1 top-1 rounded bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white light:bg-zinc-900/85"
                     onClick={() => setSlides((list) => list.filter((x) => x.id !== s.id))}
                   >
                     Quitar

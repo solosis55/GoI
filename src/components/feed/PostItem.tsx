@@ -122,8 +122,10 @@ export function PostItem({
   return (
     <li
       id={`feed-post-${post.id}`}
-      className={`feed-post-card flex flex-col gap-4 rounded-lg border border-neutral-800 bg-black/60 p-3 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.06)] transition-[box-shadow,ring] duration-300 sm:flex-row sm:items-start sm:justify-between sm:gap-4 ${
-        emphasized ? "ring-2 ring-goi-gold/50 ring-offset-2 ring-offset-black" : ""
+      className={`feed-post-card flex flex-col gap-4 rounded-lg border p-3 transition-[box-shadow,ring] duration-300 sm:flex-row sm:items-start sm:justify-between sm:gap-4 ${
+        emphasized
+          ? "ring-2 ring-goi-gold/50 ring-offset-2 ring-offset-black light:ring-offset-zinc-100"
+          : ""
       }`}
     >
       <div className="flex min-w-0 flex-1 gap-3">
@@ -132,7 +134,7 @@ export function PostItem({
             <button
               type="button"
               aria-label={`Perfil de @${post.authorUsername}`}
-              className="rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40"
+              className="rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:ring-offset-zinc-100"
               onClick={() => onOpenUserProfile(post.userId)}
             >
               <Avatar src={post.authorAvatarUrl} alt={post.authorUsername} size={46} />
@@ -149,13 +151,13 @@ export function PostItem({
                 onClick={() => onOpenUserProfile(post.userId)}
                 className="rounded-sm text-left underline-offset-4 hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
               >
-                <strong className="text-neutral-100">
+                <strong className="text-neutral-100 light:text-zinc-900">
                   {post.authorUsername}
                   {isOwner ? " (tu)" : ""}
                 </strong>
               </button>
             ) : (
-              <strong className="text-neutral-100">
+              <strong className="text-neutral-100 light:text-zinc-900">
                 {post.authorUsername}
                 {isOwner ? " (tu)" : ""}
               </strong>
@@ -163,7 +165,7 @@ export function PostItem({
             <span className="text-neutral-600">·</span>
             <time className="text-xs text-neutral-500">{formatDate(post.createdAt)}</time>
             <span
-              className="inline-flex items-center rounded-full border border-neutral-600 bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-neutral-400"
+              className="inline-flex items-center rounded-full border border-neutral-600 bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-neutral-400 light:border-zinc-300 light:bg-zinc-200/90 light:text-zinc-700"
               title={
                 visibilityLabel === "Solo yo"
                   ? "Visible solo para ti"
@@ -207,7 +209,7 @@ export function PostItem({
                 </button>
                 <button
                   type="button"
-                  className="text-xs font-semibold uppercase tracking-wide text-neutral-500 hover:text-neutral-300"
+                  className="text-xs font-semibold uppercase tracking-wide text-neutral-500 hover:text-neutral-300 light:text-zinc-600 light:hover:text-zinc-800"
                   onClick={cancelEdit}
                 >
                   Cancelar
@@ -218,7 +220,7 @@ export function PostItem({
           ) : (
             <>
               {post.content.trim() ? (
-                <div className="whitespace-pre-wrap text-goi-steel leading-relaxed">
+                <div className="whitespace-pre-wrap text-goi-steel leading-relaxed light:text-zinc-800">
                   <MentionHighlighted
                     text={post.content}
                     userDirectory={mentionDirectory}
@@ -234,7 +236,7 @@ export function PostItem({
               <DumbbellIcon className="size-4 shrink-0 text-goi-gold-dim" />
               <span className="font-semibold uppercase tracking-wide text-[10px] text-goi-gold-dim">Rutina</span>
               <span className="text-neutral-600">·</span>
-              <span className="truncate text-neutral-200">{getWorkoutTitle(post.workoutId)}</span>
+              <span className="truncate text-neutral-200 light:text-zinc-800">{getWorkoutTitle(post.workoutId)}</span>
             </div>
           ) : null}
 

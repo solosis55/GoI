@@ -22,11 +22,14 @@
 ## 1) Estructura de componentes principales
 
 ### Frontend (`src`)
+- `main.tsx`: **`BrowserRouter`** + tema global; rutas declaradas en **`RootRoutes.tsx`**: **`/aviso-legal`**, **`/privacidad`**, **`/contacto`**, cualquier otro **`path`** → **`App.tsx`** shell con pestañas.
+- `pages/legal/LegalPageShell.tsx` más **`LegalNoticePage`**, **`PrivacyPage`**, **`ContactPage`** (plantillas españolas con marcadores **`[completar]`**, revisión jurídica recomendada).
+- `config/site.ts`: **`PUBLIC_CONTACT_EMAIL`** desde **`import.meta.env.VITE_CONTACT_EMAIL`** (opcional, para **`/contacto`**).
 - `App.tsx`: shell principal (`div` flex columna + `main.social-shell`), control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`). En **Rutinas**, subvistas internas sin router URL: `workoutsView` = `overview` | `editor` | `catalog` | `exerciseDetail`. Cambiar a Inicio/Perfil **no** resetea la subvista de rutinas (se conserva editor/catalogo/ficha al volver a la pestaña). Estado auxiliar: `catalogFromEditor`, `exerciseDetailFromEditor`, `catalogExerciseId`, modo del editor (`WorkoutEditorMode`). Persistencia de pestaña activa: `sessionStorage` `fitsocial:activeTab`. Borrador crear rutina: ver `workoutCreateDraft` en seccion cliente. Auth **sin sidebar** (marca GoI centrada arriba del formulario); logueado sidebar con **foto de perfil** (`SidebarSessionBadge`) y **`SidebarNavigation`** (iconos + handlers de pestaña y logout). **`SiteFooter`** en ambos.
 - `components/branding/GoISidebarBadge.tsx`: logo GoI + FitSocial + subtítulo (auth).
 - `components/branding/SidebarSessionBadge.tsx`: avatar del usuario en el lateral + FitSocial + `@usuario`.
 - `components/layout/SidebarNavigation.tsx`: pestañas principal con iconos (`feed`/`workouts`/`profile`), **Cerrar sesión**, accesibilidad y animaciones **`motion-safe`**.
-- `components/layout/SiteFooter.tsx`: pie global — copyright dinámico, texto MVP, enlace **Roadmap** (Trello del README), placeholders Aviso legal / Privacidad / Contacto (`title` “Página en preparación”).
+- `components/layout/SiteFooter.tsx`: pie global — copyright dinámico, texto MVP, enlace **Roadmap** (Trello del README), enlaces **`/aviso-legal`**, **`/privacidad`**, **`/contacto`** (páginas legales React + `LegalPageShell`).
 - `context/AuthContext.tsx`: estado global de autenticacion (token, user, login/logout, persistencia local).
 - `pages/AuthPage.tsx`: registro, inicio de sesion, solicitud de recuperacion de contraseña y pantalla de nueva contraseña (`?reset=token`); card **`tone="dark"`**, campos **`.goi-field`**, `StatusMessage` con **`tone="dark"`**.
 - `pages/FeedPage.tsx`: **encabezado Inicio** (`<header>`: rótulo FitSocial, titulo, texto de contexto y `@usuario`); rejilla feed **columna principal flexible** (`minmax(0,1fr)` + lateral sugerencias); **Historias del gym** en tarjeta **compacta centrada** (`max-w-sm`); `FeedModeTabs` / `StoriesRow` con prop **`compact`** en ese bloque; timeline, crear post, likes, comentarios, seguir usuarios.
@@ -248,7 +251,6 @@ Flujo tipico:
 
 ## 7) Pendiente inmediato para cerrar arquitectura
 
-- Sustituir placeholders del **`SiteFooter`** (Aviso legal, Privacidad, Contacto) por rutas o URLs reales cuando existan.
 - Integrar envio de email para enlaces reales de recuperacion de contraseña (el flujo API + UI ya existe).
 - Estandarizar errores API (`{ message, code }`) donde aun falte cobertura.
 - Opcional: extraer sidebar completo del feed.

@@ -18,7 +18,7 @@ export function CommentList({ comments, currentUserId, mentionDirectory, onOpenU
             <button
               type="button"
               aria-label={`Perfil de @${comment.authorUsername}`}
-              className="mt-0.5 shrink-0 rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40"
+              className="mt-0.5 shrink-0 rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:ring-offset-zinc-100"
               onClick={() => onOpenUserProfile(comment.userId)}
             >
               <Avatar
@@ -36,7 +36,7 @@ export function CommentList({ comments, currentUserId, mentionDirectory, onOpenU
               className="mt-0.5 shrink-0 ring-goi-gold/15"
             />
           )}
-          <div className="min-w-0 flex-1 text-neutral-400">
+          <div className="min-w-0 flex-1 text-neutral-400 light:text-zinc-700">
             <div>
               {onOpenUserProfile ? (
                 <button
@@ -47,7 +47,7 @@ export function CommentList({ comments, currentUserId, mentionDirectory, onOpenU
                   {comment.authorUsername}
                 </button>
               ) : (
-                <span className="font-medium text-neutral-300">{comment.authorUsername}</span>
+                <span className="font-medium text-neutral-300 light:text-zinc-800">{comment.authorUsername}</span>
               )}
               {comment.userId === currentUserId ? <span className="text-neutral-500"> (tu)</span> : null}
               <span className="text-neutral-500"> · </span>

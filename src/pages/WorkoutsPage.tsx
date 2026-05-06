@@ -182,12 +182,12 @@ export function WorkoutsPage({ onCreateWorkout, onEditWorkout }: WorkoutsPagePro
 
   return (
     <section className="layout grid w-full min-w-0 gap-4">
-      <header className="feed-page-header rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+      <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
         <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">FitSocial</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">Rutinas</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">Rutinas</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500 light:text-zinc-600">
           Crea rutinas reutilizables, organizalas por etiquetas y evolucionalas con el tiempo.
-          {user?.username ? <span className="text-neutral-400"> Conectado como @{user.username}.</span> : null}
+          {user?.username ? <span className="text-neutral-400 light:text-zinc-700"> Conectado como @{user.username}.</span> : null}
         </p>
       </header>
 
@@ -196,20 +196,20 @@ export function WorkoutsPage({ onCreateWorkout, onEditWorkout }: WorkoutsPagePro
           <div className="flex flex-col gap-3">
             <p className="text-left text-[10px] font-semibold uppercase tracking-[0.2em] text-goi-gold-dim sm:text-xs">Resumen</p>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
-              <div className="flex min-h-[5.5rem] min-w-0 flex-col items-end justify-between rounded-lg border border-neutral-800/80 bg-black/35 px-3 py-2.5 text-right shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+              <div className="fs-workout-stat">
                 <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-goi-gold-dim sm:text-xs">Plantillas</p>
-                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 sm:text-3xl">{pageStats.templateCount}</p>
-                <p className="text-[11px] leading-snug text-neutral-500">Rutinas guardadas</p>
+                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 light:text-zinc-900 sm:text-3xl">{pageStats.templateCount}</p>
+                <p className="text-[11px] leading-snug text-neutral-500 light:text-zinc-600">Rutinas guardadas</p>
               </div>
-              <div className="flex min-h-[5.5rem] min-w-0 flex-col items-end justify-between rounded-lg border border-neutral-800/80 bg-black/35 px-3 py-2.5 text-right shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+              <div className="fs-workout-stat">
                 <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-goi-gold-dim sm:text-xs">Entrenamientos totales</p>
-                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 sm:text-3xl">{pageStats.totalSessions}</p>
-                <p className="text-[11px] leading-snug text-neutral-500">Entradas en el historial</p>
+                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 light:text-zinc-900 sm:text-3xl">{pageStats.totalSessions}</p>
+                <p className="text-[11px] leading-snug text-neutral-500 light:text-zinc-600">Entradas en el historial</p>
               </div>
-              <div className="flex min-h-[5.5rem] min-w-0 flex-col items-end justify-between rounded-lg border border-neutral-800/80 bg-black/35 px-3 py-2.5 text-right shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+              <div className="fs-workout-stat">
                 <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-goi-gold-dim sm:text-xs">Últimos 7 días</p>
-                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 sm:text-3xl">{pageStats.last7Days}</p>
-                <p className="text-[11px] leading-snug text-neutral-500">Ventana móvil desde ahora</p>
+                <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 light:text-zinc-900 sm:text-3xl">{pageStats.last7Days}</p>
+                <p className="text-[11px] leading-snug text-neutral-500 light:text-zinc-600">Ventana móvil desde ahora</p>
               </div>
             </div>
           </div>

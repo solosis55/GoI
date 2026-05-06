@@ -131,7 +131,7 @@ export function ProfileAvatarPanel({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <button
         type="button"
-        className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px]"
+        className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px] light:bg-zinc-900/35"
         aria-label="Cerrar"
         onClick={onClose}
       />
@@ -139,19 +139,19 @@ export function ProfileAvatarPanel({
         role="dialog"
         aria-modal="true"
         aria-labelledby="avatar-panel-title"
-        className="relative z-[1] w-full max-w-sm rounded-xl border border-neutral-700 bg-zinc-950 p-4 shadow-2xl shadow-black/50 ring-1 ring-goi-gold/20"
+        className="relative z-[1] w-full max-w-sm rounded-xl border border-neutral-700 bg-zinc-950 p-4 shadow-2xl shadow-black/50 ring-1 ring-goi-gold/20 light:border-zinc-200 light:bg-white light:shadow-zinc-900/15"
       >
         <div className="-mt-0.5 mb-2 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md px-2 py-1 text-xs text-neutral-400 transition hover:bg-neutral-800/80 hover:text-neutral-100"
+            className="rounded-md px-2 py-1 text-xs text-neutral-400 transition hover:bg-neutral-800/80 hover:text-neutral-100 light:text-zinc-600 light:hover:bg-zinc-100 light:hover:text-zinc-900"
           >
             Cerrar
           </button>
         </div>
 
-        <h2 id="avatar-panel-title" className="mt-0 text-sm font-semibold text-neutral-100">
+        <h2 id="avatar-panel-title" className="mt-0 text-sm font-semibold text-neutral-100 light:text-zinc-900">
           Foto de perfil
         </h2>
         <p className="mb-3 text-xs text-neutral-500">
@@ -186,7 +186,7 @@ export function ProfileAvatarPanel({
             </Button>
           </div>
 
-          <div className="grid gap-1.5 rounded-lg border border-neutral-800/90 bg-black/40 p-2.5">
+          <div className="fs-muted-well grid gap-1.5 p-2.5">
             <span className="text-[11px] font-medium text-neutral-500">O enlace a imagen</span>
             <div className="flex flex-wrap gap-2">
               <input

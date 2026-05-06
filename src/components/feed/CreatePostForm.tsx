@@ -110,11 +110,11 @@ export function CreatePostForm({
         {pendingImages.length > 0 ? (
           <ul className="mt-2 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-3 md:grid-cols-4">
             {pendingImages.map((img) => (
-              <li key={img.id} className="relative overflow-hidden rounded-lg border border-neutral-700 bg-black/60">
+              <li key={img.id} className="relative overflow-hidden rounded-lg border border-neutral-700 bg-black/60 light:border-zinc-300 light:bg-zinc-100">
                 <img src={img.dataUrl} alt={img.name} className="aspect-square w-full object-cover" loading="lazy" />
                 <button
                   type="button"
-                  className="absolute right-1 top-1 rounded bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white hover:bg-red-900/90"
+                  className="absolute right-1 top-1 rounded bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white hover:bg-red-900/90 light:bg-zinc-900/85 light:text-white light:hover:bg-red-700"
                   onClick={() => onRemoveImage(img.id)}
                 >
                   Quitar

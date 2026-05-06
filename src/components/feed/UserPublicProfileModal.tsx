@@ -93,23 +93,23 @@ export function UserPublicProfileModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-[2px] light:bg-zinc-900/40"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <section
-        className="max-h-[min(90vh,600px)] w-full max-w-lg overflow-hidden rounded-xl border border-neutral-800 bg-zinc-950 shadow-2xl"
+        className="max-h-[min(90vh,600px)] w-full max-w-lg overflow-hidden rounded-xl border border-neutral-800 bg-zinc-950 shadow-2xl light:border-zinc-200 light:bg-white"
         role="dialog"
         aria-modal="true"
         aria-labelledby="public-profile-heading"
       >
-        <header className="flex items-start justify-between gap-3 border-b border-neutral-800 px-4 py-4">
+        <header className="flex items-start justify-between gap-3 border-b border-neutral-800 px-4 py-4 light:border-zinc-200">
           <div className="flex min-w-0 items-start gap-3">
             <Avatar src={profile?.avatarUrl ?? ""} alt={profile?.username ?? ""} size={48} />
             <div className="min-w-0">
-              <h2 id="public-profile-heading" className="truncate text-lg font-semibold text-neutral-100">
+              <h2 id="public-profile-heading" className="truncate text-lg font-semibold text-neutral-100 light:text-zinc-900">
                 {loading ? "Cargando…" : `@${profile?.username ?? ""}`}
               </h2>
               {profile?.bio ? (
@@ -142,15 +142,15 @@ export function UserPublicProfileModal({
           ) : null}
           <ul className="mt-2 grid list-none gap-2 p-0">
             {posts.map((p) => (
-              <li key={p.id} className="rounded-lg border border-neutral-800/80 bg-black/40 px-3 py-2">
-                <p className="text-xs text-neutral-500">
+              <li key={p.id} className="fs-panel-row px-3 py-2">
+                <p className="text-xs text-neutral-500 light:text-zinc-600">
                   {(p.visibility ?? "public") === "public"
                     ? "Público"
                     : (p.visibility ?? "public") === "followers"
                       ? "Seguidores"
                       : "Solo yo"}
                 </p>
-                <p className="mt-1 line-clamp-4 text-sm text-neutral-200">{p.content}</p>
+                <p className="mt-1 line-clamp-4 text-sm text-neutral-200 light:text-zinc-900">{p.content}</p>
               </li>
             ))}
           </ul>

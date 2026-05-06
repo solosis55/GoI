@@ -48,9 +48,9 @@ function readStoredFeedMode(): "all" | "following" {
 }
 
 function FeedTimelineSkeleton() {
-  const bar = "rounded-md bg-neutral-800";
+  const bar = "rounded-md bg-neutral-800 light:bg-zinc-200";
   const block = (
-    <div className="animate-pulse rounded-lg border border-neutral-800/90 bg-black/50 p-4">
+    <div className="animate-pulse rounded-lg border border-neutral-800/90 bg-black/50 p-4 light:border-zinc-200 light:bg-white/90">
       <div className="flex gap-3">
         <div className={`size-11 shrink-0 rounded-full ${bar}`} />
         <div className="min-w-0 flex-1 space-y-3 pt-0.5">
@@ -443,17 +443,17 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
   return (
     <section className="feed-layout grid w-full min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(260px,340px)] lg:gap-6">
       <section className="feed-main grid w-full min-w-0 gap-3.5 lg:gap-4">
-        <header className="feed-page-header rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+        <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">FitSocial</p>
-              <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">
+              <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">
                 Inicio
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500 light:text-zinc-600">
                 Tu feed: historias (24 h, quien sigues), publicaciones y conversación con otros usuarios.
                 {user?.username ? (
-                  <span className="text-neutral-400"> Conectado como @{user.username}.</span>
+                  <span className="text-neutral-400 light:text-zinc-700"> Conectado como @{user.username}.</span>
                 ) : null}
               </p>
             </div>
@@ -468,7 +468,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
           </div>
         </header>
 
-        <div aria-hidden className="h-px w-full bg-linear-to-r from-transparent via-neutral-800 to-transparent opacity-95" />
+        <div aria-hidden className="h-px w-full bg-linear-to-r from-transparent via-neutral-800 to-transparent opacity-95 light:via-zinc-300" />
 
         <div className="w-full min-w-0">
           <Card tone="dark" className="!p-2 rounded-lg">
@@ -493,7 +493,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
           </Card>
         </div>
 
-        <div aria-hidden className="h-px w-full bg-linear-to-r from-transparent via-neutral-800 to-transparent opacity-95" />
+        <div aria-hidden className="h-px w-full bg-linear-to-r from-transparent via-neutral-800 to-transparent opacity-95 light:via-zinc-300" />
 
         <Card tone="dark">
           <h2 className="mt-0">Crear publicación</h2>

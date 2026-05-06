@@ -29,14 +29,14 @@ export function EmptyState({ message, className = "", showIcon = false }: EmptyS
     return (
       <div
         className={[
-          "rounded-lg border border-dashed border-neutral-700/75 bg-neutral-950/35 px-4 py-8 text-center",
+          "rounded-lg border border-dashed border-neutral-700/75 bg-neutral-950/35 px-4 py-8 text-center light:border-zinc-300 light:bg-zinc-100/80",
           className,
         ]
           .filter(Boolean)
           .join(" ")}
       >
-        <InboxQuietIcon className="mx-auto mb-3 size-11 text-neutral-600" aria-hidden />
-        <p className="text-sm text-neutral-500">{message}</p>
+        <InboxQuietIcon className="mx-auto mb-3 size-11 text-neutral-600 light:text-zinc-500" aria-hidden />
+        <p className="text-sm text-neutral-500 light:text-zinc-600">{message}</p>
       </div>
     );
   }

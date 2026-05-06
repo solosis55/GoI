@@ -42,7 +42,7 @@
   - Uso: barra lateral autenticada en **`App.tsx`** debajo de **`SidebarSessionBadge`**. Cuatro **`Button`** con iconos **`aria-hidden`** (casa / mancuerna / usuario / salida): **`secondary`** o **`navActive`** según pestaña; **`danger`** para **Cerrar sesión**. Clases **`motion-safe:`** en hover/active e iconos; rejilla **`max-md:grid-cols-2`** con logout **`max-md:col-span-2`**.
 - `SiteFooter`
   - Props: ninguna (copy fijo + año con `new Date().getFullYear()`).
-  - Uso: pie global bajo el `main` en **`App.tsx`** (sesion invitada y autenticada). Enlace externo **Roadmap** (Trello); textos Aviso legal / Privacidad / Contacto como placeholders (`title` “Página en preparación”) hasta tener rutas o URLs.
+  - Uso: pie global bajo el `main` en **`App.tsx`** y en **`LegalPageShell`**. Enlace externo **Roadmap** (Trello); **`Link`** internos a **`/aviso-legal`**, **`/privacidad`**, **`/contacto`**. Alternador de tema (`ThemeToggle`).
 
 ### Feed (`src/components/feed`)
 - `PostItem`

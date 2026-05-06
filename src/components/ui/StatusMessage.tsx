@@ -14,9 +14,11 @@ export function StatusMessage({
   loadingText = "Cargando...",
   tone = "light",
 }: StatusMessageProps) {
-  const loadingClass = tone === "dark" ? "text-neutral-400" : "text-neutral-600";
-  const errorClass = tone === "dark" ? "text-red-400" : "text-red-600";
-  const successClass = tone === "dark" ? "text-emerald-400" : "text-green-700 dark:text-green-400";
+  const loadingClass =
+    tone === "dark" ? "text-neutral-400 light:text-neutral-600" : "text-neutral-600";
+  const errorClass = tone === "dark" ? "text-red-400 light:text-red-700" : "text-red-600";
+  const successClass =
+    tone === "dark" ? "text-emerald-400 light:text-emerald-700" : "text-green-700 dark:text-green-400";
 
   return (
     <>

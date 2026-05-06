@@ -124,7 +124,7 @@ export function FeedNotificationsBell({
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Cerrar notificaciones" : "Abrir notificaciones"}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-neutral-300 transition-colors hover:border-goi-gold/35 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-neutral-300 transition-colors hover:border-goi-gold/35 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:border-zinc-300 light:bg-white light:text-zinc-700 light:hover:border-goi-gold-dim/50"
       >
         <BellIcon className="h-5 w-5" />
         {unreadCount > 0 ? (
@@ -139,12 +139,12 @@ export function FeedNotificationsBell({
 
       {open ? (
         <div
-          className="feed-notif-panel-animate absolute right-0 top-full z-30 mt-2 w-[min(100vw-2rem,22rem)] max-h-[min(70vh,26rem)] overflow-y-auto rounded-lg border border-neutral-800 bg-zinc-950 py-2 shadow-xl shadow-black/40"
+          className="feed-notif-panel-animate absolute right-0 top-full z-30 mt-2 w-[min(100vw-2rem,22rem)] max-h-[min(70vh,26rem)] overflow-y-auto rounded-lg border border-neutral-800 bg-zinc-950 py-2 shadow-xl shadow-black/40 light:border-zinc-200 light:bg-white light:shadow-xl light:shadow-zinc-900/15"
           role="region"
           aria-label="Actividad reciente"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 px-3 pb-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Actividad</p>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 px-3 pb-2 light:border-zinc-200">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 light:text-zinc-600">Actividad</p>
             <Button
               type="button"
               variant="secondary"
@@ -155,7 +155,7 @@ export function FeedNotificationsBell({
               Marcar todo leído
             </Button>
           </div>
-          {markErr ? <p className="px-3 pt-2 text-xs text-red-400">{markErr}</p> : null}
+          {markErr ? <p className="px-3 pt-2 text-xs text-red-400 light:text-red-700">{markErr}</p> : null}
 
           <div className="mt-2 flex flex-wrap gap-1 px-3" role="tablist" aria-label="Filtrar notificaciones">
             {(["all", "like", "comment", "follow"] as const).map((t) => (
@@ -168,7 +168,7 @@ export function FeedNotificationsBell({
                 className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium capitalize transition-colors ${
                   tab === t
                     ? "border-goi-gold/50 bg-goi-gold/15 text-goi-gold"
-                    : "border-neutral-700 text-neutral-400 hover:border-neutral-500"
+                    : "border-neutral-700 text-neutral-400 hover:border-neutral-500 light:border-zinc-300 light:text-zinc-600 light:hover:border-zinc-400"
                 }`}
               >
                 {t === "all" ? "Todas" : t === "like" ? "Likes" : t === "comment" ? "Comentarios" : "Siguen"}
@@ -185,27 +185,27 @@ export function FeedNotificationsBell({
               {filtered.map((n) => (
                 <li
                   key={n.id}
-                  className={`border-b border-neutral-800/70 px-3 py-2.5 text-sm last:border-b-0 ${
+                  className={`border-b border-neutral-800/70 px-3 py-2.5 text-sm last:border-b-0 light:border-zinc-200 ${
                     n.read === false ? "bg-goi-gold/[0.04]" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-neutral-200">{n.actorUsername}</p>
-                      <p className="mt-0.5 text-neutral-400">
+                      <p className="font-medium text-neutral-200 light:text-zinc-900">{n.actorUsername}</p>
+                      <p className="mt-0.5 text-neutral-400 light:text-zinc-600">
                         {n.type === "like" ? "Ha dado like a tu publicación." : null}
                         {n.type === "comment" ? "Ha comentado tu publicación." : null}
                         {n.type === "follow" ? "Ha empezado a seguirte." : null}
                       </p>
                       {n.commentPreview ? (
-                        <p className="mt-1 line-clamp-2 text-xs italic text-neutral-500">
+                        <p className="mt-1 line-clamp-2 text-xs italic text-neutral-500 light:text-zinc-600">
                           &quot;{n.commentPreview}&quot;
                         </p>
                       ) : null}
                       {n.postPreview && n.type !== "follow" ? (
-                        <p className="mt-1 line-clamp-2 text-xs text-neutral-600">{n.postPreview}</p>
+                        <p className="mt-1 line-clamp-2 text-xs text-neutral-600 light:text-zinc-600">{n.postPreview}</p>
                       ) : null}
-                      <time className="mt-1 block text-[10px] text-neutral-600">
+                      <time className="mt-1 block text-[10px] text-neutral-600 light:text-zinc-500">
                         {new Intl.DateTimeFormat("es-ES", {
                           dateStyle: "short",
                           timeStyle: "short",
@@ -218,7 +218,7 @@ export function FeedNotificationsBell({
                       <button
                         type="button"
                         disabled={markBusy || markingSingleId !== null}
-                        className="text-left text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-neutral-300 disabled:opacity-45"
+                        className="text-left text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-neutral-300 disabled:opacity-45 light:text-zinc-600 light:hover:text-zinc-900"
                         onClick={() => void handleMarkOneRead(n.id)}
                       >
                         {markingSingleId === n.id ? "Marcando…" : "Marcar leída"}

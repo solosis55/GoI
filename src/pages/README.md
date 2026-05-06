@@ -1,6 +1,6 @@
 # pages
 
-Vistas principales de la aplicacion (shell por pestañas en `App.tsx`, sin router de URL para el area autenticada). El shell incluye **`SiteFooter`** bajo el `main` (invitado y logueado): ver `docs/components.md`.
+Vistas principales del area autenticada (shell por pestañas en `App.tsx`, sin rutas por URL dentro de ese shell). **`react-router-dom`** declara solo paginas **`/aviso-legal`**, **`/privacidad`**, **`/contacto`** en **`RootRoutes.tsx`**, cada una en **`pages/legal/`** con **`LegalPageShell`**. El shell incluye **`SiteFooter`** bajo el `main` (invitado y logueado; el mismo pie en las paginas legales): ver `docs/components.md`.
 
 ## `AuthPage.tsx`
 

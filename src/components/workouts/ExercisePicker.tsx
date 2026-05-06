@@ -174,7 +174,7 @@ export function ExercisePicker({
 
       {filtered.length > 0 ? (
         <ul
-          className="max-h-48 list-none space-y-1 overflow-y-auto rounded-md border border-neutral-800 bg-black/25 p-1.5"
+          className="fs-muted-well max-h-48 list-none space-y-1 overflow-y-auto rounded-md p-1.5"
           aria-label="Resultados del catalogo"
         >
           {filtered.map((e) => (
@@ -218,15 +218,15 @@ export function ExercisePicker({
               return (
                 <li
                   key={`${block.exerciseId}-${index}`}
-                  className="rounded-md border border-neutral-800/80 bg-black/25 p-3"
+                  className="fs-muted-well rounded-md p-3"
                 >
-                  <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800/60 pb-2 max-sm:flex-col max-sm:items-stretch">
+                  <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800/60 pb-2 light:border-zinc-200 max-sm:flex-col max-sm:items-stretch">
                     <span className="flex w-7 shrink-0 justify-center text-xs font-semibold tabular-nums text-goi-gold-dim sm:w-8">
                       {index + 1}.
                     </span>
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1.5">
-                      <span className="text-sm font-medium text-neutral-100">{label}</span>
-                      <span className="inline-block rounded-full border border-neutral-700 bg-neutral-900/80 px-2 py-0.5 text-[10px] font-medium text-neutral-400">
+                      <span className="text-sm font-medium text-neutral-100 light:text-zinc-900">{label}</span>
+                      <span className="inline-block rounded-full border border-neutral-700 bg-neutral-900/80 px-2 py-0.5 text-[10px] font-medium text-neutral-400 light:border-zinc-300 light:bg-zinc-200 light:text-zinc-700">
                         {(block.laterality ?? "bilateral") === "unilateral" ? "Unilateral" : "Bilateral"}
                       </span>
                       {block.equipmentSlug ? (
@@ -237,7 +237,7 @@ export function ExercisePicker({
                       {(ex?.muscles ?? []).map((slug) => (
                         <span
                           key={slug}
-                          className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-[10px] font-medium text-goi-steel"
+                          className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-[10px] font-medium text-goi-steel light:bg-white light:text-yellow-950"
                         >
                           {MUSCLE_LABEL[slug] ?? slug}
                         </span>
@@ -290,7 +290,7 @@ export function ExercisePicker({
                             className={
                               active
                                 ? "rounded-full border border-sky-500/40 bg-sky-950/40 px-2.5 py-1 text-xs text-sky-100"
-                                : "rounded-full border border-neutral-700 bg-neutral-950/80 px-2.5 py-1 text-xs text-neutral-300 hover:border-neutral-500 disabled:opacity-40"
+                                : "rounded-full border border-neutral-700 bg-neutral-950/80 px-2.5 py-1 text-xs text-neutral-300 hover:border-neutral-500 disabled:opacity-40 light:border-zinc-300 light:bg-white light:text-zinc-800 light:hover:border-zinc-400"
                             }
                           >
                             {opt.label}
@@ -314,7 +314,7 @@ export function ExercisePicker({
                             className={
                               active
                                 ? "rounded-full border border-goi-gold/40 bg-goi-gold/15 px-2.5 py-1 text-xs text-goi-gold"
-                                : "rounded-full border border-neutral-700 bg-neutral-950/80 px-2.5 py-1 text-xs text-neutral-300 hover:border-neutral-500 disabled:opacity-40"
+                                : "rounded-full border border-neutral-700 bg-neutral-950/80 px-2.5 py-1 text-xs text-neutral-300 hover:border-neutral-500 disabled:opacity-40 light:border-zinc-300 light:bg-white light:text-zinc-800 light:hover:border-zinc-400"
                             }
                           >
                             {opt.label}
@@ -342,10 +342,10 @@ export function ExercisePicker({
                         Añadir serie
                       </Button>
                     </div>
-                    <div className="mt-2 overflow-x-auto rounded-md border border-neutral-800/80 bg-black/20">
+                    <div className="mt-2 overflow-x-auto rounded-md border border-neutral-800/80 bg-black/20 light:border-zinc-200 light:bg-zinc-100">
                       <table className="w-full min-w-[520px] border-collapse text-sm">
                         <thead>
-                          <tr className="border-b border-neutral-800 text-left text-[10px] uppercase tracking-wide text-neutral-500">
+                          <tr className="border-b border-neutral-800 text-left text-[10px] uppercase tracking-wide text-neutral-500 light:border-zinc-200 light:text-zinc-600">
                             <th className="px-2 py-2 font-semibold">#</th>
                             <th className="px-2 py-2 font-semibold">Reps</th>
                             <th className="px-2 py-2 font-semibold">Peso</th>
@@ -355,7 +355,7 @@ export function ExercisePicker({
                         </thead>
                         <tbody>
                           {block.sets.map((row, sIdx) => (
-                            <tr key={`set-${index}-${sIdx}`} className="border-b border-neutral-800/50 last:border-b-0">
+                            <tr key={`set-${index}-${sIdx}`} className="border-b border-neutral-800/50 last:border-b-0 light:border-zinc-200">
                               <td className="px-2 py-1.5 tabular-nums text-neutral-500">{sIdx + 1}</td>
                               <td className="px-2 py-1.5">
                                 <input

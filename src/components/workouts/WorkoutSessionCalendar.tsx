@@ -72,10 +72,10 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
   }
 
   return (
-    <div className="flex h-fit w-full min-w-0 flex-col rounded-lg border border-neutral-800 bg-zinc-950/80 p-3 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.05)] sm:p-4">
+    <div className="fs-card-surface flex h-fit w-full min-w-0 flex-col p-3 sm:p-4">
       <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Calendario</p>
       <div className="mt-2 flex items-center justify-between gap-2">
-        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-200">{monthTitle}</p>
+        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-200 light:text-zinc-900">{monthTitle}</p>
         <div className="flex shrink-0 items-center gap-1">
           <Button type="button" variant="secondary" className="!px-2 !py-1 text-xs" onClick={goPrevMonth} aria-label="Mes anterior">
             ‹
@@ -107,7 +107,7 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
               role="gridcell"
               className={[
                 "flex min-h-[1.5rem] items-center justify-center rounded-md text-xs tabular-nums sm:min-h-[1.75rem] sm:text-sm",
-                hasSession ? "bg-goi-gold/20 font-medium text-goi-gold" : "text-neutral-400",
+                hasSession ? "bg-goi-gold/20 font-medium text-goi-gold" : "text-neutral-400 light:text-zinc-600",
                 isToday && !hasSession ? "ring-1 ring-goi-gold/40 ring-inset" : "",
                 isToday && hasSession ? "ring-1 ring-goi-gold/50 ring-inset" : "",
               ]

@@ -121,7 +121,7 @@ function AppContent() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen flex-col bg-black text-neutral-200">
+      <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
         <main className="social-shell flex min-h-0 flex-1 flex-col items-center px-4 py-10 sm:py-14">
           <div className="mb-8 flex w-full flex-col items-center sm:mb-10">
             <GoISidebarBadge
@@ -140,9 +140,9 @@ function AppContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-neutral-200">
+    <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
       <main className="social-shell grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="social-sidebar sticky top-0 flex h-screen flex-col gap-5 border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3">
+        <aside className="social-sidebar sticky top-0 flex h-screen flex-col gap-5 border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3 light:border-zinc-200 light:bg-white">
           <SidebarSessionBadge username={user?.username ?? ""} avatarUrl={user?.avatarUrl ?? ""} />
           <SidebarNavigation
             activeTab={activeTab}

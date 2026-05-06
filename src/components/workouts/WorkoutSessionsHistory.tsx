@@ -40,12 +40,12 @@ export function WorkoutSessionsHistory({
         {sessions.map((session) => (
           <li
             key={session.id}
-            className="flex flex-col gap-2 rounded-lg border border-neutral-800 bg-black/30 p-3 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.05)] sm:flex-row sm:items-start sm:justify-between"
+            className="fs-panel-elevated flex flex-col gap-2 p-3 sm:flex-row sm:items-start sm:justify-between"
           >
             <div className="min-w-0">
-              <strong className="text-neutral-100">{session.workoutTitle}</strong>
+              <strong className="text-neutral-100 light:text-zinc-900">{session.workoutTitle}</strong>
               <p className="mt-1 text-sm text-neutral-500">{formatSessionPerformedAt(session.performedAt)}</p>
-              {session.notes ? <p className="mt-2 text-sm text-goi-steel">{session.notes}</p> : null}
+              {session.notes ? <p className="mt-2 text-sm text-goi-steel light:text-zinc-700">{session.notes}</p> : null}
             </div>
             {showDelete && onDeleteSession ? (
               <Button

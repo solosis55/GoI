@@ -15,15 +15,15 @@ const variantClassMap: Record<ButtonVariant, string> = {
   danger: "danger bg-red-700 border-red-700 text-white hover:bg-red-800",
   navActive:
     "nav-active border-goi-gold-dim bg-goi-gold font-semibold text-neutral-950 hover:brightness-[1.07]",
-  link: "link-btn mt-3 w-full bg-transparent border-transparent text-goi-gold hover:bg-neutral-900/70 hover:text-yellow-400",
+  link: "link-btn mt-3 w-full bg-transparent border-transparent text-goi-gold hover:bg-neutral-900/70 hover:text-yellow-400 light:hover:bg-zinc-200/90 light:hover:text-yellow-700",
   linkDark:
-    "link-btn mt-3 w-full bg-transparent border-transparent text-goi-steel hover:bg-neutral-950/70 hover:text-goi-gold",
+    "link-btn mt-3 w-full bg-transparent border-transparent text-goi-steel hover:bg-neutral-950/70 hover:text-goi-gold light:text-zinc-600 light:hover:bg-zinc-200/80 light:hover:text-goi-gold-dim",
 };
 
 export function Button({ variant = "primary", className = "", children, ...props }: ButtonProps) {
   const variantClass = variantClassMap[variant];
   const baseClasses =
-    "inline-flex items-center justify-center rounded-lg border px-3 py-2 font-inherit transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-lg border px-3 py-2 font-inherit transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70";
   const classes = [baseClasses, variantClass, className].filter(Boolean).join(" ");
 
   return (

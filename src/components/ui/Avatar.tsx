@@ -16,7 +16,7 @@ export function Avatar({ src, alt, size = 32, className = "", fill = false }: Av
       alt={alt}
       className={[
         "rounded-full object-cover",
-        fill ? "h-full w-full min-h-0 min-w-0" : "ring-2 ring-neutral-800",
+        fill ? "h-full w-full min-h-0 min-w-0" : "ring-2 ring-neutral-800 light:ring-zinc-300",
         className,
       ]
         .filter(Boolean)

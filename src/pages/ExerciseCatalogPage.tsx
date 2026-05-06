@@ -125,7 +125,7 @@ export function ExerciseCatalogPage({
 
   return (
     <section className="layout grid w-full min-w-0 gap-4">
-      <header className="rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+      <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
         <nav className="mb-1 flex flex-wrap items-center gap-2 text-xs text-neutral-500" aria-label="Miga de pan">
           <button
             type="button"
@@ -160,8 +160,8 @@ export function ExerciseCatalogPage({
           </span>
         </nav>
         <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Catalogo</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">Catalogo de ejercicios</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">Catalogo de ejercicios</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500 light:text-zinc-600">
           Filtra por nombre, musculos y tipo de material. Puedes combinar filtros: entre categorias deben cumplirse todos los
           grupos activos; dentro de musculos o de material, basta con coincidir con una etiqueta. Marca filas para la rutina o
           abre la ficha.
@@ -288,12 +288,12 @@ export function ExerciseCatalogPage({
               return (
                 <li
                   key={ex.id}
-                  className="flex flex-wrap items-center gap-3 rounded-lg border border-neutral-800/90 bg-black/25 px-3 py-2.5 max-sm:flex-col max-sm:items-stretch"
+                  className="fs-muted-well flex flex-wrap items-center gap-3 px-3 py-2.5 max-sm:flex-col max-sm:items-stretch"
                 >
                   <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 shrink-0 rounded border-neutral-600 bg-neutral-950 text-goi-gold focus:ring-goi-gold/40"
+                      className="h-4 w-4 shrink-0 rounded border-neutral-600 bg-neutral-950 text-goi-gold focus:ring-goi-gold/40 light:bg-white light:border-zinc-400"
                       checked={checked}
                       onChange={() => togglePick(ex.id)}
                       aria-label={`Seleccionar ${ex.name}`}

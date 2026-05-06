@@ -273,7 +273,7 @@ export function AuthPage() {
             </label>
             <StatusMessage tone="dark" error={error} success={message} />
             {devResetHint && (
-              <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-neutral-700 bg-black p-3 text-xs leading-relaxed text-neutral-400">
+              <pre className="fs-muted-well max-h-40 overflow-auto whitespace-pre-wrap break-all p-3 text-xs leading-relaxed text-neutral-400 light:text-zinc-600">
                 {devResetHint}
               </pre>
             )}

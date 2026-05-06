@@ -77,7 +77,7 @@ Si la plataforma solo permite `WORKDIR` dentro de `server/`, mueve este flujo o 
 
 ## Vercel (frontend + API en el mismo proyecto)
 
-El repo incluye **`vercel.json`** y **`api/index.mjs`**: las peticiones a **`/api/*`** se enrutan a una **función serverless** que exporta la misma app **Express** compilada en `server/dist/`. El build usa **`npm run vercel-build`** (equivale a `npm run build:deploy`): Vite genera **`dist/`** y TypeScript compila el **`server/`**.
+El repo incluye **`vercel.json`** y **`api/index.mjs`**: las peticiones a **`/api/*`** se enrutan a una **función serverless** que exporta la misma app **Express** compilada en `server/dist/`. Una segunda entrada de **`rewrites`** envía **`/(.*)`** a **`/index.html`** cuando no coincide ningún archivo estático (SPA: rutas legales como **`/privacidad`**, etc.). El build usa **`npm run vercel-build`** (equivale a `npm run build:deploy`): Vite genera **`dist/`** y TypeScript compila el **`server/`**.
 
 Pasos en Vercel:
 

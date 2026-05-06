@@ -114,14 +114,16 @@ export function MentionableTextarea({
       {showList ? (
         <ul
           role="listbox"
-          className={`${listClass} max-h-40 overflow-auto rounded-lg border border-neutral-700 bg-zinc-950 py-1 text-sm shadow-xl ring-1 ring-goi-gold/15`}
+          className={`${listClass} max-h-40 overflow-auto rounded-lg border border-neutral-700 bg-zinc-950 py-1 text-sm shadow-xl ring-1 ring-goi-gold/15 light:border-zinc-200 light:bg-white light:ring-goi-gold/25`}
         >
           {filtered.map((u, i) => (
             <li key={u.id} role="option" aria-selected={i === highlightIdx}>
               <button
                 type="button"
-                className={`flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-neutral-800/90 ${
-                  i === highlightIdx ? "bg-neutral-800/80 text-goi-gold" : "text-neutral-200"
+                className={`flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-neutral-800/90 light:hover:bg-zinc-100 ${
+                  i === highlightIdx
+                    ? "bg-neutral-800/80 text-goi-gold light:bg-goi-gold/15 light:text-yellow-950"
+                    : "text-neutral-200 light:text-zinc-800"
                 }`}
                 onMouseDown={(ev) => {
                   ev.preventDefault();

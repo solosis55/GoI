@@ -7,7 +7,7 @@ export function UserSummaryCard({ username, myPostsCount }: UserSummaryCardProps
   return (
     <>
       <h3>Tu cuenta</h3>
-      <p className="mt-2 text-neutral-500">
+      <p className="mt-2 text-neutral-500 light:text-zinc-600">
         @{username} | Publicaciones: {myPostsCount}
       </p>
     </>

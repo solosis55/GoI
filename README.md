@@ -9,7 +9,7 @@ Web tipo **red social + deporte**: publicar progreso en un feed comunitario, lle
 - Registro, inicio de sesión, sesión persistida en el cliente (JWT).
 - Recuperación de contraseña preparada en API y flujo en pantalla de auth (en producción falta integrar envío de correo; en local ver `server/.env.example` y `AUTH_RESET_RETURN_TOKEN`).
 - Feed con publicaciones, filtro “Todos / Seguidos”, likes y comentarios; **Inicio** con encabezado de pagina, historias en tarjeta compacta y columna principal del feed que aprovecha el ancho en pantallas grandes.
-- **Pie de pagina** global (`SiteFooter`): copyright FitSocial · GoI, enlace al roadmap en Trello y textos legales/contacto reservados para futuras paginas.
+- **Pie de página** global (`SiteFooter`): copyright FitSocial · GoI, enlace al roadmap en Trello y enlaces internos **Aviso legal** (`/aviso-legal`), **Privacidad** (`/privacidad`) y **Contacto** (`/contacto`). Correo público opcional del cliente con `VITE_CONTACT_EMAIL` (ver desarrollo).
 - CRUD de **rutinas** por usuario: ejercicios enlazados al **catalogo** (`exerciseIds`), **etiquetas** por lineas, **busqueda por titulo**, **ordenar** la lista, filtro por etiqueta, duplicar rutina.
 - **Catalogo de ejercicios** en API (`GET /api/exercises`, `GET /api/exercises/:id`): datos en `store.json` (`exercises`), JWT obligatorio; cada ejercicio puede incluir **equipamiento**, **descripcion** y **instrucciones de ejecucion** (semilla en `server/src/data/exerciseDetails.ts`). Flujo UX lineal: **Rutinas → Editor de rutinas → Nueva rutina (o Editar rutina) → Catalogo → ejercicio** (sin boton de catalogo en el listado de rutinas). Borrador de creacion de rutina en **`sessionStorage`** (`fitsocial:workoutCreateDraft`) para no perder titulo, descripcion, ejercicios y etiquetas al cambiar de pestaña o vista.
 - **Sesiones de entreno:** registrar cuando se hizo una plantilla (fecha/hora, notas) y ver historial; API `GET|POST /api/workout-sessions`, `DELETE /api/workout-sessions/:id` (JWT). El historial también se muestra en **Perfil** (solo lectura).
@@ -20,7 +20,7 @@ Web tipo **red social + deporte**: publicar progreso en un feed comunitario, lle
 
 | Capa | Tecnología |
 |------|------------|
-| Frontend | React 19, TypeScript, Vite 8, Tailwind CSS 4, `react-router-dom` (uso principal: shell por pestañas) |
+| Frontend | React 19, TypeScript, Vite 8, Tailwind CSS 4; `react-router-dom` (**rutas legales** `/aviso-legal`, `/privacidad`, `/contacto`; el resto: shell por pestañas en la app principal) |
 | Backend | Node.js, Express 5, TypeScript, JWT, bcrypt, persistencia en **`server/data/store.json`** |
 | Calidad | ESLint (raíz), Vitest + supertest (`server`) |
 
@@ -45,6 +45,8 @@ Web tipo **red social + deporte**: publicar progreso en un feed comunitario, lle
    - Backend: en la carpeta `server`, `npm run dev` → API en `http://localhost:4000` (puerto configurable con `PORT`).
 
    El cliente usa por defecto `http://localhost:4000/api` en modo desarrollo (`src/api/client.ts`).
+
+4. **Correo de contacto** (solo cliente, opcional): en `.env.local` en la raíz puedes definir `VITE_CONTACT_EMAIL=tu-correo@dominio`; se mostrará en `/contacto` y puedes usarlo en los datos identificativos de las páginas legales al completarlos.
 
 ## Usuarios de prueba (datos locales)
 

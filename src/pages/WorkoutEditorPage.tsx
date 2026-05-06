@@ -219,7 +219,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
 
   return (
     <section className="layout grid w-full min-w-0 gap-4">
-      <header className="rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+      <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
         <nav className="mb-1 flex flex-wrap items-center gap-2 text-xs text-neutral-500" aria-label="Miga de pan">
           <button
             type="button"
@@ -236,7 +236,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
           </span>
         </nav>
         <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Editor de rutinas</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">{pageTitle}</h1>
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">{pageTitle}</h1>
         {headerLine}
       </header>
 
@@ -280,13 +280,13 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
           className="hidden min-w-0 lg:block lg:sticky lg:top-4"
           aria-label="Vista previa de la rutina"
         >
-          <div className="flex h-fit flex-col gap-3 rounded-lg border border-neutral-800 bg-zinc-950/80 p-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.05)]">
+          <div className="fs-card-surface flex h-fit flex-col gap-3 p-4">
             <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Vista previa</p>
-            <div className="rounded-lg border border-neutral-800/90 bg-black/35 p-3 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
-              <strong className="block text-neutral-100">
+            <div className="fs-panel-elevated rounded-lg p-3">
+              <strong className="block text-neutral-100 light:text-zinc-900">
                 {title.trim() || "Sin titulo"}
               </strong>
-              <p className="mt-1 text-sm text-goi-steel">
+              <p className="mt-1 text-sm text-goi-steel light:text-zinc-700">
                 {description.trim() || "Sin descripcion"}
               </p>
               {previewTags.length > 0 ? (
@@ -295,7 +295,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
                   <ul className="mt-1.5 flex list-none flex-wrap gap-1.5 p-0">
                     {previewTags.map((tag, tIdx) => (
                       <li key={`${tag}-${tIdx}`}>
-                        <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel">
+                        <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel light:bg-white light:text-yellow-950">
                           {tag}
                         </span>
                       </li>
@@ -305,7 +305,7 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
               ) : null}
               <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-neutral-600">Ejercicios</p>
               {previewExerciseNames.length > 0 ? (
-                <ol className="mt-1.5 max-w-xl list-inside list-decimal space-y-1 pl-0.5 text-sm text-goi-steel">
+                <ol className="mt-1.5 max-w-xl list-inside list-decimal space-y-1 pl-0.5 text-sm text-goi-steel light:text-zinc-800">
                   {previewExerciseNames.map((name, idx) => (
                     <li key={`pv-${idx}`} className="break-words pl-1">
                       {catalogLoading && !exerciseById.size ? "…" : name}

@@ -25,11 +25,11 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
   return (
     <div className="relative w-full">
       <div
-        className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-7 bg-linear-to-r from-zinc-950 to-transparent sm:w-9"
+        className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-7 bg-linear-to-r from-zinc-950 to-transparent light:from-white sm:w-9"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-7 bg-linear-to-l from-zinc-950 to-transparent sm:w-9"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-7 bg-linear-to-l from-zinc-950 to-transparent light:from-white sm:w-9"
         aria-hidden
       />
       <div className="flex w-full justify-center">
@@ -73,7 +73,7 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
                     </span>
                   ) : null}
                 </div>
-                <small className="max-w-[4.5rem] truncate text-center text-[11px] leading-tight text-neutral-400">
+                <small className="max-w-[4.5rem] truncate text-center text-[11px] leading-tight text-neutral-400 light:text-zinc-600">
                   {label}
                 </small>
               </button>

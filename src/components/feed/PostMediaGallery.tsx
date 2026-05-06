@@ -18,7 +18,7 @@ export function PostMediaGallery({ media }: { media: PostMediaItem[] }) {
             href={item.url}
             target="_blank"
             rel="noreferrer noopener"
-            className="relative block overflow-hidden rounded-lg border border-neutral-800/90 bg-neutral-950/80 outline-none ring-goi-gold/30 transition hover:border-goi-gold/35 focus-visible:ring-2"
+            className="relative block overflow-hidden rounded-lg border border-neutral-800/90 bg-neutral-950/80 outline-none ring-goi-gold/30 transition hover:border-goi-gold/35 focus-visible:ring-2 light:border-zinc-200 light:bg-white"
           >
             <img
               src={item.url}

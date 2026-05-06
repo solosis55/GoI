@@ -63,7 +63,7 @@ export function ExerciseDetailPage({
 
   return (
     <section className="layout grid w-full min-w-0 gap-4">
-      <header className="rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+      <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
         <nav className="mb-1 flex flex-wrap items-center gap-2 text-xs text-neutral-500" aria-label="Miga de pan">
           <button
             type="button"
@@ -106,11 +106,11 @@ export function ExerciseDetailPage({
           </span>
         </nav>
         <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Ficha del ejercicio</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">
           {loading ? "Cargando…" : exercise?.name ?? "Ejercicio"}
         </h1>
         {!loading && exercise?.description ? (
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-goi-steel">{exercise.description}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-goi-steel light:text-zinc-700">{exercise.description}</p>
         ) : null}
         {!loading && exercise && !exercise.description ? (
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">
@@ -127,14 +127,14 @@ export function ExerciseDetailPage({
             {exercise.equipment ? (
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Equipamiento</p>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-200">{exercise.equipment}</p>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-200 light:text-zinc-800">{exercise.equipment}</p>
               </div>
             ) : null}
 
             {exercise.instructions ? (
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Ejecucion</p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-goi-steel">{exercise.instructions}</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-goi-steel light:text-zinc-800">{exercise.instructions}</p>
               </div>
             ) : null}
 
@@ -159,7 +159,7 @@ export function ExerciseDetailPage({
                 <ul className="mt-2 flex list-none flex-wrap gap-2 p-0">
                   {exercise.muscles.map((slug) => (
                     <li key={slug}>
-                      <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2.5 py-1 text-xs text-goi-steel">
+                      <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2.5 py-1 text-xs text-goi-steel light:bg-white light:text-yellow-950">
                         {MUSCLE_LABEL[slug] ?? slug}
                       </span>
                     </li>

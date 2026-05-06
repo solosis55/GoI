@@ -231,14 +231,14 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
 
   return (
     <section className="profile-page grid w-full max-w-3xl gap-4 lg:gap-6">
-      <header className="rounded-lg border border-neutral-800 bg-zinc-950/90 px-4 py-4 shadow-[inset_0_1px_0_0_rgba(212,175,55,0.07)] sm:px-5 sm:py-5">
+      <header className="feed-page-header px-4 py-4 sm:px-5 sm:py-5">
         <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Tu cuenta</p>
         <div className="mt-3 flex flex-wrap items-start gap-4">
           <div className="shrink-0">
             <button
               type="button"
               onClick={() => setAvatarPanelOpen((open) => !open)}
-              className="group rounded-full outline-none ring-offset-2 ring-offset-black transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-goi-gold"
+              className="group rounded-full outline-none ring-offset-2 ring-offset-black transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-goi-gold light:ring-offset-zinc-100"
               aria-expanded={avatarPanelOpen}
               aria-haspopup="dialog"
               aria-label={avatarUrl ? "Cambiar foto de perfil" : "Añadir foto de perfil"}
@@ -251,7 +251,7 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
                   className="ring-goi-gold/25 group-hover:ring-goi-gold/55"
                 />
               ) : (
-                <span className="flex size-20 items-center justify-center rounded-full border-2 border-dashed border-goi-gold/40 bg-black/55 px-1 text-center text-[11px] font-semibold leading-tight text-goi-gold/90 shadow-inner shadow-black/60">
+                <span className="flex size-20 items-center justify-center rounded-full border-2 border-dashed border-goi-gold/40 bg-black/55 px-1 text-center text-[11px] font-semibold leading-tight text-goi-gold/90 shadow-inner shadow-black/60 light:bg-zinc-100/90 light:shadow-inner light:shadow-zinc-900/10">
                   + Añadir foto
                 </span>
               )}
@@ -280,14 +280,14 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
             ) : null}
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-semibold tracking-tight text-neutral-100 sm:text-2xl">
+            <h1 className="text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900 sm:text-2xl">
               @{username || "usuario"}
             </h1>
             {goal.trim() ? <p className="mt-1 text-sm text-goi-gold/90">{goal}</p> : null}
-            <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+            <p className="mt-2 text-sm leading-relaxed text-neutral-500 light:text-zinc-600">
               {bio.trim() ? bio : "Sin biografía todavía. Edítala más abajo."}
             </p>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-600">
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-600 light:text-zinc-600">
               <span>
                 Publicaciones: {postsLoading ? "…" : myPosts.length}
               </span>
@@ -300,7 +300,7 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
       </header>
 
       <Card tone="dark">
-        <h2 className="mt-0 text-lg font-semibold text-neutral-100">Datos públicos</h2>
+        <h2 className="mt-0 text-lg font-semibold text-neutral-100 light:text-zinc-900">Datos públicos</h2>
         <p className="mb-3 text-sm text-neutral-500">
           Tu nombre de usuario y bio aparecen en el feed y en el perfil que ven otros cuando te siguen. La foto la
           cambias pulsando tu imagen arriba.
@@ -321,11 +321,11 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
       </Card>
 
       <Card tone="dark">
-        <h2 className="mt-0 text-lg font-semibold text-neutral-100">Mis publicaciones</h2>
+        <h2 className="mt-0 text-lg font-semibold text-neutral-100 light:text-zinc-900">Mis publicaciones</h2>
         <p className="mt-1 text-sm text-neutral-500">
           Publicaciones donde eres autor, ordenadas desde la más reciente. Quién pueda verlas depende del nivel de privacidad.
         </p>
-        {postsError ? <p className="mt-2 text-sm text-red-400">{postsError}</p> : null}
+        {postsError ? <p className="mt-2 text-sm text-red-400 light:text-red-700">{postsError}</p> : null}
         {postsLoading ? (
           <p className="mt-3 text-sm text-neutral-500">Cargando…</p>
         ) : myPosts.length === 0 ? (
@@ -335,10 +335,10 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
             {myPosts.map((post) => (
               <li
                 key={post.id}
-                className="flex flex-col gap-2 rounded-lg border border-neutral-800/90 bg-black/45 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
+                className="fs-panel-row flex flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-start sm:justify-between"
               >
                 <div className="min-w-0 flex-1">
-                  <span className="inline-block rounded-full border border-neutral-600 bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-neutral-400">
+                  <span className="inline-block rounded-full border border-neutral-600 bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-neutral-400 light:border-zinc-300 light:bg-zinc-200 light:text-zinc-700">
                     {visibilityLabel(post)}
                   </span>
                   {editingPostId === post.id ? (
@@ -388,7 +388,7 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
                   ) : (
                     <>
                       {post.content.trim() ? (
-                        <p className="mt-1.5 whitespace-pre-wrap text-sm text-neutral-200">{post.content}</p>
+                        <p className="mt-1.5 whitespace-pre-wrap text-sm text-neutral-200 light:text-zinc-900">{post.content}</p>
                       ) : null}
                       <PostMediaGallery media={post.media ?? []} />
                       {post.workoutId ? (
@@ -396,7 +396,7 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
                       ) : null}
                     </>
                   )}
-                  <p className="mt-1 text-xs text-neutral-600">{post.comments.length} comentarios · {post.likesCount} likes</p>
+                  <p className="mt-1 text-xs text-neutral-600 light:text-zinc-600">{post.comments.length} comentarios · {post.likesCount} likes</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {onOpenPostInFeed && editingPostId !== post.id ? (
@@ -427,7 +427,7 @@ export function ProfilePage({ onOpenPostInFeed }: ProfilePageProps) {
         )}
       </Card>
 
-      {sessionsError ? <p className="m-0 text-sm text-red-400">{sessionsError}</p> : null}
+      {sessionsError ? <p className="m-0 text-sm text-red-400 light:text-red-700">{sessionsError}</p> : null}
 
       <WorkoutSessionsHistory
         title="Entrenamientos registrados"
