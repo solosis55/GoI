@@ -44,7 +44,7 @@ export function ThemeToggle({ className = "" }: ThemeToggleProps) {
       className={[
         "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-neutral-300 transition-colors",
         "hover:border-goi-gold/40 hover:text-goi-gold",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:border-zinc-300 light:bg-white light:text-zinc-700 light:hover:border-goi-gold-dim/50 light:hover:text-goi-gold-dim light:focus-visible:ring-offset-white",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:border-zinc-300 light:bg-white light:text-zinc-700 light:hover:border-goi-gold/55 light:hover:text-goi-gold light:focus-visible:ring-offset-white light:focus-visible:ring-goi-gold/45",
         className,
       ]
         .filter(Boolean)

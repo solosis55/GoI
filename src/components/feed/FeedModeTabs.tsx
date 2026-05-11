@@ -1,18 +1,22 @@
+export type FeedScope = "all" | "following";
+
 type FeedModeTabsProps = {
-  mode: "all" | "following";
-  onChangeMode: (mode: "all" | "following") => void;
+  mode: FeedScope;
+  onChangeMode: (mode: FeedScope) => void;
   /** Pills and spacing tuned for compact strips (e. g. historias). */
   compact?: boolean;
+  className?: string;
 };
 
-export function FeedModeTabs({ mode, onChangeMode, compact }: FeedModeTabsProps) {
+export function FeedModeTabs({ mode, onChangeMode, compact, className = "" }: FeedModeTabsProps) {
   const shell = compact ? "p-0.5 gap-0.5 max-w-full" : "p-1 gap-1";
-  const seg = compact ? "px-2.5 py-1 text-xs min-w-0 flex-1 sm:flex-none" : "px-4 py-1.5 text-sm";
+  const seg = compact ? "min-h-11 px-2 py-1 text-[11px] min-w-0 flex-1 sm:flex-none sm:px-2.5 sm:text-xs" : "min-h-11 px-4 py-1.5 text-sm";
   return (
     <div
       className={[
-        "inline-flex w-full max-w-xs rounded-lg border border-neutral-800 bg-neutral-950/90 shadow-inner shadow-black/30 sm:w-auto sm:max-w-none light:border-zinc-300 light:bg-white light:shadow-inner light:shadow-zinc-900/10",
+        "inline-flex w-full max-w-full rounded-lg border border-neutral-800 bg-neutral-950/90 shadow-inner shadow-black/30 sm:w-auto sm:max-w-none light:border-zinc-300 light:bg-white light:shadow-inner light:shadow-zinc-900/10",
         shell,
+        className,
       ].join(" ")}
       role="tablist"
       aria-label="Modo del feed"

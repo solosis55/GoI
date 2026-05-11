@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Datos personales sincronizados por usuario (API local); no versionar métricas ni fotos.
+server/data/personal-body/*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

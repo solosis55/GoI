@@ -11,6 +11,7 @@
 - **Marca con sesión (`SidebarSessionBadge`):** mismo tamaño de aro (**~112px / ~88px** móvil); **imagen del usuario** a **cubierta** (`Avatar` `fill`); rótulo FitSocial y **`@usuario`** debajo.
 - **Nav lateral autenticada (`SidebarNavigation`):** enlaces **Inicio / Rutinas / Perfil** y **Cerrar sesión** con **iconos SVG** alineados a la izquierda (`Button` `secondary`, `navActive` o `danger`). Hover y estado activo con transiciones **`motion-safe:`** (traslación ligera, escala del icono, pulsación); con **`prefers-reduced-motion: reduce`** Tailwind omite esas utilidades y el bloque global de `index.css` acorta el resto. `<nav aria-label="Navegación principal">`; iconos **`aria-hidden`**. En móvil, **Cerrar sesión** ocupa anchura completa (`col-span-2` en rejilla compacta).
 - **Clase `.goi-field` (`@layer components` en `index.css`):** inputs sobre paneles oscuros — borde neutro, fondo negro, texto `goi-steel`, foco con borde y anillo **oro** (feed, crear post, comentarios, workouts, perfil, auth).
+- **Clase `.goi-field` (`@layer components` en `index.css`):** inputs sobre paneles oscuros — borde neutro, fondo negro, texto `goi-steel`, foco con borde y anillo **oro** (feed, crear post, comentarios, workouts, perfil, auth). Incluye altura mínima táctil (`min-h-11`) para mejorar usabilidad móvil.
 - **Componentes UI:** `Card` con `tone="dark"` o default (ambos tonos son paneles oscuros con viñeta interior dorada sutil); `Button` `primary` = oro (alineado con `navActive`), `secondary` = píldora clara para contraste sobre negro.
 - **Pulido global (mismo `index.css`):**
   - `::selection` — selección de texto con tinte dorado y texto oscuro.
@@ -25,20 +26,25 @@
 - `main.tsx`: **`BrowserRouter`** + tema global; rutas declaradas en **`RootRoutes.tsx`**: **`/aviso-legal`**, **`/privacidad`**, **`/contacto`**, cualquier otro **`path`** → **`App.tsx`** shell con pestañas.
 - `pages/legal/LegalPageShell.tsx` más **`LegalNoticePage`**, **`PrivacyPage`**, **`ContactPage`** (plantillas españolas con marcadores **`[completar]`**, revisión jurídica recomendada).
 - `config/site.ts`: **`PUBLIC_CONTACT_EMAIL`** desde **`import.meta.env.VITE_CONTACT_EMAIL`** (opcional, para **`/contacto`**).
-- `App.tsx`: shell principal (`div` flex columna + `main.social-shell`), control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`). En **Rutinas**, subvistas internas sin router URL: `workoutsView` = `overview` | `editor` | `catalog` | `exerciseDetail`. Cambiar a Inicio/Perfil **no** resetea la subvista de rutinas (se conserva editor/catalogo/ficha al volver a la pestaña). Estado auxiliar: `catalogFromEditor`, `exerciseDetailFromEditor`, `catalogExerciseId`, modo del editor (`WorkoutEditorMode`). Persistencia de pestaña activa: `sessionStorage` `fitsocial:activeTab`. Borrador crear rutina: ver `workoutCreateDraft` en seccion cliente. Auth **sin sidebar** (marca GoI centrada arriba del formulario); logueado sidebar con **foto de perfil** (`SidebarSessionBadge`) y **`SidebarNavigation`** (iconos + handlers de pestaña y logout). **`SiteFooter`** en ambos.
+- `App.tsx`: shell principal (`div` flex columna + `main.social-shell`), control de sesion y navegacion por tabs (`feed`, `workouts`, `profile`). En **Rutinas**, subvistas internas sin router URL: `workoutsView` = `overview` | `editor` | `catalog` | `exerciseDetail`. Cambiar a Inicio/Perfil **no** resetea la subvista de rutinas (se conserva editor/catalogo/ficha al volver a la pestaña). Estado auxiliar: `catalogFromEditor`, `exerciseDetailFromEditor`, `catalogExerciseId`, modo del editor (`WorkoutEditorMode`). Persistencia de pestaña activa: `sessionStorage` `fitsocial:activeTab`. Borrador crear rutina: ver `workoutCreateDraft` en seccion cliente. Auth **sin sidebar** (marca GoI centrada arriba del formulario); logueado sidebar con **foto de perfil** (`SidebarSessionBadge`) y **`SidebarNavigation`** (iconos + handlers de pestaña y logout). `PageContainer` aplica un **ancho máximo común** (`max-w-6xl`) al contenido principal para alejar las vistas de los bordes externos. Ajuste responsive adicional: en móvil la sidebar reduce separación interna (`max-md:gap-3`) y `SidebarNavigation` colapsa a una sola columna en anchos muy estrechos. **`SiteFooter`** en ambos.
 - `components/branding/GoISidebarBadge.tsx`: logo GoI + FitSocial + subtítulo (auth).
 - `components/branding/SidebarSessionBadge.tsx`: avatar del usuario en el lateral + FitSocial + `@usuario`.
 - `components/layout/SidebarNavigation.tsx`: pestañas principal con iconos (`feed`/`workouts`/`profile`), **Cerrar sesión**, accesibilidad y animaciones **`motion-safe`**.
 - `components/layout/SiteFooter.tsx`: pie global — copyright dinámico, texto MVP, enlace **Roadmap** (Trello del README), enlaces **`/aviso-legal`**, **`/privacidad`**, **`/contacto`** (páginas legales React + `LegalPageShell`).
+- `components/layout/PageContainer.tsx`: wrapper de layout para limitar ancho de páginas autenticadas y mantener padding lateral consistente (incluye padding móvil muy compacto para ganar espacio útil).
 - `context/AuthContext.tsx`: estado global de autenticacion (token, user, login/logout, persistencia local).
 - `pages/AuthPage.tsx`: registro, inicio de sesion, solicitud de recuperacion de contraseña y pantalla de nueva contraseña (`?reset=token`); card **`tone="dark"`**, campos **`.goi-field`**, `StatusMessage` con **`tone="dark"`**.
-- `pages/FeedPage.tsx`: **encabezado Inicio** (`<header>`: rótulo FitSocial, titulo, texto de contexto y `@usuario`); rejilla feed **columna principal flexible** (`minmax(0,1fr)` + lateral sugerencias); **Historias del gym** en tarjeta **compacta centrada** (`max-w-sm`); `FeedModeTabs` / `StoriesRow` con prop **`compact`** en ese bloque; timeline, crear post, likes, comentarios, seguir usuarios.
+- `pages/FeedPage.tsx`: **encabezado Inicio** (`<header>`: rótulo FitSocial, titulo, texto de contexto y `@usuario`); rejilla feed **columna principal flexible** (`minmax(0,1fr)` + lateral sugerencias); **Historias del gym** en tarjeta **compacta centrada** (`max-w-sm`); `FeedModeTabs` / `StoriesRow` con prop **`compact`** en ese bloque; timeline, likes, comentarios, seguir usuarios. Refuerzo responsive: en móvil el bloque de **tu cuenta/sugerencias** se mueve a la columna principal (debajo de historias) y se reserva padding inferior para que el FAB de crear publicación no solape tarjetas al final. Creación de publicación mejorada con **borrador en `sessionStorage`** (`postCreateDraft` por usuario), **validación en vivo** y **preview** antes de publicar. Entrada al compositor por **launcher** (desktop: icono `+` con tooltip en header; móvil: FAB) y modal único responsive (fullscreen móvil / centrado escritorio), sustituyendo la card inline; cierre con cambios pendientes pide confirmación y existe acción explícita de descarte de borrador. En el flujo de imágenes, se añade feedback de transferencia con barra de progreso para compresión y publicación/subida, más **reordenación previa**, selección de portada (primera imagen del payload `media`) y recorte 1:1 con editor manual (zoom + desplazamiento + preview + drag táctil/ratón para mover encuadre + pinch en móvil para zoom) antes de publicar. El sistema de menciones prioriza usuarios seguidos y recientes (histórico local por usuario), y el compositor incorpora plantillas rápidas para acelerar redacción.
+- `components/feed/PostItem.tsx`, `PostActions.tsx`, `PostMediaGallery.tsx`, `CreatePostForm.tsx`: fase de pulido visual con superficies agrupadas, contraste más consistente y jerarquía tipográfica/espaciado más clara para mejorar lectura y percepción premium en feed/compositor.
+- Testing frontend: `vitest` en raíz (`npm test`) para validar utilidades críticas del compositor (`mentionAutocomplete`, `postComposerTemplates`) sin depender de API ni DOM.
 - `pages/WorkoutsPage.tsx`: dashboard de **Rutinas** (rutina = plantilla). Resumen, calendario (`WorkoutSessionCalendar`), CTA **Ir al editor de rutinas** (sin enlace directo al catalogo), lista **Mis rutinas** (buscar/filtrar/ordenar + editar/duplicar/eliminar). Panel registrar/historial no integrado en esta pantalla.
 - `pages/WorkoutEditorPage.tsx`: crear o editar rutina; carga catalogo en cliente (`getExercises`). **Miga de pan:** `Rutinas` (vuelve al overview) / texto **Editor de rutinas** / pill **Nueva rutina** o **Editar rutina**. Acceso al catalogo con **Ver catalogo** y formulario con **`ExercisePicker`** + `onOpenCatalog`.
 - `pages/ExerciseCatalogPage.tsx`: listado filtrable del catalogo de ejercicios; enlaces a ficha; seleccion para llevar ejercicios al editor. **Miga de pan (desde editor):** `Rutinas` / `Editor de rutinas` / `Nueva rutina`|`Editar rutina` (`routineFormCrumb`) / pill **Catalogo**. Sin editor: `Rutinas` / **Catalogo**.
 - `pages/ExerciseDetailPage.tsx`: ficha de un ejercicio (`GET /api/exercises/:id`). **Miga de pan:** flujo completo `Rutinas` → `Editor de rutinas` → formulario → `Catalogo` → nombre; rotulo **Ficha del ejercicio**.
 - `pages/ProfilePage.tsx`: ver/editar perfil deportivo; bloque **Entrenamientos registrados** (`WorkoutSessionsHistory`, solo lectura, datos de `GET /api/workout-sessions`).
-- `api/*.ts`: cliente HTTP y funciones por dominio (`authApi`, `postsApi`, `storiesApi`, `workoutsApi`).
+- `pages/PersonalRoadmapPage.tsx`: ruta `/roadmap` (declarada en `RootRoutes.tsx`). Carga inicial: `GET /api/personal-roadmap` si responde, si no `loadRoadmap()` desde `localStorage`. **Guardar cambios** (botón) → `saveRoadmap` + `PUT /api/personal-roadmap`; aviso de cambios sin guardar y `beforeunload` si procede.
+- `components/roadmap/RoadmapDiagram.tsx`: pan/zoom, conectores SVG pintados de forma imperativa; registro de nodos para geometría.
+- `api/*.ts`: cliente HTTP y funciones por dominio (`authApi`, `postsApi`, `storiesApi`, `workoutsApi`, `personalRoadmapApi`).
 - `types/*.ts`: contratos TypeScript del cliente.
 
 ### Backend (`server/src`)
@@ -102,6 +108,8 @@ Regla de arquitectura:
 
 ## 4) Diseno de API REST (backend)
 
+Ejemplos JSON request/response y mapa de archivos del servidor: **[docs/api.md](./api.md)**.
+
 Base URL (cliente):
 
 - Desarrollo: `http://localhost:4000/api` (valor por defecto si no existe `VITE_API_URL`).
@@ -114,6 +122,7 @@ Recursos:
 - `exercises` (catalogo)
 - `posts`
 - `stories` (reels de imagenes, JWT)
+- `personal-roadmap` (JSON en fichero propio, sin JWT)
 - `health`
 
 ### Auth (`/api/auth`)
@@ -210,16 +219,32 @@ Carrete activo ~**24 h** por creacion en servidor; listado limitado a **tu usuar
 - `GET /`
   - 200: estado del servicio
 
+### Roadmap personal (`/api/personal-roadmap`, sin JWT)
+
+Diagrama de nodos en árbol para planificación local (página `/roadmap`). Persistencia en fichero separado del `store` — ver `server/src/services/personalRoadmapFile.ts` (`server/data/personal-roadmap.json` en repo local; en Vercel ruta bajo `/tmp` si aplica).
+
+- `GET /`
+  - 200: `{ tasks: RoadmapTask[] }` — árbol de tareas (`id`, `title`, `done`, `children`).
+- `PUT /`
+  - body: `{ tasks: RoadmapTask[] }`
+  - 200: mismo esquema que GET tras escribir disco.
+  - Errores de validación o escritura según controlador.
+
+En el cliente, la escritura a disco solo ocurre cuando el usuario pulsa **Guardar cambios**; la copia en **`localStorage`** (`fitsocial:personalRoadmap:v1`, utilidades `src/utils/personalRoadmap.ts`) se actualiza en ese mismo paso.
+
 ## 5) Persistencia: servidor vs cliente
 
 Servidor (persistido en `server/data/store.json`, o ruta `FITSOCIAL_STORE_PATH`; en **Vercel** serverless el valor por defecto es un JSON en **`/tmp`** copiado del seed del repo — ver `docs/deploy.md`):
 - `users` (incluye campos opcionales internos `passwordResetTokenHash` y `passwordResetExpires` mientras un reset este pendiente; no se exponen en respuestas `user` publicas), `workouts` (**`exerciseIds`** hacia el catalogo), **`exercises`** (catalogo global), **`workoutSessions`**, `posts`, `likes`, `comments`, `follows`, **`storyReels`** (reels de historias con `slides` y `expiresAt`).
 - Fuente de verdad de negocio.
 
+Además, **fuera de `store.json`**: roadmap personal en **`server/data/personal-roadmap.json`** (o ruta equivalente en serverless) — solo lectura/escritura vía **`/api/personal-roadmap`**, no mezclado con usuarios ni JWT.
+
 Cliente (persistencia local):
 - Sesion autenticada (`token`, `user`) en `localStorage`.
 - Pestaña activa (`fitsocial:activeTab`) y borrador **crear rutina** (`fitsocial:workoutCreateDraft` en `sessionStorage`: titulo, descripcion, `exerciseIds`, lineas de etiquetas) — utilidad `src/utils/workoutCreateDraft.ts`.
 - Historias «vistas» por usuario: mapa en `localStorage` (`src/utils/storySeen.ts`) para el anillo de **no visto** en `StoriesRow` (complementario al TTL del servidor).
+- **Roadmap personal:** árbol de nodos en `localStorage` (`fitsocial:personalRoadmap:v1`, `src/utils/personalRoadmap.ts`); sincronización con disco solo al **guardar** explícitamente en `/roadmap`.
 - Resto del estado de pantalla se recalcula desde API cuando aplica.
 
 Decision:
@@ -248,6 +273,8 @@ Flujo tipico:
 2. La pagina llama a `src/api/postsApi.ts`.
 3. Backend valida y persiste en `store.json`.
 4. Frontend recarga feed y re-renderiza estado.
+
+Detalle del cliente HTTP (`apiFetch`, tipos, módulos): **[docs/api-client.md](./api-client.md)**.
 
 ## 7) Pendiente inmediato para cerrar arquitectura
 

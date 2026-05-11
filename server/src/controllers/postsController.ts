@@ -185,7 +185,7 @@ export function markNotificationsRead(req: Request, res: Response) {
   const { keys, all } = req.body as MarkReadsBody;
   const validKeys = new Set(buildNotificationsForRecipient(authUserId).map((n) => n.id));
 
-  let toMark: string[] = [];
+  let toMark: string[];
   if (all === true) {
     toMark = [...validKeys];
   } else if (Array.isArray(keys)) {
@@ -453,5 +453,11 @@ export function createComment(req: Request, res: Response) {
 
   store.comments.push(comment);
   saveStore();
-  res.status(201).json(comment);
+
+  const commentAuthor = store.users.find((user) => user.id === userId);
+  res.status(201).json({
+    ...comment,
+    authorUsername: commentAuthor?.username ?? "Usuario",
+    authorAvatarUrl: commentAuthor?.avatarUrl ?? "",
+  });
 }

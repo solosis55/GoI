@@ -6,7 +6,6 @@ type ProfileFormProps = {
   username: string;
   goal: string;
   bio: string;
-  accountEmail?: string;
   loading: boolean;
   error: string;
   message: string;
@@ -20,7 +19,6 @@ export function ProfileForm({
   username,
   goal,
   bio,
-  accountEmail,
   loading,
   error,
   message,
@@ -31,13 +29,6 @@ export function ProfileForm({
 }: ProfileFormProps) {
   return (
     <form className="stack grid gap-3" onSubmit={onSubmit}>
-      {accountEmail ? (
-        <label className="grid gap-1.5 font-semibold">
-          Correo
-          <input className="goi-field cursor-not-allowed opacity-90" readOnly disabled value={accountEmail} />
-          <span className="text-xs font-normal text-neutral-500">Visible solo para ti</span>
-        </label>
-      ) : null}
       <label className="grid gap-1.5 font-semibold">
         Usuario
         <input
@@ -73,7 +64,7 @@ export function ProfileForm({
 
       <StatusMessage tone="dark" error={error} success={message} />
 
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading} className="w-full sm:w-auto">
         {loading ? "Guardando..." : "Guardar perfil"}
       </Button>
     </form>

@@ -4,6 +4,7 @@ import type {
   CreatePostInput,
   NotificationsResponse,
   Post,
+  PostComment,
 } from "../types/post";
 
 export function getPosts() {
@@ -40,7 +41,7 @@ export function toggleLike(postId: string) {
 }
 
 export function createComment(postId: string, input: CreateCommentInput) {
-  return apiFetch<{ id: string }>(`/posts/${postId}/comments`, {
+  return apiFetch<PostComment>(`/posts/${postId}/comments`, {
     method: "POST",
     body: JSON.stringify(input),
   });

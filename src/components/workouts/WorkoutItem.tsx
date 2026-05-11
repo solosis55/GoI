@@ -67,14 +67,14 @@ export function WorkoutItem({
           <p className="mt-1 text-sm text-neutral-500">Sin ejercicios.</p>
         )}
       </div>
-      <div className="actions flex flex-wrap gap-2 max-md:w-full">
-        <Button type="button" variant="secondary" className="max-md:flex-1 min-[480px]:min-w-[6.5rem]" onClick={onDuplicate}>
+      <div className="actions flex flex-wrap gap-2 max-md:w-full max-[479px]:grid max-[479px]:grid-cols-1">
+        <Button type="button" variant="secondary" className="max-md:flex-1 max-[479px]:w-full min-[480px]:min-w-[6.5rem]" onClick={onDuplicate}>
           Duplicar
         </Button>
-        <Button type="button" className="max-md:flex-1 min-[480px]:min-w-[6.5rem]" onClick={onEdit}>
+        <Button type="button" className="max-md:flex-1 max-[479px]:w-full min-[480px]:min-w-[6.5rem]" onClick={onEdit}>
           Editar
         </Button>
-        <Button type="button" variant="danger" className="max-md:flex-1 min-[480px]:min-w-[6.5rem]" onClick={onDelete}>
+        <Button type="button" variant="danger" className="max-md:flex-1 max-[479px]:w-full min-[480px]:min-w-[6.5rem]" onClick={onDelete}>
           Eliminar
         </Button>
       </div>

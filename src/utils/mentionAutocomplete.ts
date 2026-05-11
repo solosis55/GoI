@@ -1,4 +1,11 @@
-export type MentionPickUser = { id: string; username: string };
+export type MentionPickUser = {
+  id: string;
+  username: string;
+  /** Prioriza en sugerencias @. */
+  isFollowing?: boolean;
+  /** 0 = más reciente; null/undefined = sin prioridad reciente. */
+  recentRank?: number | null;
+};
 
 export function getActiveMention(value: string, caret: number): { triggerIndex: number; query: string } | null {
   const slice = value.slice(0, caret);
@@ -23,7 +30,19 @@ export function filterMentionCandidates(
   for (const c of candidates) {
     uniq.set(c.id, c);
   }
-  const list = [...uniq.values()].sort((a, b) => a.username.localeCompare(b.username));
-  if (!q) return list.slice(0, max);
-  return list.filter((c) => c.username.toLowerCase().startsWith(q)).slice(0, max);
+  const rank = (candidate: MentionPickUser) => {
+    const followScore = candidate.isFollowing ? 1000 : 0;
+    const recentScore =
+      typeof candidate.recentRank === "number" && candidate.recentRank >= 0
+        ? Math.max(0, 400 - candidate.recentRank * 40)
+        : 0;
+    return followScore + recentScore;
+  };
+  const sorted = [...uniq.values()].sort((a, b) => {
+    const byScore = rank(b) - rank(a);
+    if (byScore !== 0) return byScore;
+    return a.username.localeCompare(b.username);
+  });
+  if (!q) return sorted.slice(0, max);
+  return sorted.filter((c) => c.username.toLowerCase().startsWith(q)).slice(0, max);
 }

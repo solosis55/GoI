@@ -381,22 +381,24 @@ export function initializeStore() {
     : [];
 
   store.posts = Array.isArray(parsed.posts)
-    ? parsed.posts
-        .filter((p): p is Partial<Post> => Boolean(p && typeof p === "object"))
+    ? (parsed.posts as unknown[])
+        .filter((p) => Boolean(p && typeof p === "object"))
         .map((p) => {
-          const m = sanitizePersistedMedia((p as { media?: unknown }).media);
+          const raw = p as Record<string, unknown>;
+          const m = sanitizePersistedMedia(raw.media);
           return {
-            id: String(p.id ?? ""),
-            userId: String(p.userId ?? ""),
-            content: String(p.content ?? ""),
+            id: String(raw.id ?? ""),
+            userId: String(raw.userId ?? ""),
+            content: String(raw.content ?? ""),
             ...(m && m.length > 0 ? { media: m } : {}),
-            workoutId: p.workoutId === null ? null : String(p.workoutId ?? ""),
-            visibility:
-              p.visibility === "followers" || p.visibility === "private" || p.visibility === "public"
-                ? p.visibility
-                : "public",
-            createdAt: String(p.createdAt ?? ""),
-            updatedAt: String(p.updatedAt ?? ""),
+            workoutId: raw.workoutId === null ? null : String(raw.workoutId ?? ""),
+            visibility: (
+              raw.visibility === "followers" || raw.visibility === "private" || raw.visibility === "public"
+                ? raw.visibility
+                : "public"
+            ) as Post["visibility"],
+            createdAt: String(raw.createdAt ?? ""),
+            updatedAt: String(raw.updatedAt ?? ""),
           };
         })
         .filter((p) => p.id && p.userId)
@@ -406,23 +408,29 @@ export function initializeStore() {
   store.follows = Array.isArray(parsed.follows) ? parsed.follows : [];
 
   store.storyReels = Array.isArray(parsed.storyReels)
-    ? parsed.storyReels
-        .filter((r): r is Partial<StoryReel> => Boolean(r && typeof r === "object"))
-        .map((r) => ({
-          id: String((r as StoryReel).id ?? ""),
-          userId: String((r as StoryReel).userId ?? ""),
-          slides: Array.isArray((r as StoryReel).slides)
-            ? (r as StoryReel).slides
-                .filter((s): s is Partial<StorySlide> => Boolean(s && typeof s === "object"))
-                .map((s) => ({
-                  id: String((s as StorySlide).id ?? ""),
-                  mediaUrl: String((s as StorySlide).mediaUrl ?? ""),
-                }))
-                .filter((s) => s.id && s.mediaUrl)
-            : [],
-          createdAt: String((r as StoryReel).createdAt ?? ""),
-          expiresAt: String((r as StoryReel).expiresAt ?? ""),
-        }))
+    ? (parsed.storyReels as unknown[])
+        .filter((r) => Boolean(r && typeof r === "object"))
+        .map((r) => {
+          const raw = r as Record<string, unknown>;
+          return {
+            id: String(raw.id ?? ""),
+            userId: String(raw.userId ?? ""),
+            slides: Array.isArray(raw.slides)
+              ? raw.slides
+                  .filter((s) => Boolean(s && typeof s === "object"))
+                  .map((s) => {
+                    const slide = s as Record<string, unknown>;
+                    return {
+                      id: String(slide.id ?? ""),
+                      mediaUrl: String(slide.mediaUrl ?? ""),
+                    };
+                  })
+                  .filter((s) => s.id && s.mediaUrl)
+              : [],
+            createdAt: String(raw.createdAt ?? ""),
+            expiresAt: String(raw.expiresAt ?? ""),
+          };
+        })
         .filter((r) => r.id && r.userId && r.slides.length > 0 && r.expiresAt)
     : [];
 

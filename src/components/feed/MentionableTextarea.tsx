@@ -12,6 +12,8 @@ export function MentionableTextarea({
   placeholder,
   /** Si no hay lista @ abierta: Enter (sin Shift) llama a esto. */
   onEnterSubmit,
+  onMentionPick,
+  autoGrow = false,
   listPlacement = "above",
   required,
 }: {
@@ -23,6 +25,8 @@ export function MentionableTextarea({
   className?: string;
   placeholder?: string;
   onEnterSubmit?: () => void;
+  onMentionPick?: (picked: MentionPickUser) => void;
+  autoGrow?: boolean;
   /** Desplegable arriba (comentarios) o abajo (crear post). */
   listPlacement?: "above" | "below";
   required?: boolean;
@@ -48,17 +52,26 @@ export function MentionableTextarea({
     setCaretPos(el?.selectionStart ?? value.length);
   }, [value.length]);
 
+  useEffect(() => {
+    if (!autoGrow) return;
+    const el = areaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [autoGrow, value]);
+
   const insertMention = useCallback(
-    (username: string) => {
+    (picked: MentionPickUser) => {
       const el = areaRef.current;
       if (!el || !mentionState) return;
       const { triggerIndex } = mentionState;
       const caret = el.selectionStart ?? value.length;
       const before = value.slice(0, triggerIndex);
       const tail = value.slice(caret);
-      const insert = `@${username} `;
+      const insert = `@${picked.username} `;
       const next = `${before}${insert}${tail}`;
       onChange(next);
+      onMentionPick?.(picked);
       const pos = triggerIndex + insert.length;
       queueMicrotask(() => {
         el.focus();
@@ -66,7 +79,7 @@ export function MentionableTextarea({
         setCaretPos(pos);
       });
     },
-    [value, mentionState, onChange],
+    [value, mentionState, onChange, onMentionPick],
   );
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -88,12 +101,12 @@ export function MentionableTextarea({
       if (e.key === "Enter") {
         e.preventDefault();
         const pick = filtered[highlightIdx];
-        if (pick) insertMention(pick.username);
+        if (pick) insertMention(pick);
         return;
       }
       if (e.key === "Tab" && filtered[highlightIdx]) {
         e.preventDefault();
-        insertMention(filtered[highlightIdx]!.username);
+        insertMention(filtered[highlightIdx]!);
       }
       return;
     }
@@ -127,7 +140,7 @@ export function MentionableTextarea({
                 }`}
                 onMouseDown={(ev) => {
                   ev.preventDefault();
-                  insertMention(u.username);
+                  insertMention(u);
                 }}
               >
                 <span className="truncate font-medium">@{u.username}</span>
@@ -152,6 +165,7 @@ export function MentionableTextarea({
         onClick={syncCaret}
         onKeyUp={syncCaret}
         onKeyDown={onKeyDown}
+        style={autoGrow ? { overflowY: "hidden" } : undefined}
       />
     </div>
   );

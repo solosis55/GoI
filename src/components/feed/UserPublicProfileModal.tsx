@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { getProfile, toggleFollow } from "../../api/authApi";
 import { getPostsByUser } from "../../api/postsApi";
 import type { ProfileUser } from "../../types/auth";
@@ -12,7 +13,8 @@ type UserPublicProfileModalProps = {
   currentUserId: string | undefined;
   initialFollowingIds: string[];
   onClose: () => void;
-  onFollowingChanged?: () => void;
+  /** Tras seguir/dejar de seguir desde el modal (para sincronizar el feed sin recargarlo). */
+  onFollowingChanged?: (targetUserId: string, following: boolean) => void;
 };
 
 export function UserPublicProfileModal({
@@ -74,6 +76,15 @@ export function UserPublicProfileModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [userId, onClose]);
 
+  useEffect(() => {
+    if (!userId || userId === currentUserId) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [userId, currentUserId]);
+
   async function handleToggleFollow() {
     if (!userId || userId === currentUserId) return;
     setFollowBusy(true);
@@ -81,7 +92,7 @@ export function UserPublicProfileModal({
     try {
       const res = await toggleFollow(userId);
       setFollowing(res.following);
-      onFollowingChanged?.();
+      onFollowingChanged?.(userId, res.following);
     } catch (e) {
       setError(getErrorMessage(e, "No se pudo actualizar seguimiento"));
     } finally {
@@ -91,21 +102,21 @@ export function UserPublicProfileModal({
 
   if (!userId || userId === currentUserId) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-[2px] light:bg-zinc-900/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-[2px] sm:p-6 light:bg-zinc-900/40"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <section
-        className="max-h-[min(90vh,600px)] w-full max-w-lg overflow-hidden rounded-xl border border-neutral-800 bg-zinc-950 shadow-2xl light:border-zinc-200 light:bg-white"
+        className="flex max-h-[min(90vh,600px)] min-h-0 w-full max-w-lg flex-col overflow-hidden rounded-xl border border-neutral-800 bg-zinc-950 shadow-2xl light:border-zinc-200 light:bg-white"
         role="dialog"
         aria-modal="true"
         aria-labelledby="public-profile-heading"
       >
-        <header className="flex items-start justify-between gap-3 border-b border-neutral-800 px-4 py-4 light:border-zinc-200">
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-neutral-800 px-4 py-4 light:border-zinc-200">
           <div className="flex min-w-0 items-start gap-3">
             <Avatar src={profile?.avatarUrl ?? ""} alt={profile?.username ?? ""} size={48} />
             <div className="min-w-0">
@@ -135,7 +146,7 @@ export function UserPublicProfileModal({
           </div>
         </header>
 
-        <div className="max-h-[calc(min(90vh,600px)-8rem)] overflow-y-auto px-4 pb-4 pt-3">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-3">
           {error ? <p className="text-sm text-red-400">{error}</p> : null}
           {!loading && !error && posts.length === 0 ? (
             <p className="text-sm text-neutral-500">No hay publicaciones visibles aquí.</p>
@@ -156,6 +167,7 @@ export function UserPublicProfileModal({
           </ul>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -12,6 +12,7 @@
     "start:deploy": "node server/dist/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
     "seed:demo-users": "npm run seed:demo-users --prefix server",
     "reset:demo-users": "npm run reset:demo-users --prefix server"
   },
@@ -34,6 +35,7 @@
     "tailwindcss": "^4.2.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
   }
 }

@@ -195,7 +195,7 @@ export function WorkoutsPage({ onCreateWorkout, onEditWorkout }: WorkoutsPagePro
         <div className="w-full min-w-0 sm:max-w-4xl sm:flex-1">
           <div className="flex flex-col gap-3">
             <p className="text-left text-[10px] font-semibold uppercase tracking-[0.2em] text-goi-gold-dim sm:text-xs">Resumen</p>
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
+            <div className="grid grid-cols-1 gap-2.5 min-[460px]:grid-cols-2 sm:grid-cols-3 sm:gap-3">
               <div className="fs-workout-stat">
                 <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-goi-gold-dim sm:text-xs">Plantillas</p>
                 <p className="text-2xl font-semibold tabular-nums tracking-tight text-neutral-100 light:text-zinc-900 sm:text-3xl">{pageStats.templateCount}</p>

@@ -224,7 +224,91 @@ Actualizacion reciente:
 
 72. **Detalle por ejercicio en catalogo:** modelo `Exercise` ampliado con `equipment`, `description`, `instructions` (backend `store.ts` + semilla `server/src/data/exerciseDetails.ts`). Fusion en `mergeExerciseCatalog`; UI: lista del catalogo muestra resumen (`line-clamp-2`); ficha (`ExerciseDetailPage`) muestra equipamiento, ejecucion multilinea y grupos musculares. Tests `exercises.test.ts` comprueban respuesta con texto.
 
-73. **Historias (reels) + sesiones consistentes.** Persistencia **`storyReels`** en store; API **`GET|POST /api/stories`** (JWT); caducidad en servidor (~24 h). Cliente `storiesApi`, componentes **`StoriesRow`**, **`CreateStoryModal`**, **`StoryViewerModal`**; uso de `storySeen` en `localStorage` para anillo «no visto». Escrituras con JWT cuyo `userId` no existe en store (dato reiniciado, token viejo): **`401` + `AUTH_SESSION_STALE`** en posts/historias; mensaje user-facing en `errorMessages`; expiracion forzada en `api/client.ts`. Scripts demo: **`server/scripts/reset-demo-users.ts`** + comando **`npm run reset:demo-users`** (desde **`server/`** o raiz via `npm run reset:demo-users`), upsert de `DEMO_USERS` con password `123456`; **`seed-demo-users`** sigue siendo «solo si falta email». Documentacion en **`README.md`**, **`docs/design.md`**, **`docs/deploy.md`** (operativa reload del API tras tocar disco).
+73. **Historias (reels) + sesiones consistentes.** Persistencia **`storyReels`** en store; API **`GET|POST /api/stories`** (JWT); caducidad en servidor (~24 h). Cliente `storiesApi`, componentes **`StoriesRow`**, **`CreateStoryModal`**, **`StoryViewerModal`**; uso de `storySeen` en `localStorage` para anillo «no visto». Escrituras con JWT cuyo `userId` no existe en store (dato reiniciado, token viejo): **`401` + `AUTH_SESSION_STALE`** en posts/historias; mensaje user-facing en `errorMessages`; expiracion forzada en `api/client.ts`. Scripts demo: **`server/scripts/reset-demo-users.ts`** + comando **`npm run reset:demo-users`** (desde **`server/`** o raiz via `npm run reset:demo-users`), upsert de `DEMO_USERS` con password `123456`; **`seed-demo-users`** sigue siendo «solo si falta email**. Documentacion en **`README.md`**, **`docs/design.md`**, **`docs/deploy.md`** (operativa reload del API tras tocar disco).
+
+74. **Roadmap personal (`/roadmap`).** Pagina **`PersonalRoadmapPage`**, ruta en **`RootRoutes.tsx`**; pie **`SiteFooter`** enlaza **`/roadmap`**. Backend **`GET|PUT /api/personal-roadmap`** (sin JWT), fichero **`server/data/personal-roadmap.json`** (`personalRoadmapFile.ts`). Cliente: **`fetchPersonalRoadmap`**, **`savePersonalRoadmap`**, utilidades **`personalRoadmap`** (`fitsocial:personalRoadmap:v1` en **`localStorage`**). **Guardado solo bajo demanda** (**Guardar cambios**): escribe copia local y API si responde; aviso de cambios pendientes y **`beforeunload`** cuando hay ediciones sin guardar. Diagrama **`RoadmapDiagram`** con conectores SVG imperativos. Documentacion en **`README.md`**, **`docs/design.md`**, **`docs/components.md`**, **`src/pages/README.md`**.
+
+75. **Feed — sidebar extraído a componente reutilizable.** Se creó **`src/components/feed/FeedSidebar.tsx`** para encapsular la barra lateral derecha del feed (resumen de cuenta + sugerencias + acciones de seguir/ver perfil). **`FeedPage.tsx`** delega ese bloque en `FeedSidebar`, reduciendo tamaño de la página y dejando preparado el terreno para futuras extracciones del layout de Inicio. Documentación sincronizada en **`docs/components.md`** y este archivo.
+
+76. **Layout global de contenido (más margen lateral).** Para separar las vistas principales de los bordes de la ventana, se añadió **`src/components/layout/PageContainer.tsx`** y se aplicó en **`App.tsx`** sobre el contenido autenticado (Feed/Rutinas/Perfil). Resultado: ancho máximo común (**`max-w-6xl`**) + padding lateral consistente, sin tocar la lógica de cada pantalla. Documentación sincronizada en **`docs/design.md`**, **`docs/components.md`** y este archivo.
+
+77. **Ajuste fino de posición del contenido principal.** Para mejorar el equilibrio visual con la sidebar, `PageContainer` desplaza ligeramente el bloque de páginas hacia la derecha en escritorio (padding asimétrico: `lg:pl-6`, `lg:pr-4`). En móvil y tablet pequeña se mantiene centrado sin cambios de comportamiento.
+
+78. **Refuerzo responsive en móviles estrechos.** Se pulió la UI para evitar compresión de controles: `SidebarNavigation` pasa a **1 columna** bajo ~430 px; `WorkoutsPage` muestra el bloque de resumen en **1 columna** bajo ~460 px; `WorkoutItem` y acciones de posts en `ProfilePage` apilan botones en <480 px; `SiteFooter` centra contenido y oculta separadores `·` cuando los enlaces hacen wrap. Documentación sincronizada en **`docs/components.md`**, **`docs/design.md`**, **`src/pages/README.md`** y este archivo.
+
+79. **Mobile-first ampliado (feed + formularios + acciones).** Segunda pasada responsive para teléfonos: `FeedPage` reduce paddings/gaps en móvil; `PostItem` compacta tarjeta y evita separadores visuales en anchos ultra estrechos; `PostActions` y `MentionComposer` pasan a disposición vertical en <480 px; `CreatePostForm` adapta bloque de fotos/CTA a ancho completo en móvil; `FeedNotificationsBell` ajusta tamaño de botón y ancho del panel al viewport; `StoriesRow` reduce ligeramente avatar en móvil; `ProfileForm` usa CTA full-width en pantallas pequeñas; `WorkoutSessionCalendar` reorganiza cabecera en anchos reducidos. Documentación sincronizada en **`docs/components.md`**, **`docs/design.md`**, **`src/pages/README.md`** y este archivo.
+
+80. **Pulido táctil (objetivos ~44 px).** Se reforzó accesibilidad móvil en controles interactivos: `Button` adopta `min-h-11` global; `.goi-field` también usa `min-h-11`; `FeedModeTabs` garantiza altura táctil en ambos modos; `FeedNotificationsBell` pasa a botón de ~44 px; toggle de comentarios en `PostItem` aumenta zona tocable. Objetivo: menos taps fallidos y mejor ergonomía en teléfonos sin cambiar contratos ni flujos funcionales.
+
+81. **Crear publicación — UX reforzada.** Se añadió borrador automático por usuario en `sessionStorage` (**`fitsocial:postCreateDraft:v1`**) para texto + visibilidad + rutina seleccionada; al volver a la pestaña se recupera el estado del compositor. Además, validación en vivo (mensaje guía previo al submit) y botón de publicar inteligente (`canSubmit`). `CreatePostForm` incorpora una vista previa compacta (texto, rutina, nº de fotos y visibilidad) para reducir ediciones posteriores.
+
+82. **Composer móvil fullscreen para publicaciones.** En `FeedPage`, en pantallas pequeñas (`sm:hidden`) la card de “Crear publicación” muestra CTA **Abrir editor** y abre un modal de pantalla casi completa (overlay + panel inferior con scroll) reutilizando `CreatePostForm`. En escritorio se mantiene el formulario inline sin cambios. Al publicar con éxito desde móvil, el modal se cierra automáticamente.
+
+83. **Crear publicación por launcher (sin card inline).** Se reemplaza la card “Crear publicación” por accesos directos: botón **Publicar** en cabecera de `FeedPage` y **FAB** (`+`) en móvil. Ambos abren un único modal responsive con `CreatePostForm` (fullscreen en móvil, centrado en escritorio). Se mantiene borrador/validación/preview del paso 81.
+
+84. **Launcher desktop minimalista con tooltip.** Ajuste visual en `FeedPage`: en escritorio el acceso a crear post pasa a icono `+` sin texto (con `title` + tooltip visible en hover/focus), manteniendo accesibilidad (`aria-label` y texto `sr-only`). En móvil sigue el FAB `+`.
+
+85. **Pack 1+2 de creación de publicaciones (seguridad de cierre + descarte explícito).** `FeedPage` ahora protege el cierre del modal de composición: si hay cambios pendientes (texto/fotos/rutina/visibilidad), al cerrar por overlay o botón aparece confirmación para evitar cierres accidentales. Además, se añadió botón **Descartar borrador** en la cabecera del modal; pide confirmación, limpia el estado del compositor y borra `fitsocial:postCreateDraft:v1` antes de cerrar.
+
+86. **Pack 3 de creación de publicaciones (progreso visual de compresión/subida).** Se añadió estado de transferencia en el compositor de `FeedPage`: al adjuntar fotos se muestra progreso de compresión (`compressManyImageFiles` ahora reporta avance), y al publicar se presenta barra/porcentaje de subida con mensajes de estado. Mientras hay proceso en curso se bloquean acciones sensibles (publicar, adjuntar y quitar fotos) para evitar envíos duplicados o inconsistencias. Si falla la publicación, se mantiene el borrador y se muestra mensaje explícito de reintento.
+
+87. **Pack 4 de creación de publicaciones (reordenar imágenes + portada).** En `CreatePostForm` se añadieron controles por miniatura para mover imágenes a izquierda/derecha y acción **Portada** para priorizar una imagen. En `FeedPage`, estas acciones reordenan `draftImages` en cliente y la portada se materializa como **primera imagen** del array `media` enviado al backend (sin cambiar contrato API). La vista previa ahora muestra también el nombre de la portada seleccionada.
+
+88. **Pack 5 de creación de publicaciones (recorte básico de imágenes).** Se añadió acción `Recorte 1:1` por miniatura en `CreatePostForm`. `FeedPage` aplica un recorte cuadrado centrado sobre la imagen seleccionada antes de publicar, manteniendo calidad/compresión JPEG del flujo actual y sin cambiar el contrato de `POST /api/posts`. Durante el recorte se reutiliza el estado visual de procesamiento para feedback al usuario.
+
+89. **Pack 5.1 (recorte manual dentro del compositor).** Evolución del recorte básico: la acción de recorte abre un mini-editor modal 1:1 con controles de **zoom** y desplazamiento **horizontal/vertical**, preview en tiempo real y botón **Aplicar recorte**. Técnicamente se añadió `cropDataUrlToSquare` con opciones (`zoom`, `offsetX`, `offsetY`) en `postImages.ts`; `FeedPage` guarda el resultado en la imagen del borrador sin cambios de contrato hacia backend.
+
+90. **Pack 5.2 (gesto drag para encuadre).** En el editor de recorte manual de `FeedPage`, la vista previa ahora permite arrastrar directamente (pointer events, compatible táctil/ratón) para mover el encuadre X/Y de forma natural. Los sliders se mantienen para ajuste fino.
+
+91. **Pack 5.3 (pinch-to-zoom en recorte).** En el mismo editor de recorte, se añadió gesto de pellizco con dos dedos sobre la preview para ajustar el zoom dinámicamente (rango 1x-3x). Se conserva drag para desplazar encuadre y sliders para microajuste.
+
+92. **Feed móvil — reubicación de “Tu cuenta / Sugerencias”.** Para evitar solape visual con el FAB de crear publicación, `FeedSidebar` se renderiza en móvil dentro de la columna principal (debajo de historias) y en desktop permanece en el lateral derecho. Se añadió `className` opcional al componente para controlar visibilidad por breakpoint y se reservó `padding-bottom` en la columna principal móvil para despejar el CTA flotante.
+
+93. **Checklist publicaciones — menciones priorizadas (seguidos + recientes).** Se mejoró el autocompletado `@` en `MentionableTextarea`: mantiene navegación teclado y ahora prioriza candidatos seguidos y recientemente mencionados. `FeedPage` guarda historial reciente por usuario en `localStorage` (`fitsocial:mentionRecents:v1:{userId}`) cuando se selecciona una mención desde el compositor o comentarios, y lo usa para ordenar sugerencias de forma más útil.
+
+94. **Checklist publicaciones — atajos/plantillas rápidas.** En `CreatePostForm` se añadieron chips de texto rápido (`PR`, `Check-in`, `Resumen`, `Pregunta`) para acelerar redacción. Al aplicar una plantilla: si el contenido está vacío se inserta completo; si ya hay texto se añade debajo con separación, respetando el flujo de validación y borrador existente.
+
+95. **Tests (publicaciones) — cobertura utilitaria en frontend.** Se habilitó `vitest` en la raíz (`npm test`) y se añadieron pruebas unitarias para piezas clave del flujo de publicación: prioridad de menciones (`mentionAutocomplete.test.ts`, seguidos + recientes + filtro por query) y aplicación de plantillas rápidas (`postComposerTemplates.test.ts`). Además, `FeedPage` reutiliza la utilidad testeada `applyPostTemplate`.
+
+96. **Fase visual 1 (quick wins) — creador + cards de publicación.** Sin tocar lógica de negocio, se mejoró jerarquía visual del compositor (`CreatePostForm`) agrupando secciones en superficies con borde/sombra suave (texto, fotos, visibilidad, rutina). En timeline, `PostItem` refuerza lectura con cabecera y cuerpo más estructurados; `PostActions` y `PostMediaGallery` pasan a bloques visuales más consistentes para un look más “card premium”.
+
+97. **Ajuste UX textarea (compositor/comentarios).** Se refinó el estilo del cuadro de texto principal de publicación (más alto y superficie visual más limpia) y se desactivó el resize manual en campos de mención para evitar el efecto de “abrir/cerrar” textarea que rompía la composición visual.
+
+98. **Textarea compositor — mayor presencia + auto-grow.** Se habilitó crecimiento automático de altura en `MentionableTextarea` (`autoGrow`) y se aplicó en el campo principal de `CreatePostForm`, aumentando además su altura base para ocupar casi toda la tarjeta de texto y mejorar confort de escritura.
+
+99. **Compositor por fases (wizard v1).** Se transformó `CreatePostForm` en flujo guiado de 4 pasos: **Contenido**, **Multimedia**, **Configuración** y **Revisión**. Se añadió stepper visual con navegación `Atrás / Siguiente / Publicar`, manteniendo el mismo estado de borrador/validaciones/adjuntos existente para iterar el diseño sin romper lógica.
+
+100. **Ajuste visual navegación de pasos.** En el wizard de `CreatePostForm`, los botones `Atrás / Siguiente` se movieron al borde inferior del formulario sin caja contenedora adicional, eliminando el rectángulo envolvente para un cierre visual más limpio.
+
+101. **Modal compositor sin scroll interno + lienzo ampliado.** Se eliminó el `overflow-y-auto` del contenedor del editor de publicaciones y se incrementaron dimensiones del modal (móvil y desktop) para ofrecer más área visible de diseño sin desplazamiento interno.
+
+102. **Wizard v2 según feedback (flujo 3 fases).** Se reordenó `CreatePostForm` a: (1) **Imagen + edición**, (2) **Texto/menciones + configuración**, (3) **Revisión**. Además, tras añadir imágenes se mantiene una vista principal grande (portada) visible durante todo el flujo para acercar cada fase al resultado final de la publicación.
+
+103. **Fase 1 — navegación visual de multimedia.** En el lienzo principal de imagen se añadieron controles de flecha izquierda/derecha para recorrer los archivos cargados y previsualizarlos sin salir del paso. El menú contextual `+` ahora actúa sobre el archivo actualmente visible (editar/eliminar).
+
+104. **Editor de foto — mejoras de precisión y comparación.** Se reforzó el editor de recorte con presets rápidos de zoom, mini panel de comparación **original vs recorte**, y controles de ajuste fino por flechas (nudge) para mover encuadre con más precisión además de drag/pinch/sliders.
+
+105. **Editor de foto en barra lateral derecha.** El recorte dejó de abrirse como overlay/popup independiente y ahora se edita desde un panel lateral derecho dentro del propio entorno del compositor, manteniendo contexto visual del flujo por fases.
+
+106. **Carpeta `src/hooks/` y documentación de hooks.** Se extrajo `useMentionRecents` (menciones recientes en `localStorage`) desde `FeedPage`; `useRegisterRoadmapNode` y el contexto `RoadmapRegistryContext` quedaron modularizados para el diagrama del roadmap personal. Documentación de `useState`, `useEffect`, `useMemo`, `useCallback` y enlaces al código en **`docs/hooks.md`**.
+
+107. **Documentación de hooks ampliada (`docs/hooks.md`).** Tabla checklist con rutas de archivo, sección de **ejemplos citados** (`FeedPage`, `useMentionRecents`, `useRegisterRoadmapNode`) para entrega / corrección sin buscar a mano.
+
+108. **Documentación de Context API (`docs/context.md`).** Cuándo conviene usar contexto frente a props/estado local; descripción de **`AuthContext`**, **`ThemeContext`** y **`RoadmapRegistryContext`**; orden de providers (`ThemeProvider` en `main.tsx`, `AuthProvider` en `App.tsx`); enlaces al código y referencia cruzada con `docs/hooks.md`.
+
+109. **Rutas y 404.** `RootRoutes` monta **`/` → App**, rutas legales y **`/roadmap`**, y **`path="*"` → NotFoundPage`** (`src/pages/NotFoundPage.tsx`). Documentación en **`docs/routing.md`** y enlace en **`README.md`**.
+
+110. **Formularios (`docs/forms.md`).** Documentación de formularios controlados, validación (auth, perfil, compositor), **`StatusMessage`** y ejemplos citados del código; enlace en **`README.md`**.
+
+111. **API REST (`docs/api.md`).** Documentación dedicada: base URL, cabecera **`Authorization: Bearer`**, formato **`{ code, message }`**, tabla de archivos del backend y **ejemplos JSON** por recurso (health, auth, workouts, posts, roadmap, etc.); referencia cruzada con **`docs/design.md`** y **`docs/deploy.md`**; enlace en **`README.md`**.
+
+112. **Capa de red frontend (`docs/api-client.md`).** Documentación de **`apiFetch`**, **`ApiError`**, evento **`auth:expired`**, tabla de **`src/api/*.ts`**, **`src/types/`**, estados de red en UI y nota sobre persistencia local vs API; enlaces **`README.md`** y **`docs/design.md`** (flujo de datos).
+
+113. **Testing (`docs/testing.md`).** Vitest en raíz (`mentionAutocomplete`, `postComposerTemplates`) y en **`server/`** (auth/workouts, exercises, posts seguridad, sesiones, historias); comandos **`npm run test`**, **`npm run build`**, **`npm run lint`**; checklist manual (auth, feed, compositor, perfil, rutas legales, 404, responsive/consola); enlace en **`README.md`**.
+
+114. **Despliegue y URLs.** Creado **`docs/deployment.md`** como entrada que enlaza la guía completa **`docs/deploy.md`** (requisito nombre `deployment.md`). En **`README.md`**, sección **Despliegue**: tabla **Producción (URLs)** con placeholders para front y nota API mismo origen / `VITE_API_URL`; comprobación **`GET /api/health`**.
+
+115. **Retrospectiva (`docs/retrospective.md`).** Documento de cierre: revisión de docs API/red, síntesis React + Express + cliente HTTP, tabla de problemas típicos, sección de uso de IA y reflexión final con bloques *[Personalizar]*; enlace en **`README.md`**.
 
 ## Usuarios demo y fichero JSON (operativa rapida)
 

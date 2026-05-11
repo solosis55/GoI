@@ -29,7 +29,7 @@ export function ContactPage() {
         <p className="rounded-lg border border-neutral-700 bg-neutral-950/60 px-3 py-2 text-neutral-400 light:border-zinc-300 light:bg-zinc-50 light:text-zinc-700">
           Aún no hay correo público configurado. En el proyecto, define la variable de entorno del cliente{" "}
           <code className="rounded bg-neutral-900 px-1.5 py-0.5 text-xs text-neutral-300 light:bg-zinc-200 light:text-zinc-900">VITE_CONTACT_EMAIL</code>{" "}
-          antes del build para mostrar aquí tu dirección de contacto (p. ej. en Vercel, Netlify o tu hosting).
+          antes del build para mostrar aquí tu dirección de contacto (p. ej. en Vercel, Netlify o tu hosting).
         </p>
       )}
 

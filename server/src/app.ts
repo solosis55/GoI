@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import postsRoutes from "./routes/postsRoutes.js";
 import storiesRoutes from "./routes/storiesRoutes.js";
+import personalRoadmapRoutes from "./routes/personalRoadmapRoutes.js";
 import exercisesRoutes from "./routes/exercisesRoutes.js";
 import workoutSessionsRoutes from "./routes/workoutSessionsRoutes.js";
 import workoutsRoutes from "./routes/workoutsRoutes.js";
@@ -58,6 +59,8 @@ if (!serveProductionClient) {
         workoutSessions: "/api/workout-sessions",
         posts: "/api/posts",
         stories: "/api/stories",
+        personalRoadmap: "/api/personal-roadmap",
+        personalBody: "/api/auth/personal-body (GET/PUT, auth)",
       },
     });
   });
@@ -74,6 +77,7 @@ app.use("/api/exercises", exercisesRoutes);
 app.use("/api/workout-sessions", workoutSessionsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/stories", storiesRoutes);
+app.use("/api/personal-roadmap", personalRoadmapRoutes);
 
 if (serveProductionClient) {
   app.use(express.static(clientDist, { index: false }));

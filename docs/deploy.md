@@ -1,5 +1,7 @@
 # Despliegue (MVP)
 
+Documento principal de despliegue. Entrada alternativa para convenciones que pidan **`deployment.md`**: **[docs/deployment.md](./deployment.md)** (enlace a este archivo).
+
 Objetivo: publicar **frontend + API en un solo origen** (`/` la SPA, `/api/*` el backend) para evitar CORS y configurar una sola URL en produccion.
 
 ## Que hace el proyecto en produccion
@@ -28,6 +30,8 @@ Consulta `server/.env.example` para variables adicionales opcionales (`AUTH_RESE
 ## Persistencia (importante)
 
 Los datos viven en **`server/data/store.json`** (o en la ruta definida por **`FITSOCIAL_STORE_PATH`**). En contenedores/PaaS sin **volumen persistente**, el fichero se pierde al redesplegar o recrear la instancia.
+
+El **roadmap personal** de la app (`/roadmap`, API **`/api/personal-roadmap`**) va en un fichero aparte: **`server/data/personal-roadmap.json`** en desarrollo y proceso Node con disco (implementacion en **`server/src/services/personalRoadmapFile.ts`**). Con **`VERCEL=1`**, el valor por defecto es un JSON de trabajo bajo **`/tmp`** (no durable entre invocaciones). La SPA solo escribe ese archivo cuando el usuario pulsa **Guardar cambios**; montar volumen en Docker debe incluir **`server/data`** si quieres conservar también este JSON junto al **`store.json`**.
 
 - **Demo / desarrollo**: para recrear las cuatro cuentas `*@test.com` existe **`npm run seed:demo-users`** (solo si falta el email) y **`npm run reset:demo-users`** (**upsert** + password `123456` según `server/src/data/demoUsers.ts`), desde la **raiz del repo** o `server/` (ver **`README.md`**). Los scripts solo escriben disco en **fuera de test**: tras ejecutarlos, **reinicia el proceso del API** para que vuelva a leer el JSON (`GET /api/health` muestra **`devStore.usersLoaded`**).
 - **`FITSOCIAL_STORE_PATH`**: si la defines, debe apuntar a un archivo JSON válido **o estar sin definir**: un fichero vacío o incompleto hace fallar **`JSON.parse`** al arrancar. Usa seeds sobre la misma ruta que usará runtime.

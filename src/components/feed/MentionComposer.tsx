@@ -10,9 +10,10 @@ export function MentionComposer({
   onSubmit,
   candidates,
   placeholder = "Escribe un comentario (@ para mencionar)",
-  className = "goi-field min-h-[2.75rem] w-full resize-y py-2 text-sm",
+  className = "goi-field min-h-[2.75rem] w-full resize-none py-2 text-sm",
   rows = 2,
   maxLength = 180,
+  onMentionPick,
 }: {
   value: string;
   onChange: (next: string) => void;
@@ -22,21 +23,23 @@ export function MentionComposer({
   className?: string;
   rows?: number;
   maxLength?: number;
+  onMentionPick?: (picked: MentionPickUser) => void;
 }) {
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="mt-2 flex gap-2 max-[479px]:flex-col">
       <MentionableTextarea
         value={value}
         onChange={onChange}
         candidates={candidates}
         rows={rows}
         maxLength={maxLength}
+        onMentionPick={onMentionPick}
         className={[className, "min-w-0 flex-1"].join(" ")}
         placeholder={placeholder}
         onEnterSubmit={onSubmit}
         listPlacement="above"
       />
-      <Button type="button" variant="secondary" className="shrink-0 self-end" onClick={onSubmit}>
+      <Button type="button" variant="secondary" className="shrink-0 self-end max-[479px]:w-full" onClick={onSubmit}>
         Comentar
       </Button>
     </div>

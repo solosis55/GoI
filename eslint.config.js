@@ -23,6 +23,9 @@ export default defineConfig([
       'react-hooks/set-state-in-effect': 'off',
       // Exportamos hooks, contexto y utilidades junto a componentes (Vite HMR sigue siendo util en la práctica).
       'react-refresh/only-export-components': 'off',
+      // React Compiler / plugin experimental: marcan patrones válidos (refs espejo de estado, useCallback con deps finas).
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/refs': 'off',
     },
   },
 ])

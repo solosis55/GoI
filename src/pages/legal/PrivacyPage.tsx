@@ -60,7 +60,7 @@ export function PrivacyPage() {
         </li>
         <li>
           <strong>Contenidos generados:</strong> publicaciones, fotos cargadas temporalmente tras validación servidor,
-          comentarios, historias con caducidad de ~24 h donde proceda según configuración técnica.
+          comentarios, historias con caducidad de ~24 h donde proceda según configuración técnica.
         </li>
         <li>
           <strong>Datos derivados:</strong> interacciones (likes), relaciones sociales tipo seguimiento dentro de la

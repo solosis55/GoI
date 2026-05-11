@@ -94,8 +94,8 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
 
     setCreateDraftReady(false);
     const d = readWorkoutCreateDraft();
-    let nextTitle = d?.title ?? "";
-    let nextDesc = d?.description ?? "";
+    const nextTitle = d?.title ?? "";
+    const nextDesc = d?.description ?? "";
     let nextBlocks = blocksFromLegacy(d?.exerciseIds, d?.exerciseBlocks).slice(0, WORKOUT_EXERCISES_MAX);
     const rawTags = d?.tags?.length ? [...d.tags] : [""];
 
@@ -113,6 +113,8 @@ export function WorkoutEditorPage({ mode, onBack, onSaved, onBrowseCatalog }: Wo
     setExerciseBlocks(nextBlocks);
     setTags(rawTags.length ? rawTags : [""]);
     setCreateDraftReady(true);
+    // Claves derivadas (`editWorkoutId`, `appendExerciseIdsKey`) sustituyen a `mode.workout` / `initialExerciseIds` para no re-hidratar en exceso.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ver comentario arriba
   }, [mode.mode, editWorkoutId, appendExerciseIdsKey]);
 
   useEffect(() => {

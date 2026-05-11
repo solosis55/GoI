@@ -291,6 +291,20 @@ export function getFollowing(req: Request, res: Response) {
   res.json({ followingIds });
 }
 
+/** Usuarios que siguen a `userId` (son `followerId` con `followingId === userId`). */
+export function getFollowers(req: Request, res: Response) {
+  const { userId } = req.params;
+  const authUserId = String(res.locals.authUserId ?? "");
+  if (!authUserId || authUserId !== userId) {
+    sendError(res, 403, "AUTH_FORBIDDEN", "forbidden");
+    return;
+  }
+  const followerIds = store.follows
+    .filter((follow) => follow.followingId === userId)
+    .map((follow) => follow.followerId);
+  res.json({ followerIds });
+}
+
 export function toggleFollow(req: Request, res: Response) {
   const targetUserId = String(req.params.targetUserId);
   const followerId = String(res.locals.authUserId ?? "");

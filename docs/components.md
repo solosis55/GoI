@@ -14,7 +14,7 @@
 ### UI base (`src/components/ui`)
 - `Button`
   - Props: `variant` (`primary` | `secondary` | `danger` | `navActive` | `link` | `linkDark`), props nativas de `button`.
-  - Uso: **`primary`** y **`navActive`** comparten linea **oro GoI** (CTA y pestaña activa); **`secondary`** pildora clara (`neutral-100`) para contraste sobre lateral o cards oscuras; **`danger`** eliminar/cerrar sesion; **`link`** / **`linkDark`** enlaces tipo boton en tonos **oro** / **acero** sobre fondo oscuro. Incluye **`focus-visible`** con anillo oro y `ring-offset-black` para teclado.
+  - Uso: **`primary`** y **`navActive`** comparten linea **oro GoI** (CTA y pestaña activa); **`secondary`** pildora clara (`neutral-100`) para contraste sobre lateral o cards oscuras; **`danger`** eliminar/cerrar sesion; **`link`** / **`linkDark`** enlaces tipo boton en tonos **oro** / **acero** sobre fondo oscuro. Incluye **`focus-visible`** con anillo oro y `ring-offset-black` para teclado y altura mínima táctil (**`min-h-11`**, ~44 px).
 - `Card`
   - Props: `tone`, `as`, `className`, `id` (opcional, p. ej. ancla para scroll).
   - Uso: contenedores en feed, perfil, entrenamientos y **auth**; `tone="dark"` y el tono por defecto son **paneles oscuros** (zinc/negro) con viñeta interior dorada sutil — elegir según jerarquía visual en la pantalla.
@@ -30,8 +30,11 @@
 
 ### Marca (`src/components/branding`)
 - `GoISidebarBadge`
-  - Props: `subtitle`, `description?`, opcional **`showDescriptionOnMobile`**.
-  - Uso: pantalla **auth** centrada sobre el card (logo circular, FitSocial).
+  - Props: `subtitle`, `description?`, opcional **`showDescriptionOnMobile`**, **`presentation`** (`"compact"` | **`hero`**`; defecto **`compact`**), **`heroHalo`** (solo con **`hero`**: halo **conic-gradient** rotatorio detrás del círculo; clase **`goi-hero-halo`** en **`index.css`**).
+  - Uso: pantalla **auth** centrada sobre el card (logo circular, FitSocial); **`hero`** + **`heroHalo`** lo usa **`LoginHeroBrand`**.
+- `LoginHeroBrand`
+  - Props: mismos textos que **`GoISidebarBadge`** (`subtitle`, `description?`, **`showDescriptionOnMobile`**), **`onDismissComplete`** al terminar la salida del logo (~1 s).
+  - Uso: solo **`App.tsx`** invitado — primero **solo** marca centrada (`splash`); al clic desaparece con transición larga y el padre muestra **`AuthPage`** con **`auth-form-reveal`**.
 - `SidebarSessionBadge`
   - Props: `username`, `avatarUrl`.
   - Uso: **lateral con sesión** — foto en anillo dorado equivalente al logo GoI; FitSocial y `@usuario`.
@@ -39,10 +42,18 @@
 ### Layout (`src/components/layout`)
 - `SidebarNavigation`
   - Props: **`activeTab`** (`"feed" | "profile" | "workouts"`); **`onFeed`**, **`onWorkouts`**, **`onProfile`**, **`onLogout`** (callbacks).
-  - Uso: barra lateral autenticada en **`App.tsx`** debajo de **`SidebarSessionBadge`**. Cuatro **`Button`** con iconos **`aria-hidden`** (casa / mancuerna / usuario / salida): **`secondary`** o **`navActive`** según pestaña; **`danger`** para **Cerrar sesión**. Clases **`motion-safe:`** en hover/active e iconos; rejilla **`max-md:grid-cols-2`** con logout **`max-md:col-span-2`**.
+  - Uso: barra lateral autenticada en **`App.tsx`** debajo de **`SidebarSessionBadge`**. Cuatro **`Button`** con iconos **`aria-hidden`** (casa / mancuerna / usuario / salida): **`secondary`** o **`navActive`** según pestaña; **`danger`** para **Cerrar sesión**. Clases **`motion-safe:`** en hover/active e iconos; rejilla **`max-md:grid-cols-2`** y en móviles muy estrechos (**`max-[430px]`**) pasa a **una columna** para evitar botones comprimidos.
 - `SiteFooter`
   - Props: ninguna (copy fijo + año con `new Date().getFullYear()`).
-  - Uso: pie global bajo el `main` en **`App.tsx`** y en **`LegalPageShell`**. Enlace externo **Roadmap** (Trello); **`Link`** internos a **`/aviso-legal`**, **`/privacidad`**, **`/contacto`**. Alternador de tema (`ThemeToggle`).
+  - Uso: pie global bajo el `main` en **`App.tsx`** y en **`LegalPageShell`**. **`Link`** a **`/roadmap`** con texto **Roadmap** (diagrama personal de planificación); **`Link`** a **`/aviso-legal`**, **`/privacidad`**, **`/contacto`**. En móvil centra copy/enlaces y oculta separadores `·` para mejorar legibilidad cuando hace wrap. El tablero público Trello del proyecto se enlaza desde el copy de **`/roadmap`** y del **`README.md`**, no desde este pie. Alternador de tema (`ThemeToggle`).
+- `PageContainer`
+  - Props: `children`, `className?`.
+  - Uso: ancho máximo reutilizable para el contenido principal autenticado (`max-w-6xl`) con padding lateral consistente; separa feed/rutinas/perfil de los bordes externos de la ventana. En móvil usa padding aún más compacto (`px-0.5`) para aprovechar ancho sin pegar el contenido al borde.
+
+### Roadmap (`src/components/roadmap`)
+- `RoadmapDiagram`
+  - Props: `tasks` (`RoadmapTask[]`), `handlers` (toggle, título, eliminar, añadir hijo).
+  - Uso: vista **`PersonalRoadmapPage`** — zoom/pan (Ctrl+rueda, arrastre del fondo), nodos editables, conectores SVG actualizados sin estado React en los paths (reduce parpadeos). Contexto de registro para medir aristas (`collectRoadmapEdges` en `src/utils/roadmapEdges.ts`).
 
 ### Feed (`src/components/feed`)
 - `PostItem`
@@ -59,7 +70,7 @@
   - Uso: item de sugerencias para seguir usuarios.
 - `StoriesRow`
   - Props: `authors` (lista `FeedStoryAuthor` desde `GET /api/stories`), `currentUserId`, `seenRevision` (fuerza releer `storySeen` en `localStorage`), `onSelectAuthor`.
-  - Uso: fila horizontal de **reels** (tu usuario + seguidos); anillo dorado cuando hay slides **no vistas**; gradientes laterales sobre scroll.
+  - Uso: fila horizontal de **reels** (tu usuario + seguidos); anillo dorado cuando hay slides **no vistas**; gradientes laterales sobre scroll. En móviles muy estrechos reduce ligeramente el tamaño de avatar para mantener más ítems visibles sin saturar.
 - `CreateStoryModal`
   - Props: `open`, `onClose`, `onCreated` (tras `POST /api/stories` correcto).
   - Uso: elegir/compimir imagenes cliente (`postImages`), previsualizar, publicar historia (limite servidor 1–15 slides).
@@ -71,23 +82,30 @@
   - Uso: rejilla responsive de imagenes (enlace abre nueva pestaña) dentro del post.
 - `FeedNotificationsBell`
   - Props: `notifications`, `unreadCount`, `loading`, `onRefresh`.
-  - Uso: campana con panel de avisos del feed; marca leidas con API (`postsApi`).
+  - Uso: campana con panel de avisos del feed; marca leidas con API (`postsApi`). Ajustada para móvil: objetivo táctil de ~44 px y panel más ancho relativo al viewport (`100vw - 1rem`).
 - `UserPublicProfileModal`
   - Props: `userId | null`, `currentUserId`, `initialFollowingIds`, `onClose`, `onFollowingChanged?`.
   - Uso: perfil ligero ajeno (`getProfile` + posts de usuario + follow).
 - `CreatePostForm`
   - Props: `content`, `selectedWorkoutId`, **`mentionCandidates`** (lista para autocompletar **@** en el texto), `workouts`, handlers.
-  - Uso: formulario para crear publicacion.
+  - Uso: formulario para crear publicacion (ahora se monta dentro de modal en `FeedPage`, no inline en card) en formato **wizard de 3 fases**: (1) Imagen + edición, (2) Texto/menciones + configuración, (3) Revisión. Incluye stepper, navegación `Atrás / Siguiente / Publicar`, validación por pasos, y mantiene validación en vivo, preview, estado de transferencia, adjuntos (reordenar/portada/recorte), menciones priorizadas y plantillas rápidas. Tras añadir imágenes, muestra una vista principal grande de portada durante todo el flujo. El textarea principal usa `resize-none` + `autoGrow`.
+- `postCreateDraft` (`src/utils/postCreateDraft.ts`)
+  - API: `readPostCreateDraft`, `writePostCreateDraft`, `clearPostCreateDraft`.
+  - Uso: borrador de creación de post por usuario en `sessionStorage` (`fitsocial:postCreateDraft:v1`); soporte para confirmar cierre del modal con cambios y descarte explícito.
 - `MentionComposer` / `MentionableTextarea`
-  - Comentarios y texto del post: sugerencias al escribir **@**, teclado arriba/abajo/Enter/Tab.
+  - Comentarios y texto del post: sugerencias al escribir **@**, teclado arriba/abajo/Enter/Tab. Prioriza seguidos y recientes; al elegir una mención se actualiza histórico reciente por usuario (persistencia local). `MentionableTextarea` soporta `autoGrow` para crecer con contenido (sin resize manual). En pantallas muy estrechas el botón **Comentar** baja debajo del campo para evitar overflow horizontal.
+- Tests asociados (frontend): `src/utils/mentionAutocomplete.test.ts` valida orden de sugerencias y filtro de query; `src/utils/postComposerTemplates.test.ts` valida inserción/append de plantillas.
 - `PostComposer`
   - Componente simple input+boton; el feed usa **`MentionComposer`** en su lugar.
 - `FeedModeTabs`
   - Props: `mode`, `onChangeMode`, `compact?` (pills `text-xs` y menos padding; pestañas centradas con `justify-center`).
-  - Uso: alternar feed entre "Todos" y "Seguidos" (en historias se usa **`compact`**).
+  - Uso: alternar feed entre "Todos" y "Seguidos" (en historias se usa **`compact`**); segmentos con altura mínima táctil (~44 px).
 - `UserSummaryCard`
   - Props: `username`, `myPostsCount`.
   - Uso: resumen de cuenta en sidebar del feed.
+- `FeedSidebar`
+  - Props: `username`, `myPostsCount`, `suggestedUsers`, `followingIds`, `onToggleFollow`, `onViewProfile`, `className?`.
+  - Uso: lateral reutilizable del feed (resumen de cuenta + sugerencias + acciones de seguir/perfil). En móvil se renderiza en la columna principal; en desktop se mantiene en el lateral derecho.
 
 ### Workouts (`src/components/workouts`)
 - `WorkoutForm`
@@ -98,10 +116,10 @@
   - Uso: si **`onOpenCatalog`** existe, muestra CTA **Elegir ejercicios en el catalogo** y la lista ordenada de la rutina; si no, modo legacy con busqueda embebida en mini lista (max ~40 resultados).
 - `WorkoutItem`
   - Props: `workout`, **`exerciseLabels`** (nombres resueltos desde el catalogo en `WorkoutsPage`), **`sessionCount`**, **`lastSessionPerformedAt`**, estado de edicion, callbacks de edicion/borrado/duplicar segun implementacion actual.
-  - Uso: item de lista con titulo, descripcion, chips de etiquetas, resumen de sesiones, **lista de nombres de ejercicios**; acciones **Duplicar**, **Editar**, **Eliminar** (mas detalle en `WorkoutItem.tsx`).
+  - Uso: item de lista con titulo, descripcion, chips de etiquetas, resumen de sesiones, **lista de nombres de ejercicios**; acciones **Duplicar**, **Editar**, **Eliminar** (mas detalle en `WorkoutItem.tsx`). En pantallas muy estrechas (<480 px) la botonera se apila en columna para evitar recortes de texto.
 - `WorkoutSessionCalendar`
   - Props: `sessions`.
-  - Uso: mini calendario mensual (lun-dom) con dias de entrenamiento resaltados; navegacion de mes y boton Hoy. Se usa en cabecera de `WorkoutsPage`.
+  - Uso: mini calendario mensual (lun-dom) con dias de entrenamiento resaltados; navegacion de mes y boton Hoy. Se usa en cabecera de `WorkoutsPage`; en móviles muy estrechos centra y apila mejor la cabecera del mes.
 - `WorkoutSessionsHistory`
   - Props: `sessions`, `loading`, `title`, `description` (opcional), `emptyMessage`, `showDelete`, `onDeleteSession`.
   - Uso: lista de entrenamientos registrados; actualmente visible en **Perfil** (solo lectura). Puede reutilizarse en otras pantallas.
@@ -112,8 +130,8 @@
 ### Profile (`src/components/profile`)
 - `ProfileForm`
   - Props: campos de perfil, estados (`loading/error/message`) y handlers.
-  - Uso: formulario de actualizacion de perfil.
+  - Uso: formulario de actualizacion de perfil. CTA de guardado a ancho completo en móvil para mejorar tap target.
 
 ## Pendientes
 
-- [ ] (Opcional) Extraer `FeedSidebar` para encapsular toda la barra derecha del feed.
+- [ ] (Opcional) seguir extrayendo bloques de `FeedPage` si crece la complejidad del timeline principal.

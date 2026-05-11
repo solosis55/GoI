@@ -74,9 +74,9 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
   return (
     <div className="fs-card-surface flex h-fit w-full min-w-0 flex-col p-3 sm:p-4">
       <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Calendario</p>
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-200 light:text-zinc-900">{monthTitle}</p>
-        <div className="flex shrink-0 items-center gap-1">
+      <div className="mt-2 flex items-center justify-between gap-2 max-[379px]:flex-col max-[379px]:items-stretch">
+        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-200 light:text-zinc-900 max-[379px]:text-center">{monthTitle}</p>
+        <div className="flex shrink-0 items-center gap-1 max-[379px]:justify-center">
           <Button type="button" variant="secondary" className="!px-2 !py-1 text-xs" onClick={goPrevMonth} aria-label="Mes anterior">
             ‹
           </Button>

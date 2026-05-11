@@ -27,7 +27,7 @@ export function WorkoutSessionsHistory({
   loading,
   title = "Historial de entrenamientos",
   description,
-  emptyMessage = "Aun no has registrado ningun entrenamiento.",
+  emptyMessage = "Aún no has registrado ningún entrenamiento.",
   showDelete = false,
   onDeleteSession,
 }: WorkoutSessionsHistoryProps) {

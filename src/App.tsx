@@ -1,13 +1,20 @@
 import "./App.css";
 import { useCallback, useEffect, useState } from "react";
-import { GoISidebarBadge } from "./components/branding/GoISidebarBadge";
+import { LoginHeroBrand } from "./components/branding/LoginHeroBrand";
+import { PageContainer } from "./components/layout/PageContainer";
 import { SidebarSessionBadge } from "./components/branding/SidebarSessionBadge";
 import { SiteFooter } from "./components/layout/SiteFooter";
-import { SidebarNavigation } from "./components/layout/SidebarNavigation";
+import {
+  SidebarLogoutButton,
+  SidebarNavigation,
+  SidebarSettingsButton,
+} from "./components/layout/SidebarNavigation";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AuthPage } from "./pages/AuthPage";
 import { FeedPage } from "./pages/FeedPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { StatisticsPage } from "./pages/StatisticsPage";
 import { ExerciseCatalogPage } from "./pages/ExerciseCatalogPage";
 import { ExerciseDetailPage } from "./pages/ExerciseDetailPage";
 import { WorkoutEditorPage, type WorkoutEditorMode } from "./pages/WorkoutEditorPage";
@@ -16,13 +23,20 @@ import type { Workout } from "./types/workout";
 import { clearWorkoutCreateDraft } from "./utils/workoutCreateDraft";
 
 const TAB_STORAGE_KEY = "fitsocial:activeTab";
-type ActiveTab = "feed" | "profile" | "workouts";
+type ActiveTab = "feed" | "profile" | "settings" | "statistics" | "workouts";
 type WorkoutsView = "overview" | "catalog" | "exerciseDetail" | "editor";
 
 function readStoredTab(): ActiveTab | null {
   try {
     const raw = sessionStorage.getItem(TAB_STORAGE_KEY);
-    if (raw === "feed" || raw === "profile" || raw === "workouts") return raw;
+    if (
+      raw === "feed" ||
+      raw === "profile" ||
+      raw === "settings" ||
+      raw === "statistics" ||
+      raw === "workouts"
+    )
+      return raw;
   } catch {
     /* ignore */
   }
@@ -50,8 +64,21 @@ function stripPostQueryFromUrl() {
   }
 }
 
+type AuthWelcomePhase = "splash" | "form";
+
+function readAuthWelcomePhaseInitial(): AuthWelcomePhase {
+  try {
+    if (new URLSearchParams(window.location.search).get("reset")?.trim()) return "form";
+  } catch {
+    /* ignore */
+  }
+  return "splash";
+}
+
 function AppContent() {
   const { isAuthenticated, logout, user } = useAuth();
+  /** Invitado: primero solo logo centrado; tras clic aparece el formulario de acceso (salvo `?reset=` en URL). */
+  const [authWelcomePhase, setAuthWelcomePhase] = useState<AuthWelcomePhase>(readAuthWelcomePhaseInitial);
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => readStoredTab() ?? "feed");
   const [workoutsView, setWorkoutsView] = useState<WorkoutsView>("overview");
   const [catalogExerciseId, setCatalogExerciseId] = useState<string | null>(null);
@@ -116,23 +143,32 @@ function AppContent() {
       setCatalogExerciseId(null);
       setCatalogFromEditor(false);
       setExerciseDetailFromEditor(false);
+      setAuthWelcomePhase("splash");
     }
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
-        <main className="social-shell flex min-h-0 flex-1 flex-col items-center px-4 py-10 sm:py-14">
-          <div className="mb-8 flex w-full flex-col items-center sm:mb-10">
-            <GoISidebarBadge
-              subtitle="Inicia sesión o regístrate"
-              description="Red social y rutinas en un solo lugar. Entra al feed cuando inicies sesión."
-              showDescriptionOnMobile
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-1 flex-col justify-center pb-8">
-            <AuthPage />
-          </div>
+        <main className="social-shell relative flex min-h-0 flex-1 flex-col overflow-x-hidden">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-[min(26rem,52vh)] bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(212,175,55,0.16)_0%,transparent_70%)] light:bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(196,154,26,0.24)_0%,transparent_72%)]"
+            aria-hidden
+          />
+          {authWelcomePhase === "splash" ? (
+            <div className="relative z-[1] flex min-h-[min(85vh,calc(100vh-8rem))] flex-1 flex-col items-center justify-center px-4 py-8">
+              <LoginHeroBrand
+                subtitle="Inicia sesión o regístrate"
+                description="Red social y rutinas en un solo lugar. Entra al feed cuando inicies sesión."
+                showDescriptionOnMobile
+                onDismissComplete={() => setAuthWelcomePhase("form")}
+              />
+            </div>
+          ) : (
+            <div className="auth-form-reveal relative z-[1] flex w-full min-w-0 flex-1 flex-col justify-center px-4 pb-10 pt-6 sm:pb-14 sm:pt-8 md:pt-10">
+              <AuthPage />
+            </div>
+          )}
         </main>
         <SiteFooter />
       </div>
@@ -142,122 +178,164 @@ function AppContent() {
   return (
     <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
       <main className="social-shell grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="social-sidebar sticky top-0 flex h-screen flex-col gap-5 border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3 light:border-zinc-200 light:bg-white">
-          <SidebarSessionBadge username={user?.username ?? ""} avatarUrl={user?.avatarUrl ?? ""} />
-          <SidebarNavigation
-            activeTab={activeTab}
-            onFeed={() => goTo("feed")}
-            onWorkouts={() => {
-              setWorkoutsView("overview");
-              setCatalogExerciseId(null);
-              setCatalogFromEditor(false);
-              setExerciseDetailFromEditor(false);
-              goTo("workouts");
-            }}
-            onProfile={() => goTo("profile")}
-            onLogout={logout}
+        <aside className="auth-session-enter-aside social-sidebar relative sticky top-0 flex h-screen flex-col overflow-hidden border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3 light:border-l-[3px] light:border-l-amber-400/35 light:border-zinc-200 light:bg-white light:shadow-none">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[2px] bg-linear-to-r from-goi-gold/85 via-goi-gold/40 to-transparent light:from-amber-500/90 light:via-amber-400/45"
+            aria-hidden
           />
+          <div className="relative z-[2] flex min-h-0 min-w-0 flex-1 flex-col gap-5 max-md:gap-3">
+            <SidebarSessionBadge
+              username={user?.username ?? ""}
+              avatarUrl={user?.avatarUrl ?? ""}
+              tagline={
+                user?.goal?.trim() ||
+                (user?.bio?.trim()
+                  ? user.bio.trim().length > 72
+                    ? `${user.bio.trim().slice(0, 72)}…`
+                    : user.bio.trim()
+                  : undefined)
+              }
+              onNavigateToProfile={() => goTo("profile")}
+            />
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-1">
+              <SidebarNavigation
+                activeTab={activeTab}
+                onFeed={() => goTo("feed")}
+                onWorkouts={() => {
+                  setWorkoutsView("overview");
+                  setCatalogExerciseId(null);
+                  setCatalogFromEditor(false);
+                  setExerciseDetailFromEditor(false);
+                  goTo("workouts");
+                }}
+                onStatistics={() => goTo("statistics")}
+                onProfile={() => goTo("profile")}
+              />
+            </div>
+            <div className="mt-auto shrink-0 space-y-2.5 border-t border-neutral-800 pt-4 light:border-zinc-200">
+              <SidebarSettingsButton active={activeTab === "settings"} onClick={() => goTo("settings")} />
+              <SidebarLogoutButton onLogout={logout} />
+            </div>
+          </div>
         </aside>
 
-        <section className="social-content min-h-0 min-w-0 w-full p-4 max-md:p-2.5">
-          {activeTab === "workouts" && workoutsView === "overview" && (
-            <WorkoutsPage
-              onCreateWorkout={() => {
-                setWorkoutEditorMode({ mode: "create" });
-                setWorkoutsView("editor");
-              }}
-              onEditWorkout={(workout: Workout) => {
-                setWorkoutEditorMode({ mode: "edit", workout });
-                setWorkoutsView("editor");
-              }}
-            />
-          )}
-          {activeTab === "workouts" && workoutsView === "catalog" && (
-            <ExerciseCatalogPage
-              creationFlowLabel={catalogFromEditor ? "editor" : "standalone"}
-              onBack={() => {
-                const backToEditor = catalogFromEditor;
-                setCatalogFromEditor(false);
-                setWorkoutsView(backToEditor ? "editor" : "overview");
-              }}
-              onNavigateToRutinas={() => {
-                setCatalogFromEditor(false);
-                setWorkoutsView("overview");
-              }}
-              routineFormCrumb={catalogFromEditor ? routineFormBreadcrumbLabel : undefined}
-              onNavigateToEditorForm={
-                catalogFromEditor
-                  ? () => {
-                      setWorkoutsView("editor");
-                      setCatalogFromEditor(true);
-                    }
-                  : undefined
-              }
-              onOpenExerciseDetail={(id) => {
-                setExerciseDetailFromEditor(catalogFromEditor);
-                setCatalogExerciseId(id);
-                setWorkoutsView("exerciseDetail");
-              }}
-              onNewRoutineWithExerciseIds={(ids) => {
-                setWorkoutEditorMode({ mode: "create", initialExerciseIds: ids });
-                setCatalogFromEditor(false);
-                setWorkoutsView("editor");
-              }}
-            />
-          )}
-          {activeTab === "workouts" && workoutsView === "exerciseDetail" && catalogExerciseId ? (
-            <ExerciseDetailPage
-              exerciseId={catalogExerciseId}
-              showRoutineTrail={exerciseDetailFromEditor}
-              routineFormCrumb={exerciseDetailFromEditor ? routineFormBreadcrumbLabel : undefined}
-              onNavigateToEditorForm={
-                exerciseDetailFromEditor
-                  ? () => {
-                      setCatalogExerciseId(null);
-                      setExerciseDetailFromEditor(false);
-                      setWorkoutsView("editor");
-                      setCatalogFromEditor(true);
-                    }
-                  : undefined
-              }
-              onBackToCatalog={() => {
-                setCatalogExerciseId(null);
-                setExerciseDetailFromEditor(false);
-                setWorkoutsView("catalog");
-              }}
-              onBackToRoutines={() => {
-                setCatalogExerciseId(null);
-                setExerciseDetailFromEditor(false);
-                setWorkoutsView("overview");
-              }}
-              onNewRoutineWithExerciseIds={(ids) => {
-                setWorkoutEditorMode({ mode: "create", initialExerciseIds: ids });
-                setCatalogExerciseId(null);
-                setExerciseDetailFromEditor(false);
-                setCatalogFromEditor(false);
-                setWorkoutsView("editor");
-              }}
-            />
-          ) : null}
-          {activeTab === "workouts" && workoutsView === "editor" && (
-            <WorkoutEditorPage
-              mode={workoutEditorMode}
-              onBack={() => setWorkoutsView("overview")}
-              onSaved={() => setWorkoutsView("overview")}
-              onBrowseCatalog={() => {
-                setCatalogExerciseId(null);
-                setCatalogFromEditor(true);
-                setWorkoutsView("catalog");
-              }}
-            />
-          )}
-          {activeTab === "profile" && <ProfilePage onOpenPostInFeed={navigateToFeedPost} />}
-          {activeTab === "feed" && (
-            <FeedPage focusPostId={feedFocusPostId} onFocusPostHandled={clearFeedFocus} />
-          )}
+        <section className="auth-session-enter-main social-content min-h-0 min-w-0 w-full p-4 max-md:p-2">
+          <PageContainer>
+            {activeTab === "workouts" && workoutsView === "overview" && (
+              <WorkoutsPage
+                onCreateWorkout={() => {
+                  setWorkoutEditorMode({ mode: "create" });
+                  setWorkoutsView("editor");
+                }}
+                onEditWorkout={(workout: Workout) => {
+                  setWorkoutEditorMode({ mode: "edit", workout });
+                  setWorkoutsView("editor");
+                }}
+              />
+            )}
+            {activeTab === "workouts" && workoutsView === "catalog" && (
+              <ExerciseCatalogPage
+                creationFlowLabel={catalogFromEditor ? "editor" : "standalone"}
+                onBack={() => {
+                  const backToEditor = catalogFromEditor;
+                  setCatalogFromEditor(false);
+                  setWorkoutsView(backToEditor ? "editor" : "overview");
+                }}
+                onNavigateToRutinas={() => {
+                  setCatalogFromEditor(false);
+                  setWorkoutsView("overview");
+                }}
+                routineFormCrumb={catalogFromEditor ? routineFormBreadcrumbLabel : undefined}
+                onNavigateToEditorForm={
+                  catalogFromEditor
+                    ? () => {
+                        setWorkoutsView("editor");
+                        setCatalogFromEditor(true);
+                      }
+                    : undefined
+                }
+                onOpenExerciseDetail={(id) => {
+                  setExerciseDetailFromEditor(catalogFromEditor);
+                  setCatalogExerciseId(id);
+                  setWorkoutsView("exerciseDetail");
+                }}
+                onNewRoutineWithExerciseIds={(ids) => {
+                  setWorkoutEditorMode({ mode: "create", initialExerciseIds: ids });
+                  setCatalogFromEditor(false);
+                  setWorkoutsView("editor");
+                }}
+              />
+            )}
+            {activeTab === "workouts" && workoutsView === "exerciseDetail" && catalogExerciseId ? (
+              <ExerciseDetailPage
+                exerciseId={catalogExerciseId}
+                showRoutineTrail={exerciseDetailFromEditor}
+                routineFormCrumb={exerciseDetailFromEditor ? routineFormBreadcrumbLabel : undefined}
+                onNavigateToEditorForm={
+                  exerciseDetailFromEditor
+                    ? () => {
+                        setCatalogExerciseId(null);
+                        setExerciseDetailFromEditor(false);
+                        setWorkoutsView("editor");
+                        setCatalogFromEditor(true);
+                      }
+                    : undefined
+                }
+                onBackToCatalog={() => {
+                  setCatalogExerciseId(null);
+                  setExerciseDetailFromEditor(false);
+                  setWorkoutsView("catalog");
+                }}
+                onBackToRoutines={() => {
+                  setCatalogExerciseId(null);
+                  setExerciseDetailFromEditor(false);
+                  setWorkoutsView("overview");
+                }}
+                onNewRoutineWithExerciseIds={(ids) => {
+                  setWorkoutEditorMode({ mode: "create", initialExerciseIds: ids });
+                  setCatalogExerciseId(null);
+                  setExerciseDetailFromEditor(false);
+                  setCatalogFromEditor(false);
+                  setWorkoutsView("editor");
+                }}
+              />
+            ) : null}
+            {activeTab === "workouts" && workoutsView === "editor" && (
+              <WorkoutEditorPage
+                mode={workoutEditorMode}
+                onBack={() => setWorkoutsView("overview")}
+                onSaved={() => setWorkoutsView("overview")}
+                onBrowseCatalog={() => {
+                  setCatalogExerciseId(null);
+                  setCatalogFromEditor(true);
+                  setWorkoutsView("catalog");
+                }}
+              />
+            )}
+            {activeTab === "profile" && (
+              <ProfilePage
+                onOpenPostInFeed={navigateToFeedPost}
+                onGoToFeed={() => goTo("feed")}
+                onGoToStatistics={() => goTo("statistics")}
+                onGoToWorkouts={() => {
+                  setWorkoutsView("overview");
+                  setCatalogExerciseId(null);
+                  setCatalogFromEditor(false);
+                  setExerciseDetailFromEditor(false);
+                  goTo("workouts");
+                }}
+                onGoToSettings={() => goTo("settings")}
+              />
+            )}
+            {activeTab === "statistics" && <StatisticsPage />}
+            {activeTab === "settings" && <SettingsPage onGoToProfile={() => goTo("profile")} />}
+            {activeTab === "feed" && (
+              <FeedPage focusPostId={feedFocusPostId} onFocusPostHandled={clearFeedFocus} />
+            )}
+          </PageContainer>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter className="auth-session-enter-footer" />
     </div>
   );
 }

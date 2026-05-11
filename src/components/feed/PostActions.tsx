@@ -1,25 +1,12 @@
-import { Button } from "../ui/Button";
-
 type PostActionsProps = {
-  isOwner: boolean;
   likedByMe?: boolean;
   likesCount: number;
   onLike: () => void;
-  onDelete: () => void;
-  onEdit?: () => void;
-  onCopyLink?: () => void;
-  /** Tras copiar enlace con éxito (feedback breve en el botón). */
-  linkCopied?: boolean;
 };
 
 function HeartIcon({ filled, className }: { filled: boolean; className?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      className={className}
-      aria-hidden
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className} aria-hidden>
       {filled ? (
         <path
           fill="currentColor"
@@ -38,80 +25,38 @@ function HeartIcon({ filled, className }: { filled: boolean; className?: string 
   );
 }
 
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M5 13.5 9.5 18 19 6"
-        stroke="currentColor"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+export function PostActions({ likedByMe, likesCount, onLike }: PostActionsProps) {
+  const liked = !!likedByMe;
 
-export function PostActions({
-  isOwner,
-  likedByMe,
-  likesCount,
-  onLike,
-  onDelete,
-  onEdit,
-  onCopyLink,
-  linkCopied = false,
-}: PostActionsProps) {
   return (
-    <div className="actions flex flex-wrap gap-2">
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={onLike}
-        aria-pressed={!!likedByMe}
-        aria-label={
-          likedByMe
-            ? `Quitar tu me gusta. Total: ${likesCount}.`
-            : `Dar me gusta. Actualmente ${likesCount}.`
-        }
-        className={
-          likedByMe
-            ? "!inline-flex !items-center !gap-1.5 !border-goi-gold/45 !bg-goi-gold/15 !text-goi-gold hover:!border-goi-gold/65"
-            : "!inline-flex !items-center !gap-1.5"
-        }
+    <button
+      type="button"
+      onMouseDown={(event) => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+      }}
+      onClick={onLike}
+      aria-pressed={liked}
+      aria-label={
+        liked ? `Quitar tu me gusta. Total: ${likesCount}.` : `Dar me gusta. Actualmente ${likesCount}.`
+      }
+      className={[
+        "inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full px-2 py-1.5 text-[13px] font-semibold tabular-nums tracking-tight transition-[color,background-color]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white",
+        liked
+          ? "text-goi-gold hover:bg-goi-gold/[0.12] light:text-amber-700 light:hover:bg-amber-100/90"
+          : "text-neutral-500 hover:bg-neutral-800/55 hover:text-goi-gold light:text-zinc-500 light:hover:bg-zinc-200/70 light:hover:text-amber-700",
+      ].join(" ")}
+    >
+      <span
+        className={[
+          "inline-flex items-center justify-center",
+          liked ? "drop-shadow-[0_0_10px_rgba(212,175,55,0.35)]" : "",
+        ].filter(Boolean).join(" ")}
       >
-        <HeartIcon filled={!!likedByMe} className="size-4 shrink-0 text-current opacity-95" />
-        <span>{likesCount}</span>
-      </Button>
-      {isOwner && (
-        <>
-          {onCopyLink ? (
-            <Button
-              type="button"
-              variant="secondary"
-              className="!inline-flex !items-center !gap-1 !py-1.5 !text-xs"
-              onClick={onCopyLink}
-            >
-              {linkCopied ? (
-                <>
-                  <CheckIcon className="size-3.5 text-emerald-400" />
-                  Listo
-                </>
-              ) : (
-                "Copiar enlace"
-              )}
-            </Button>
-          ) : null}
-          {onEdit ? (
-            <Button type="button" variant="secondary" className="!py-1.5 !text-xs" onClick={onEdit}>
-              Editar
-            </Button>
-          ) : null}
-          <Button type="button" variant="danger" className="!py-1.5 !text-xs" onClick={onDelete}>
-            Eliminar
-          </Button>
-        </>
-      )}
-    </div>
+        <HeartIcon filled={liked} className="size-[1.35rem] shrink-0 text-current" />
+      </span>
+      <span className="min-w-[1ch]">{likesCount}</span>
+    </button>
   );
 }

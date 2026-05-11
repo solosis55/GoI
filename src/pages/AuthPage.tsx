@@ -10,7 +10,7 @@ import { getErrorMessage } from "../utils/errorMessages";
 
 type AuthView = "register" | "login" | "forgot" | "reset";
 
-const labelClass = "grid gap-1.5 font-semibold text-neutral-200";
+const labelClass = "grid gap-1.5 font-semibold text-neutral-200 light:text-zinc-800";
 const fieldClass = "goi-field w-full";
 
 export function AuthPage() {
@@ -173,10 +173,13 @@ export function AuthPage() {
           : "Nueva contraseña";
 
   return (
-    <section className="layout mx-auto w-full max-w-[520px]">
-      <Card tone="dark">
-        <h2 className="text-lg font-semibold text-neutral-100">{title}</h2>
-        <p className="mb-5 mt-1 text-sm text-neutral-400">
+    <section className="layout mx-auto w-full max-w-[480px] sm:max-w-[520px]">
+      <Card
+        tone="dark"
+        className="p-[1.15rem] shadow-[0_22px_50px_-12px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(212,175,55,0.09)] ring-1 ring-goi-gold/15 sm:p-5 light:shadow-[0_20px_45px_-16px_rgba(24,24,27,0.18)] light:ring-goi-gold/20"
+      >
+        <h2 className="text-xl font-semibold tracking-tight text-neutral-100 light:text-zinc-900">{title}</h2>
+        <p className="mb-5 mt-1.5 text-sm leading-relaxed text-neutral-400 light:text-zinc-600">
           {view === "register" && "Únete con un usuario, email y contraseña."}
           {view === "login" && "Introduce tus credenciales para continuar."}
           {view === "forgot" && "Te enviaremos instrucciones si el correo está registrado."}
@@ -251,7 +254,7 @@ export function AuthPage() {
 
         {view === "forgot" && (
           <form className="grid gap-3.5" onSubmit={handleForgotPassword}>
-            <p className="m-0 text-sm leading-relaxed text-neutral-400">
+            <p className="m-0 text-sm leading-relaxed text-neutral-400 light:text-zinc-600">
               Indica el correo de tu cuenta. Si existe, podrás restablecer la contraseña (en producción llegaría un email; en
               local revisa la documentación y{" "}
               <code className="rounded bg-neutral-800 px-1 py-0.5 font-mono text-xs text-goi-gold">
@@ -298,7 +301,7 @@ export function AuthPage() {
 
         {view === "reset" && (
           <form className="grid gap-3.5" onSubmit={handleResetPassword}>
-            <p className="m-0 text-sm text-neutral-400">Elige una contraseña nueva para tu cuenta.</p>
+            <p className="m-0 text-sm text-neutral-400 light:text-zinc-600">Elige una contraseña nueva para tu cuenta.</p>
             <label className={labelClass}>
               Nueva contraseña
               <input
@@ -346,7 +349,7 @@ export function AuthPage() {
         )}
 
         {(view === "register" || view === "login") && (
-          <div className="mt-6 border-t border-neutral-700 pt-4">
+          <div className="mt-6 border-t border-neutral-700 pt-4 light:border-zinc-200">
             <Button
               type="button"
               variant="link"

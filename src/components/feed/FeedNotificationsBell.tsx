@@ -124,7 +124,7 @@ export function FeedNotificationsBell({
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Cerrar notificaciones" : "Abrir notificaciones"}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-neutral-300 transition-colors hover:border-goi-gold/35 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:border-zinc-300 light:bg-white light:text-zinc-700 light:hover:border-goi-gold-dim/50"
+        className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-neutral-300 transition-colors hover:border-goi-gold/35 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:border-zinc-300 light:bg-white light:text-zinc-700 light:hover:border-goi-gold-dim/50"
       >
         <BellIcon className="h-5 w-5" />
         {unreadCount > 0 ? (
@@ -139,7 +139,7 @@ export function FeedNotificationsBell({
 
       {open ? (
         <div
-          className="feed-notif-panel-animate absolute right-0 top-full z-30 mt-2 w-[min(100vw-2rem,22rem)] max-h-[min(70vh,26rem)] overflow-y-auto rounded-lg border border-neutral-800 bg-zinc-950 py-2 shadow-xl shadow-black/40 light:border-zinc-200 light:bg-white light:shadow-xl light:shadow-zinc-900/15"
+          className="feed-notif-panel-animate absolute right-0 top-full z-[60] mt-2 w-[min(calc(100vw-2rem),22rem)] max-h-[min(85vh,32rem)] overflow-y-auto overscroll-contain rounded-lg border border-neutral-800 bg-zinc-950 py-2 shadow-xl shadow-black/40 ring-1 ring-black/20 light:border-zinc-200 light:bg-white light:shadow-xl light:shadow-zinc-900/15 light:ring-zinc-900/10"
           role="region"
           aria-label="Actividad reciente"
         >

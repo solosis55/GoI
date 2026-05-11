@@ -7,7 +7,10 @@ import { PostMediaGallery } from "./PostMediaGallery";
 import type { Post } from "../../types/post";
 import type { MentionPickUser } from "../../utils/mentionAutocomplete";
 import type { MentionUserDirectory } from "../../utils/mentionText";
-import { MentionHighlighted } from "../../utils/mentionText";
+import { visibilityBadgeClasses } from "../../utils/visibilityBadgeClasses";
+import { formatPostAbsolute, formatPostRelative } from "../../utils/feedPostDate";
+import { PostFeedText } from "./PostFeedText";
+import { FeedPostOverflowMenu } from "./FeedPostOverflowMenu";
 
 type PostItemProps = {
   post: Post;
@@ -20,14 +23,20 @@ type PostItemProps = {
   onUpdate?: (postId: string, input: { content: string; visibility: "public" | "followers" | "private" }) => void;
   onComment: () => void;
   getWorkoutTitle: (workoutId: string | null) => string | null;
-  formatDate: (value: string) => string;
   onOpenUserProfile?: (userId: string) => void;
   mentionCandidates: MentionPickUser[];
   mentionDirectory: MentionUserDirectory;
+  onMentionPick?: (picked: MentionPickUser) => void;
   /** Destaca la tarjeta tras scroll por enlace (`?post=`). */
   emphasized?: boolean;
   /** Tras copiar URL del post (solo propio). */
   onPostLinkCopied?: () => void;
+  /** Ese usuario te sigue (mutuo contexto social). */
+  authorFollowsYou?: boolean;
+  saved?: boolean;
+  onToggleSave?: () => void;
+  onMuteAuthor?: () => void;
+  onReport?: () => void;
 };
 
 function DumbbellIcon({ className }: { className?: string }) {
@@ -55,17 +64,23 @@ export function PostItem({
   onUpdate,
   onComment,
   getWorkoutTitle,
-  formatDate,
   onOpenUserProfile,
   mentionCandidates,
   mentionDirectory,
+  onMentionPick,
   emphasized = false,
   onPostLinkCopied,
+  authorFollowsYou = false,
+  saved = false,
+  onToggleSave,
+  onMuteAuthor,
+  onReport,
 }: PostItemProps) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [editVisibility, setEditVisibility] = useState<"public" | "followers" | "private">(post.visibility ?? "public");
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [composerExpanded, setComposerExpanded] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const visibility = post.visibility ?? "public";
@@ -108,6 +123,14 @@ export function PostItem({
     return () => window.clearTimeout(t);
   }, [linkCopied]);
 
+  useEffect(() => {
+    if (commentsOpen) setComposerExpanded(true);
+  }, [commentsOpen]);
+
+  const hasMedia = (post.media?.length ?? 0) > 0;
+  const showComposerMobile =
+    composerExpanded || commentValue.trim().length > 0;
+
   async function handleCopyPostLink() {
     try {
       const url = `${window.location.origin}${window.location.pathname}?post=${encodeURIComponent(post.id)}`;
@@ -119,169 +142,229 @@ export function PostItem({
     }
   }
 
+  const hoverLift = emphasized
+    ? ""
+    : "lg:hover:-translate-y-px lg:hover:shadow-[0_14px_44px_rgb(0_0_0_/_0.48)] light:lg:hover:shadow-[0_12px_36px_rgb(24_24_27_/_0.11)]";
+
   return (
     <li
       id={`feed-post-${post.id}`}
-      className={`feed-post-card flex flex-col gap-4 rounded-lg border p-3 transition-[box-shadow,ring] duration-300 sm:flex-row sm:items-start sm:justify-between sm:gap-4 ${
+      className={`feed-post-card flex flex-col overflow-hidden rounded-2xl border transition-[box-shadow,ring,transform] duration-300 max-lg:hover:translate-y-0 max-lg:hover:shadow-none ${hoverLift} ${
         emphasized
           ? "ring-2 ring-goi-gold/50 ring-offset-2 ring-offset-black light:ring-offset-zinc-100"
           : ""
       }`}
     >
-      <div className="flex min-w-0 flex-1 gap-3">
-        <div className="shrink-0 pt-0.5">
-          {onOpenUserProfile ? (
-            <button
-              type="button"
-              aria-label={`Perfil de @${post.authorUsername}`}
-              className="rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:ring-offset-zinc-100"
-              onClick={() => onOpenUserProfile(post.userId)}
-            >
-              <Avatar src={post.authorAvatarUrl} alt={post.authorUsername} size={46} />
-            </button>
-          ) : (
-            <Avatar src={post.authorAvatarUrl} alt={post.authorUsername} size={46} />
-          )}
-        </div>
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+      {/* Cabecera compacta + acciones (la foto hero va debajo y ocupa el ancho del post). */}
+      <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between sm:gap-5 sm:p-5 sm:pb-3">
+        <div className="flex min-w-0 flex-1 gap-3.5">
+          <div className="shrink-0 pt-1">
             {onOpenUserProfile ? (
               <button
                 type="button"
+                aria-label={`Perfil de @${post.authorUsername}`}
+                className="rounded-full outline-none ring-offset-2 ring-offset-black focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:ring-offset-zinc-100"
                 onClick={() => onOpenUserProfile(post.userId)}
-                className="rounded-sm text-left underline-offset-4 hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
               >
-                <strong className="text-neutral-100 light:text-zinc-900">
-                  {post.authorUsername}
-                  {isOwner ? " (tu)" : ""}
-                </strong>
+                <Avatar src={post.authorAvatarUrl} alt={post.authorUsername} size={46} />
               </button>
             ) : (
-              <strong className="text-neutral-100 light:text-zinc-900">
-                {post.authorUsername}
-                {isOwner ? " (tu)" : ""}
-              </strong>
+              <Avatar src={post.authorAvatarUrl} alt={post.authorUsername} size={46} />
             )}
-            <span className="text-neutral-600">·</span>
-            <time className="text-xs text-neutral-500">{formatDate(post.createdAt)}</time>
-            <span
-              className="inline-flex items-center rounded-full border border-neutral-600 bg-neutral-900/70 px-2 py-0.5 text-[10px] font-medium text-neutral-400 light:border-zinc-300 light:bg-zinc-200/90 light:text-zinc-700"
-              title={
-                visibilityLabel === "Solo yo"
-                  ? "Visible solo para ti"
-                  : visibilityLabel === "Seguidores"
-                    ? "Visible para tus seguidores"
-                    : "Visible para todos"
-              }
-            >
-              {visibilityLabel}
-            </span>
           </div>
-
-          {editing ? (
-            <div className="grid gap-2">
-              <textarea
-                className="goi-field min-h-[88px]"
-                maxLength={280}
-                value={editContent}
-                onChange={(event) => setEditContent(event.target.value)}
-                placeholder="Texto opcional si hay fotos (máx. 280 caracteres)."
-              />
-              {post.media && post.media.length > 0 ? <PostMediaGallery media={post.media} /> : null}
-              <div className="flex flex-wrap items-center gap-2">
-                <select
-                  className="goi-field max-w-[180px]"
-                  value={editVisibility}
-                  onChange={(event) =>
-                    setEditVisibility(event.target.value as "public" | "followers" | "private")
-                  }
-                >
-                  <option value="public">Público</option>
-                  <option value="followers">Seguidores</option>
-                  <option value="private">Solo yo</option>
-                </select>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-800/40 pb-3 light:border-zinc-200/75">
+              <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2.5 gap-y-1">
+              {onOpenUserProfile ? (
                 <button
                   type="button"
-                  className="text-xs font-semibold uppercase tracking-wide text-goi-gold hover:underline"
-                  onClick={submitEdit}
+                  onClick={() => onOpenUserProfile(post.userId)}
+                  className="rounded-sm text-left underline-offset-4 hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
                 >
-                  Guardar
+                  <span className="text-[15px] font-semibold tracking-tight text-neutral-100 light:text-zinc-900">
+                    {post.authorUsername}
+                    {isOwner ? <span className="font-normal text-neutral-500"> (tu)</span> : null}
+                  </span>
                 </button>
-                <button
-                  type="button"
-                  className="text-xs font-semibold uppercase tracking-wide text-neutral-500 hover:text-neutral-300 light:text-zinc-600 light:hover:text-zinc-800"
-                  onClick={cancelEdit}
-                >
-                  Cancelar
-                </button>
-                <span className="text-xs text-neutral-500">{editContent.trim().length}/280</span>
+              ) : (
+                <span className="text-[15px] font-semibold tracking-tight text-neutral-100 light:text-zinc-900">
+                  {post.authorUsername}
+                  {isOwner ? <span className="font-normal text-neutral-500"> (tu)</span> : null}
+                </span>
+              )}
+              {!isOwner && authorFollowsYou ? (
+                <span className="rounded-full border border-goi-gold/35 bg-goi-gold/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-goi-gold light:border-amber-400/50 light:bg-amber-50 light:text-amber-950">
+                  Te sigue
+                </span>
+              ) : null}
+              <span className="text-neutral-600 max-[379px]:hidden">·</span>
+              <time
+                className="text-[13px] tabular-nums text-neutral-500 light:text-zinc-500"
+                dateTime={post.createdAt}
+                title={formatPostAbsolute(post.createdAt)}
+              >
+                {formatPostRelative(post.createdAt)}
+              </time>
+              <span
+                className={[
+                  "inline-flex scale-[0.96] items-center rounded-full border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide opacity-90",
+                  visibilityBadgeClasses(visibility),
+                ].join(" ")}
+                title={
+                  visibilityLabel === "Solo yo"
+                    ? "Visible solo para ti"
+                    : visibilityLabel === "Seguidores"
+                      ? "Visible para tus seguidores"
+                      : "Visible para todos"
+                }
+              >
+                {visibilityLabel}
+              </span>
               </div>
             </div>
-          ) : (
-            <>
-              {post.content.trim() ? (
-                <div className="whitespace-pre-wrap text-goi-steel leading-relaxed light:text-zinc-800">
-                  <MentionHighlighted
-                    text={post.content}
-                    userDirectory={mentionDirectory}
-                    onOpenProfile={onOpenUserProfile}
-                  />
-                </div>
-              ) : null}
-              <PostMediaGallery media={post.media ?? []} />
-            </>
-          )}
-          {post.workoutId ? (
-            <div className="mt-1 inline-flex max-w-full flex-wrap items-center gap-2 rounded-lg border border-goi-gold/25 bg-goi-gold/[0.07] px-2.5 py-1.5 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.08)]">
-              <DumbbellIcon className="size-4 shrink-0 text-goi-gold-dim" />
-              <span className="font-semibold uppercase tracking-wide text-[10px] text-goi-gold-dim">Rutina</span>
-              <span className="text-neutral-600">·</span>
-              <span className="truncate text-neutral-200 light:text-zinc-800">{getWorkoutTitle(post.workoutId)}</span>
-            </div>
-          ) : null}
+          </div>
+        </div>
 
+        <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 sm:w-auto sm:self-start sm:pt-1">
+          <PostActions likedByMe={post.likedByMe} likesCount={post.likesCount} onLike={onLike} />
+          {currentUserId && onToggleSave ? (
+            <FeedPostOverflowMenu
+              disabled={false}
+              isSaved={saved}
+              isOwner={isOwner}
+              authorUsername={post.authorUsername}
+              onToggleSave={onToggleSave}
+              onMuteAuthor={!isOwner && onMuteAuthor ? onMuteAuthor : undefined}
+              onReport={!isOwner && onReport ? onReport : undefined}
+              onCopyLink={isOwner ? () => void handleCopyPostLink() : undefined}
+              onEdit={isOwner && onUpdate ? startEdit : undefined}
+              onDelete={isOwner ? onDelete : undefined}
+              linkCopied={linkCopied}
+            />
+          ) : null}
+        </div>
+      </div>
+
+      {!editing && hasMedia ? (
+        <PostMediaGallery layout="hero" media={post.media ?? []} feedInteractive />
+      ) : null}
+
+      <div
+        className={`space-y-3 px-4 pb-4 sm:px-5 sm:pb-5 ${
+          hasMedia && !editing ? "pt-4 sm:pt-5" : "pt-1 sm:pt-2"
+        }`}
+      >
+        {editing ? (
+          <div className="grid gap-2">
+            <textarea
+              className="goi-field min-h-[88px]"
+              maxLength={280}
+              value={editContent}
+              onChange={(event) => setEditContent(event.target.value)}
+              placeholder="Texto opcional si hay fotos (máx. 280 caracteres)."
+            />
+            {post.media && post.media.length > 0 ? <PostMediaGallery media={post.media} layout="inline" /> : null}
+            <div className="flex flex-wrap items-center gap-2 max-[479px]:grid max-[479px]:grid-cols-1">
+              <select
+                className="goi-field max-w-[180px] max-[479px]:max-w-none"
+                value={editVisibility}
+                onChange={(event) =>
+                  setEditVisibility(event.target.value as "public" | "followers" | "private")
+                }
+              >
+                <option value="public">Público</option>
+                <option value="followers">Seguidores</option>
+                <option value="private">Solo yo</option>
+              </select>
+              <button
+                type="button"
+                className="text-xs font-semibold uppercase tracking-wide text-goi-gold hover:underline"
+                onClick={submitEdit}
+              >
+                Guardar
+              </button>
+              <button
+                type="button"
+                className="text-xs font-semibold uppercase tracking-wide text-neutral-500 hover:text-neutral-300 light:text-zinc-600 light:hover:text-zinc-800"
+                onClick={cancelEdit}
+              >
+                Cancelar
+              </button>
+              <span className="text-xs text-neutral-500">{editContent.trim().length}/280</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <PostFeedText
+              content={post.content}
+              mentionDirectory={mentionDirectory}
+              onOpenProfile={onOpenUserProfile}
+            />
+          </>
+        )}
+
+        {post.workoutId ? (
+          <div className="flex w-full max-w-full flex-col items-start gap-1.5 rounded-2xl border border-goi-gold/30 bg-goi-gold/[0.09] px-3 py-2 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.12)] sm:inline-flex sm:w-auto sm:max-w-full sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 sm:rounded-full sm:py-1.5 light:border-goi-gold/35 light:bg-amber-50/90">
+            <span className="inline-flex shrink-0 items-center gap-2">
+              <DumbbellIcon className="size-4 shrink-0 text-goi-gold" />
+              <span className="font-semibold uppercase tracking-wide text-[10px] text-goi-gold-dim">Rutina</span>
+            </span>
+            <span className="hidden text-neutral-600 sm:inline">·</span>
+            <span className="w-full min-w-0 font-medium leading-snug text-neutral-100 sm:w-auto sm:truncate light:text-zinc-900">
+              {getWorkoutTitle(post.workoutId)}
+            </span>
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-neutral-800/35 pt-3 text-[11px] tabular-nums text-neutral-500 light:border-zinc-200/55 light:text-zinc-600">
+          <span>{post.likesCount === 1 ? "1 me gusta" : `${post.likesCount} me gusta`}</span>
+          <span className="text-neutral-600 light:text-zinc-400" aria-hidden>
+            ·
+          </span>
           {commentsCount > 0 ? (
             <button
               type="button"
-              className="rounded-sm text-left text-[11px] font-semibold uppercase tracking-wide text-goi-gold-dim hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
+              className="font-medium text-neutral-400 underline-offset-2 hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:text-zinc-600 light:hover:text-goi-gold-dim"
               onClick={() => setCommentsOpen((o) => !o)}
               aria-expanded={commentsOpen}
             >
               {commentsOpen
                 ? "Ocultar comentarios"
-                : `Ver ${commentsCount} ${commentsCount === 1 ? "comentario" : "comentarios"}`}
+                : `${commentsCount} ${commentsCount === 1 ? "comentario" : "comentarios"}`}
             </button>
-          ) : null}
+          ) : (
+            <span>Sin comentarios</span>
+          )}
+        </div>
 
-          {commentsCount > 0 && commentsOpen ? (
-            <CommentList
-              comments={post.comments}
-              currentUserId={currentUserId}
-              mentionDirectory={mentionDirectory}
-              onOpenUserProfile={onOpenUserProfile}
-            />
-          ) : null}
+        {commentsCount > 0 && commentsOpen ? (
+          <CommentList
+            comments={post.comments}
+            currentUserId={currentUserId}
+            mentionDirectory={mentionDirectory}
+            onOpenUserProfile={onOpenUserProfile}
+          />
+        ) : null}
 
+        {!showComposerMobile ? (
+          <button
+            type="button"
+            className="mt-1 w-full rounded-xl border border-neutral-800/70 bg-black/20 py-2.5 text-sm font-medium text-neutral-300 hover:border-goi-gold/35 hover:bg-black/30 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 sm:hidden light:border-zinc-200 light:bg-white light:text-zinc-800 light:hover:bg-zinc-50"
+            onClick={() => setComposerExpanded(true)}
+          >
+            Comentar
+          </button>
+        ) : null}
+
+        <div className={showComposerMobile ? "block" : "hidden sm:block"}>
           <MentionComposer
             value={commentValue}
             onChange={onChangeComment}
             onSubmit={onComment}
             candidates={mentionCandidates}
+            onMentionPick={onMentionPick}
           />
         </div>
-      </div>
-
-      <div className="w-full shrink-0 sm:w-auto sm:self-start sm:pt-0.5">
-        <PostActions
-          isOwner={isOwner}
-          likedByMe={post.likedByMe}
-          likesCount={post.likesCount}
-          onLike={onLike}
-          onDelete={onDelete}
-          onEdit={isOwner ? startEdit : undefined}
-          onCopyLink={isOwner ? () => void handleCopyPostLink() : undefined}
-          linkCopied={linkCopied}
-        />
       </div>
     </li>
   );

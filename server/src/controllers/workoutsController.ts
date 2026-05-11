@@ -56,11 +56,7 @@ function resolveExercisePayload(body: WorkoutPayload): {
   return { exerciseBlocks: blocksFromExerciseIdsOnly(ids), exerciseIds: ids };
 }
 
-function validateResolvedExercises(
-  res: Response,
-  exerciseIds: string[],
-  exerciseBlocks: WorkoutExerciseBlock[],
-): boolean {
+function validateResolvedExercises(res: Response, exerciseIds: string[]): boolean {
   if (exerciseIds.length > MAX_EXERCISES) {
     sendError(res, 400, "WORKOUT_INVALID_INPUT", "too many exercises");
     return false;
@@ -92,7 +88,7 @@ export function createWorkout(req: Request, res: Response) {
     sendError(res, 400, "WORKOUT_INVALID_INPUT", "description is too long");
     return;
   }
-  if (!validateResolvedExercises(res, exerciseIds, exerciseBlocks)) {
+  if (!validateResolvedExercises(res, exerciseIds)) {
     return;
   }
 
@@ -174,7 +170,7 @@ export function updateWorkout(req: Request, res: Response) {
       exerciseIds = ids;
     }
 
-    if (!validateResolvedExercises(res, exerciseIds, exerciseBlocks)) {
+    if (!validateResolvedExercises(res, exerciseIds)) {
       return;
     }
     workout.exerciseIds = exerciseIds;
