@@ -90,7 +90,7 @@ export function MusclePentagonRadar({ hits, className = "" }: MusclePentagonRada
         {gridLines}
         <path
           d={pathD}
-          className="fill-goi-gold/25 stroke-goi-gold/70 light:fill-amber-200/50 light:stroke-amber-700/80"
+          className="fill-goi-gold/25 stroke-goi-gold/70 light:fill-amber-200/50 healthy:fill-goi-gold/18 light:stroke-amber-700 healthy:stroke-goi-gold/80"
           strokeWidth={1.5}
           strokeLinejoin="round"
         />

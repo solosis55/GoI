@@ -90,3 +90,19 @@ export function aggregateMuscleHitsOctagon(
   }
   return hits;
 }
+
+/** Ventana temporal para el mapa corporal / mismas reglas de agregación que el radar. */
+export type OctagonMapPeriod = "7d" | "30d" | "90d" | "all";
+
+export function filterSessionsForOctagonMap(
+  sessions: WorkoutSessionWithTitle[],
+  period: OctagonMapPeriod,
+): WorkoutSessionWithTitle[] {
+  if (period === "all") return sessions;
+  const days = period === "7d" ? 7 : period === "30d" ? 30 : 90;
+  const cutoff = Date.now() - days * 86400000;
+  return sessions.filter((s) => {
+    const t = Date.parse(s.performedAt);
+    return Number.isFinite(t) && t >= cutoff;
+  });
+}

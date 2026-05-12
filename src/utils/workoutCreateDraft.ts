@@ -1,6 +1,6 @@
 import type { WorkoutExerciseBlock } from "../types/workout";
 
-export const WORKOUT_CREATE_DRAFT_KEY = "fitsocial:workoutCreateDraft";
+export const WORKOUT_CREATE_DRAFT_KEY = "goi:workoutCreateDraft";
 
 export type WorkoutCreateDraft = {
   title: string;

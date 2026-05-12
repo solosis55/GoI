@@ -31,7 +31,7 @@ export function UserSummaryCard({ username, avatarUrl, myPostsCount, onGoToProfi
           <button
             type="button"
             onClick={onGoToProfile}
-            className="inline-flex min-h-9 items-center rounded-lg border border-goi-gold/40 bg-goi-gold/[0.08] px-3 py-1.5 text-xs font-semibold text-goi-gold transition-colors hover:bg-goi-gold/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:border-amber-400/55 light:bg-amber-50/90 light:text-amber-950 light:hover:bg-amber-100"
+            className="inline-flex min-h-9 items-center rounded-lg border border-goi-gold/40 bg-goi-gold/[0.08] px-3 py-1.5 text-xs font-semibold text-goi-gold transition-colors hover:bg-goi-gold/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:border-goi-gold/45 healthy:border-goi-gold/36 light:bg-goi-gold/[0.1] healthy:bg-goi-gold/[0.08] light:text-goi-gold-dim healthy:text-goi-gold-dim light:hover:bg-goi-gold/[0.14] healthy:hover:bg-goi-gold/[0.12]"
           >
             Ir al perfil
           </button>

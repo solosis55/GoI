@@ -22,6 +22,10 @@ type ExerciseDetailPageProps = {
   showRoutineTrail?: boolean;
   routineFormCrumb?: string;
   onNavigateToEditorForm?: () => void;
+  /** Eslabón de la miga antes del nombre del ejercicio (p. ej. «Editor» si se abrió desde el panel del editor). */
+  listCrumbLabel?: string;
+  /** Texto del botón secundario que vuelve al listado previo. */
+  backButtonLabel?: string;
   onBackToCatalog: () => void;
   onBackToRoutines: () => void;
   onNewRoutineWithExerciseIds: (exerciseIds: string[]) => void;
@@ -32,6 +36,8 @@ export function ExerciseDetailPage({
   showRoutineTrail = false,
   routineFormCrumb,
   onNavigateToEditorForm,
+  listCrumbLabel = "Catálogo",
+  backButtonLabel = "Volver al listado",
   onBackToCatalog,
   onBackToRoutines,
   onNewRoutineWithExerciseIds,
@@ -98,7 +104,7 @@ export function ExerciseDetailPage({
             className="rounded px-1 py-0.5 text-neutral-400 transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35"
             onClick={onBackToCatalog}
           >
-            Catalogo
+            {listCrumbLabel}
           </button>
           <span className="text-neutral-600">/</span>
           <span className="max-w-[min(100%,12rem)] truncate rounded-full border border-goi-gold/30 bg-goi-gold/15 px-2 py-0.5 font-medium text-goi-gold">
@@ -159,7 +165,7 @@ export function ExerciseDetailPage({
                 <ul className="mt-2 flex list-none flex-wrap gap-2 p-0">
                   {exercise.muscles.map((slug) => (
                     <li key={slug}>
-                      <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2.5 py-1 text-xs text-goi-steel light:bg-white light:text-yellow-950">
+                      <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2.5 py-1 text-xs text-goi-steel light:bg-white light:text-yellow-950 healthy:text-goi-gold-dim">
                         {MUSCLE_LABEL[slug] ?? slug}
                       </span>
                     </li>
@@ -176,7 +182,7 @@ export function ExerciseDetailPage({
 
             <div className="flex flex-wrap gap-2 pt-1">
               <Button type="button" variant="secondary" onClick={onBackToCatalog}>
-                Volver al listado
+                {backButtonLabel}
               </Button>
               <Button type="button" onClick={() => onNewRoutineWithExerciseIds([exercise.id])}>
                 Nueva rutina con este ejercicio
@@ -188,7 +194,7 @@ export function ExerciseDetailPage({
         {!loading && !exercise && error ? (
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="secondary" onClick={onBackToCatalog}>
-              Volver al catalogo
+              {backButtonLabel}
             </Button>
           </div>
         ) : null}

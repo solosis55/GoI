@@ -1,6 +1,7 @@
+import { AUTH_STORAGE_KEY } from "../constants/storageKeys";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? "/api" : "http://localhost:4000/api");
-const AUTH_STORAGE_KEY = "fit-social-auth";
 const AUTH_EXPIRED_EVENT = "auth:expired";
 
 type ApiErrorBody = {

@@ -1,6 +1,6 @@
 import type { FeedStorySlide } from "../types/story";
 
-const STORAGE_KEY = "fitsocial:storySeen:v1";
+const STORAGE_KEY = "goi:storySeen:v1";
 
 /** Firma estable del set de slides visibles para distinguir historia nueva vs ya vista. */
 export function signatureForSlides(slides: FeedStorySlide[]) {

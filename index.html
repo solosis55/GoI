@@ -4,21 +4,27 @@
     <meta charset="UTF-8" />
     <script>
       (function () {
+        function normTheme(r) {
+          if (r === "legacy" || r === "encendido" || r === "healthy" || r === "neon") return r;
+          if (r === "dark") return "legacy";
+          if (r === "light") return "encendido";
+          return null;
+        }
         try {
-          var k = "fitsocial:theme";
-          var raw = localStorage.getItem(k);
-          var t;
-          if (raw === "light" || raw === "dark") t = raw;
-          else t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          var raw =
+            localStorage.getItem("goi:theme") || localStorage.getItem("fitsocial:theme");
+          var t = normTheme(raw);
+          if (!t) {
+            t = window.matchMedia("(prefers-color-scheme: light)").matches ? "encendido" : "legacy";
+          }
           document.documentElement.setAttribute("data-theme", t);
         } catch (e) {
-          document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.setAttribute("data-theme", "legacy");
         }
       })();
     </script>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mi-propia-idea</title>
+    <title>GoI</title>
   </head>
   <body>
     <div id="root"></div>

@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Button } from "../ui/Button";
 import { StatusMessage } from "../ui/StatusMessage";
 
@@ -13,6 +13,8 @@ type ProfileFormProps = {
   onChangeGoal: (value: string) => void;
   onChangeBio: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  /** Campos extra (cabecera, enlaces, privacidad) dentro del mismo formulario. */
+  extraSection?: ReactNode;
 };
 
 export function ProfileForm({
@@ -26,6 +28,7 @@ export function ProfileForm({
   onChangeGoal,
   onChangeBio,
   onSubmit,
+  extraSection,
 }: ProfileFormProps) {
   return (
     <form className="stack grid gap-3" onSubmit={onSubmit}>
@@ -61,6 +64,8 @@ export function ProfileForm({
         />
         <span className="text-xs font-normal text-neutral-500">{bio.length}/200</span>
       </label>
+
+      {extraSection ? <div className="grid gap-3 border-t border-neutral-800/80 pt-3 light:border-zinc-200">{extraSection}</div> : null}
 
       <StatusMessage tone="dark" error={error} success={message} />
 

@@ -11,7 +11,7 @@ export function ContactPage() {
   return (
     <LegalPageShell title="Contacto" lastUpdated={UPDATED}>
       <p>
-        Para cualquier comunicación relacionada con el uso de FitSocial · GoI, soporte técnico, ejercicio de derechos en
+        Para cualquier comunicación relacionada con el uso de GoI, soporte técnico, ejercicio de derechos en
         materia de privacidad o incidencias relativas al contenido, utiliza uno de estos canales.
       </p>
 
@@ -20,7 +20,7 @@ export function ContactPage() {
         <p>
           <a
             href={mailHref}
-            className="font-medium text-goi-gold underline underline-offset-2 hover:text-yellow-400"
+            className="font-medium text-goi-gold underline underline-offset-2 hover:text-yellow-400 light:hover:text-amber-800 healthy:hover:text-zinc-800"
           >
             {email}
           </a>

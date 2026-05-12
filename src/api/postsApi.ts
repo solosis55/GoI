@@ -58,6 +58,24 @@ export function markNotificationsRead(body: { keys?: string[]; all?: boolean }) 
   });
 }
 
+/** Tamaño por defecto de página para listados de publicaciones por usuario (perfil). */
+export const PROFILE_POSTS_PAGE_SIZE = 24;
+
+export type PostsByUserPageResponse = {
+  posts: Post[];
+  nextCursor: string | null;
+  total: number;
+};
+
 export function getPostsByUser(userId: string) {
   return apiFetch<Post[]>(`/posts/by-user/${encodeURIComponent(userId)}`);
+}
+
+export function getPostsByUserPage(userId: string, opts: { limit: number; cursor?: string | null }) {
+  const sp = new URLSearchParams();
+  sp.set("limit", String(opts.limit));
+  if (opts.cursor) sp.set("cursor", opts.cursor);
+  return apiFetch<PostsByUserPageResponse>(
+    `/posts/by-user/${encodeURIComponent(userId)}?${sp.toString()}`,
+  );
 }

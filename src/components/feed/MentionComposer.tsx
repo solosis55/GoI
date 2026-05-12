@@ -10,7 +10,11 @@ export function MentionComposer({
   onSubmit,
   candidates,
   placeholder = "Escribe un comentario (@ para mencionar)",
-  className = "goi-field min-h-[2.75rem] w-full resize-none py-2 text-sm",
+  className = [
+    "goi-field min-h-[2.75rem] w-full resize-none rounded-xl py-2.5 text-sm",
+    "border-neutral-700/85 bg-black/35 placeholder:text-neutral-600",
+    "light:border-zinc-300 light:bg-white light:placeholder:text-zinc-400",
+  ].join(" "),
   rows = 2,
   maxLength = 180,
   onMentionPick,
@@ -26,7 +30,7 @@ export function MentionComposer({
   onMentionPick?: (picked: MentionPickUser) => void;
 }) {
   return (
-    <div className="mt-2 flex gap-2 max-[479px]:flex-col">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
       <MentionableTextarea
         value={value}
         onChange={onChange}
@@ -39,7 +43,16 @@ export function MentionComposer({
         onEnterSubmit={onSubmit}
         listPlacement="above"
       />
-      <Button type="button" variant="secondary" className="shrink-0 self-end max-[479px]:w-full" onClick={onSubmit}>
+      <Button
+        type="button"
+        variant="primary"
+        className={[
+          "w-full shrink-0 self-center justify-center rounded-xl !min-h-[2.75rem] !px-6 !py-2 !text-sm !font-semibold",
+          "shadow-[0_6px_20px_-6px_rgba(212,175,55,0.55)] transition hover:brightness-[1.05] active:scale-[0.99]",
+          "sm:w-auto sm:min-w-[8.25rem] sm:self-auto",
+        ].join(" ")}
+        onClick={onSubmit}
+      >
         Comentar
       </Button>
     </div>

@@ -115,7 +115,7 @@ export function PersonalRoadmapPage() {
             to="/"
             className="text-sm font-medium text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white"
           >
-            ← Volver a FitSocial
+            ← Volver a GoI
           </Link>
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-gold-dim">Roadmap personal</span>
         </div>
@@ -138,9 +138,9 @@ export function PersonalRoadmapPage() {
             className={[
               "mt-3 max-w-2xl rounded-lg border px-3 py-2 text-xs leading-relaxed",
               persistMode === "projectDisk"
-                ? "border-emerald-900/60 bg-emerald-950/30 text-emerald-200/95 light:border-emerald-200 light:bg-emerald-50 light:text-emerald-900"
+                ? "border-goi-gold/35 bg-neutral-950/50 text-goi-gold/95 light:border-amber-200 light:bg-amber-50 light:text-amber-950 healthy:border-goi-gold/25 healthy:bg-goi-gold/[0.07] healthy:text-goi-gold-dim"
                 : persistMode === "browserOnly"
-                  ? "border-amber-900/60 bg-amber-950/25 text-amber-100/95 light:border-amber-200 light:bg-amber-50 light:text-amber-950"
+                  ? "border-amber-900/60 bg-amber-950/25 text-amber-100/95 light:border-amber-200 healthy:border-goi-gold/22 light:bg-amber-50 healthy:bg-goi-gold/[0.09] light:text-amber-950 healthy:text-goi-gold-dim"
                   : "border-neutral-800 text-neutral-500 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600",
             ].join(" ")}
             role="status"
@@ -162,7 +162,7 @@ export function PersonalRoadmapPage() {
           </p>
 
           {dirty ? (
-            <p className="mt-3 max-w-2xl rounded-lg border border-amber-900/55 bg-amber-950/25 px-3 py-2 text-xs text-amber-100/95 light:border-amber-300 light:bg-amber-50 light:text-amber-950">
+            <p className="mt-3 max-w-2xl rounded-lg border border-amber-900/55 bg-amber-950/25 px-3 py-2 text-xs text-amber-100/95 light:border-amber-300 healthy:border-goi-gold/26 light:bg-amber-50 healthy:bg-goi-gold/[0.09] light:text-amber-950 healthy:text-goi-gold-dim">
               Tienes cambios sin guardar. Pulsa <strong className="font-semibold">Guardar cambios</strong> para persistirlos.
             </p>
           ) : null}
@@ -217,7 +217,7 @@ export function PersonalRoadmapPage() {
               rel="noreferrer noopener"
               className="font-medium text-goi-gold underline-offset-2 hover:underline"
             >
-              tablero FitSocial · GoI
+              tablero GoI
             </a>
           </p>
         </div>

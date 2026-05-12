@@ -25,7 +25,7 @@ export type RoadmapTask = {
   children: RoadmapTask[];
 };
 
-export const PERSONAL_ROADMAP_STORAGE_KEY = "fitsocial:personalRoadmap:v1";
+export const PERSONAL_ROADMAP_STORAGE_KEY = "goi:personalRoadmap:v1";
 
 export function newRoadmapTask(title: string): RoadmapTask {
   return {

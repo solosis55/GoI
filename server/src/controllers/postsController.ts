@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { Request, Response } from "express";
 import { createId, saveStore, store, Post } from "../services/store.js";
 import { sendError } from "../services/http.js";
@@ -117,6 +118,30 @@ function canUserViewPost(post: Post, viewerUserId: string): boolean {
   return false;
 }
 
+function sortPostsNewestFirst(posts: Post[]): Post[] {
+  return [...posts].sort((a, b) => {
+    if (a.createdAt !== b.createdAt) return a.createdAt < b.createdAt ? 1 : -1;
+    return a.id < b.id ? 1 : -1;
+  });
+}
+
+function encodePostCursor(post: Post): string {
+  return Buffer.from(JSON.stringify({ c: post.createdAt, i: post.id }), "utf8").toString("base64url");
+}
+
+function decodePostCursor(raw: string): { createdAt: string; id: string } | null {
+  try {
+    const s = String(raw).trim();
+    if (!s) return null;
+    const json = Buffer.from(s, "base64url").toString("utf8");
+    const o = JSON.parse(json) as { c?: unknown; i?: unknown };
+    if (typeof o.c === "string" && typeof o.i === "string") return { createdAt: o.c, id: o.i };
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 function mapPostWithInteractions(post: Post, viewerUserId: string) {
   const author = store.users.find((user) => user.id === post.userId);
   const likes = store.likes.filter((like) => like.postId === post.id);
@@ -224,16 +249,72 @@ export function listPostsByUser(req: Request, res: Response) {
     return;
   }
 
-  const targetExists = store.users.some((u) => u.id === targetUserId);
-  if (!targetExists) {
+  const targetUser = store.users.find((u) => u.id === targetUserId);
+  if (!targetUser) {
     sendError(res, 404, "AUTH_USER_NOT_FOUND", "user not found");
     return;
   }
 
-  const posts = [...store.posts]
-    .filter((p) => p.userId === targetUserId && canUserViewPost(p, authUserId))
-    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-  res.json(posts.map((p) => mapPostWithInteractions(p, authUserId)));
+  const limitRaw = req.query.limit;
+  const limitFirst = Array.isArray(limitRaw) ? limitRaw[0] : limitRaw;
+  const wantPagination = limitFirst !== undefined && String(limitFirst).trim() !== "";
+
+  const cursorRaw =
+    typeof req.query.cursor === "string"
+      ? req.query.cursor.trim()
+      : Array.isArray(req.query.cursor) && typeof req.query.cursor[0] === "string"
+        ? req.query.cursor[0].trim()
+        : "";
+
+  if (
+    targetUserId !== authUserId &&
+    targetUser.profileVisibility === "followers" &&
+    !store.follows.some((f) => f.followerId === authUserId && f.followingId === targetUserId)
+  ) {
+    if (wantPagination) {
+      res.json({ posts: [], nextCursor: null, total: 0 });
+    } else {
+      res.json([]);
+    }
+    return;
+  }
+
+  const filtered = store.posts.filter((p) => p.userId === targetUserId && canUserViewPost(p, authUserId));
+  const sorted = sortPostsNewestFirst(filtered);
+
+  if (!wantPagination) {
+    res.json(sorted.map((p) => mapPostWithInteractions(p, authUserId)));
+    return;
+  }
+
+  let limitNum = parseInt(String(limitFirst), 10);
+  if (!Number.isFinite(limitNum)) {
+    sendError(res, 400, "POST_INVALID_INPUT", "invalid limit");
+    return;
+  }
+  limitNum = Math.min(50, Math.max(1, Math.floor(limitNum)));
+
+  let start = 0;
+  if (cursorRaw) {
+    const decoded = decodePostCursor(cursorRaw);
+    if (!decoded) {
+      sendError(res, 400, "POST_INVALID_INPUT", "invalid cursor");
+      return;
+    }
+    const idx = sorted.findIndex((p) => p.createdAt === decoded.createdAt && p.id === decoded.id);
+    start = idx === -1 ? sorted.length : idx + 1;
+  }
+
+  const slice = sorted.slice(start, start + limitNum);
+  const mapped = slice.map((p) => mapPostWithInteractions(p, authUserId));
+  const hasMore = start + slice.length < sorted.length;
+  const nextCursor = hasMore && slice.length > 0 ? encodePostCursor(slice[slice.length - 1]!) : null;
+
+  res.json({
+    posts: mapped,
+    nextCursor,
+    total: sorted.length,
+  });
 }
 
 export function createPost(req: Request, res: Response) {

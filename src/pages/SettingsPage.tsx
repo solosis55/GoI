@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { ThemeToggle } from "../components/ui/ThemeToggle";
+import { ThemeModePicker } from "../components/ui/ThemeModePicker";
 
 type SettingsPageProps = {
   onGoToProfile: () => void;
@@ -21,12 +21,14 @@ export function SettingsPage({ onGoToProfile }: SettingsPageProps) {
 
       <Card tone="dark" className="border-neutral-800/70 light:border-zinc-200">
         <h2 className="mt-0 text-sm font-semibold text-neutral-100 light:text-zinc-900">Apariencia</h2>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-800/80 pt-4 light:border-zinc-200">
+        <div className="mt-4 space-y-4 border-t border-neutral-800/80 pt-4 light:border-zinc-200">
           <div className="min-w-0">
             <p className="text-sm font-medium text-neutral-200 light:text-zinc-900">Tema</p>
-            <p className="mt-0.5 text-xs text-neutral-500 light:text-zinc-600">Modo oscuro o claro en toda la aplicación.</p>
+            <p className="mt-0.5 text-xs text-neutral-500 light:text-zinc-600">
+              Temas claros (Encendido, Healthy) y oscuros (Legacy, Neon); elige el que prefieras.
+            </p>
           </div>
-          <ThemeToggle />
+          <ThemeModePicker />
         </div>
       </Card>
 
@@ -54,7 +56,7 @@ export function SettingsPage({ onGoToProfile }: SettingsPageProps) {
           <li>
             <Link
               to="/privacidad"
-              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-amber-900"
+              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-goi-gold-dim healthy:text-goi-gold-dim"
             >
               Política de privacidad
             </Link>
@@ -63,7 +65,7 @@ export function SettingsPage({ onGoToProfile }: SettingsPageProps) {
           <li>
             <Link
               to="/aviso-legal"
-              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-amber-900"
+              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-goi-gold-dim healthy:text-goi-gold-dim"
             >
               Aviso legal
             </Link>
@@ -71,7 +73,7 @@ export function SettingsPage({ onGoToProfile }: SettingsPageProps) {
           <li>
             <Link
               to="/contacto"
-              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-amber-900"
+              className="font-medium text-goi-gold underline-offset-4 hover:underline light:text-goi-gold-dim healthy:text-goi-gold-dim"
             >
               Contacto
             </Link>
@@ -86,7 +88,7 @@ export function SettingsPage({ onGoToProfile }: SettingsPageProps) {
       <Card tone="dark" className="border-neutral-800/70 light:border-zinc-200">
         <h2 className="mt-0 text-sm font-semibold text-neutral-100 light:text-zinc-900">Acerca de</h2>
         <p className="mt-2 text-sm text-neutral-500 light:text-zinc-600">
-          FitSocial · cliente web ({import.meta.env.MODE === "production" ? "producción" : "desarrollo"})
+          GoI · cliente web ({import.meta.env.MODE === "production" ? "producción" : "desarrollo"})
         </p>
       </Card>
     </section>

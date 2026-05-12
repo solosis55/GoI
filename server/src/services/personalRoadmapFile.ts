@@ -7,9 +7,10 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const defaultRepoPath = resolve(currentDir, "../../data/personal-roadmap.json");
 
 function getFilePath(): string {
-  const env = process.env.FITSOCIAL_PERSONAL_ROADMAP_PATH?.trim();
+  const env =
+    process.env.GOI_PERSONAL_ROADMAP_PATH?.trim() || process.env.FITSOCIAL_PERSONAL_ROADMAP_PATH?.trim();
   if (env) return resolve(env);
-  if (process.env.VERCEL) return join("/tmp", "fitsocial-personal-roadmap.json");
+  if (process.env.VERCEL) return join("/tmp", "goi-personal-roadmap.json");
   return defaultRepoPath;
 }
 

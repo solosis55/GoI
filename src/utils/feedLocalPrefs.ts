@@ -1,8 +1,19 @@
 /** Preferencias locales del feed (guardados, silenciados, reportes) por usuario. */
 
-const savedKey = (userId: string) => `fitsocial:feedSaved:${userId}`;
-const mutedKey = (userId: string) => `fitsocial:feedMuted:${userId}`;
-const reportsKey = (userId: string) => `fitsocial:feedReports:${userId}`;
+export const OPEN_FEED_COMPOSER_SESSION_KEY = "goi:openFeedComposer";
+
+/** Marca que al abrir Inicio debe abrirse el compositor de publicación (una vez). */
+export function stashOpenFeedComposerRequest() {
+  try {
+    sessionStorage.setItem(OPEN_FEED_COMPOSER_SESSION_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
+const savedKey = (userId: string) => `goi:feedSaved:${userId}`;
+const mutedKey = (userId: string) => `goi:feedMuted:${userId}`;
+const reportsKey = (userId: string) => `goi:feedReports:${userId}`;
 
 export type LocalFeedReport = {
   postId: string;

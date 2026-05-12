@@ -17,9 +17,9 @@ export function LegalPageShell({ title, lastUpdated, children }: LegalPageShellP
             to="/"
             className="text-sm font-medium text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white"
           >
-            ← Volver a FitSocial
+            ← Volver a GoI
           </Link>
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-gold-dim">FitSocial · GoI</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-gold-dim">GoI</span>
         </div>
       </header>
       <main className="flex-1 px-4 py-8 pb-12 sm:px-6">

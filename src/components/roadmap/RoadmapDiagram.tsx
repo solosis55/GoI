@@ -68,15 +68,15 @@ function TaskNodeCard({
         ref={register}
         data-roadmap-node
         className={[
-          "relative z-[3] w-[min(100%,18rem)] rounded-xl border-2 bg-neutral-950/95 px-3 py-2.5 shadow-[0_10px_36px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(212,175,55,0.1)] light:bg-white",
-          task.done ? "border-goi-gold/25 opacity-[0.92]" : "border-goi-gold/45",
+          "relative z-[3] w-[min(100%,18rem)] rounded-xl border-2 bg-neutral-950/95 px-3 py-2.5 shadow-[0_10px_36px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(212,175,55,0.1)] light:bg-white healthy:shadow-[0_10px_36px_-12px_rgba(0,0,0,0.08),0_0_0_1px_rgba(93,146,112,0.14)]",
+          task.done ? "border-goi-gold/25 opacity-[0.92] healthy:border-goi-gold/38/30" : "border-goi-gold/45 healthy:border-goi-gold/38/45",
         ]
           .filter(Boolean)
           .join(" ")}
       >
         {joinFromAbove ? (
           <div
-            className="absolute -top-px left-1/2 h-2 w-2 -translate-x-1/2 rounded-full border border-goi-gold/50 bg-neutral-950 light:bg-white"
+            className="absolute -top-px left-1/2 h-2 w-2 -translate-x-1/2 rounded-full border border-goi-gold/50 bg-neutral-950 light:bg-white healthy:border-goi-gold/36"
             aria-hidden
           />
         ) : null}
@@ -86,7 +86,7 @@ function TaskNodeCard({
               type="checkbox"
               checked={task.done}
               onChange={() => onToggle(task.id)}
-              className="size-4 rounded border-neutral-600 text-goi-gold focus:ring-goi-gold/40 light:border-zinc-400"
+              className="size-4 rounded border-neutral-600 text-goi-gold focus:ring-goi-gold/40 light:border-zinc-400 healthy:text-goi-gold healthy:focus:ring-goi-gold/30"
               aria-label={task.done ? "Marcar como pendiente" : "Marcar como hecha"}
             />
             <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-neutral-500 sm:inline light:text-zinc-500">

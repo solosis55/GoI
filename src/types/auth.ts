@@ -5,12 +5,24 @@ export type SafeUser = {
   bio: string;
   goal: string;
   avatarUrl: string;
+  bannerUrl: string;
+  bannerShowInFeed: boolean;
+  websiteUrl: string;
+  instagramUrl: string;
+  stravaUrl: string;
+  location: string;
+  profileVisibility: "public" | "followers";
+  pinnedPostId: string;
   createdAt: string;
   updatedAt: string;
 };
 
 /** Respuesta de `GET /auth/profile/:id`: el correo solo va incluido si miras tu propio perfil. */
-export type ProfileUser = Omit<SafeUser, "email"> & { email?: string };
+export type ProfileUser = Omit<SafeUser, "email"> & {
+  email?: string;
+  /** Perfil limitado hasta que el visitante siga a esta cuenta. */
+  restrictedToFollowers?: boolean;
+};
 
 export type AuthResponse = {
   message: string;
@@ -45,6 +57,14 @@ export type UpdateProfileInput = Partial<{
   bio: string;
   goal: string;
   avatarUrl: string;
+  bannerUrl: string;
+  bannerShowInFeed: boolean;
+  websiteUrl: string;
+  instagramUrl: string;
+  stravaUrl: string;
+  location: string;
+  profileVisibility: "public" | "followers";
+  pinnedPostId: string | null;
 }>;
 
 export type DiscoverUser = ProfileUser & {

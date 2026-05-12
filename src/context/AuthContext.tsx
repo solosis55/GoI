@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AUTH_EXPIRED_EVENT } from "../api/client";
+import { AUTH_STORAGE_KEY } from "../constants/storageKeys";
 import type { SafeUser } from "../types/auth";
+import { mergeSafeUser } from "../utils/safeUserDefaults";
 
 type AuthState = {
   token: string | null;
@@ -11,8 +13,6 @@ type AuthState = {
   updateUser: (user: SafeUser) => void;
   logout: () => void;
 };
-
-const AUTH_STORAGE_KEY = "fit-social-auth";
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
@@ -24,7 +24,7 @@ function getStoredAuth(): { token: string | null; user: SafeUser | null } {
     const parsed = JSON.parse(raw) as { token: string; user: SafeUser };
     if (!parsed?.token || !parsed?.user) return { token: null, user: null };
 
-    return { token: parsed.token, user: parsed.user };
+    return { token: parsed.token, user: mergeSafeUser(parsed.user) };
   } catch {
     return { token: null, user: null };
   }
@@ -49,16 +49,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setAuth = useCallback((nextToken: string, nextUser: SafeUser) => {
+    const merged = mergeSafeUser(nextUser);
     setToken(nextToken);
-    setUser(nextUser);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: nextToken, user: nextUser }));
+    setUser(merged);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: nextToken, user: merged }));
   }, []);
 
   const updateUser = useCallback((nextUser: SafeUser) => {
-    setUser(nextUser);
+    const merged = mergeSafeUser(nextUser);
+    setUser(merged);
     setToken((currentToken) => {
       if (currentToken) {
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: currentToken, user: nextUser }));
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token: currentToken, user: merged }));
       }
       return currentToken;
     });

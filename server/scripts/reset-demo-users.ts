@@ -33,6 +33,14 @@ async function main() {
       existing.bio = sanitizeText(row.bio) ?? "";
       existing.goal = sanitizeText(row.goal) ?? "";
       existing.avatarUrl = sanitizeText(row.avatarUrl) ?? "";
+      existing.bannerUrl = existing.bannerUrl ?? "";
+      existing.bannerShowInFeed = existing.bannerShowInFeed !== false;
+      existing.websiteUrl = existing.websiteUrl ?? "";
+      existing.instagramUrl = existing.instagramUrl ?? "";
+      existing.stravaUrl = existing.stravaUrl ?? "";
+      existing.location = existing.location ?? "";
+      existing.profileVisibility = existing.profileVisibility === "followers" ? "followers" : "public";
+      existing.pinnedPostId = existing.pinnedPostId ?? "";
       existing.updatedAt = now;
       updated += 1;
       console.log("[reset-demo-users] actualizado:", email);
@@ -47,6 +55,14 @@ async function main() {
       bio: sanitizeText(row.bio) ?? "",
       goal: sanitizeText(row.goal) ?? "",
       avatarUrl: sanitizeText(row.avatarUrl) ?? "",
+      bannerUrl: "",
+      bannerShowInFeed: true,
+      websiteUrl: "",
+      instagramUrl: "",
+      stravaUrl: "",
+      location: "",
+      profileVisibility: "public",
+      pinnedPostId: "",
       createdAt: now,
       updatedAt: now,
     };

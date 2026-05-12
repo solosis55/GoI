@@ -31,13 +31,13 @@
 ### Marca (`src/components/branding`)
 - `GoISidebarBadge`
   - Props: `subtitle`, `description?`, opcional **`showDescriptionOnMobile`**, **`presentation`** (`"compact"` | **`hero`**`; defecto **`compact`**), **`heroHalo`** (solo con **`hero`**: halo **conic-gradient** rotatorio detrás del círculo; clase **`goi-hero-halo`** en **`index.css`**).
-  - Uso: pantalla **auth** centrada sobre el card (logo circular, FitSocial); **`hero`** + **`heroHalo`** lo usa **`LoginHeroBrand`**.
+  - Uso: pantalla **auth** centrada sobre el card (logo circular, GoI); **`hero`** + **`heroHalo`** lo usa **`LoginHeroBrand`**.
 - `LoginHeroBrand`
   - Props: mismos textos que **`GoISidebarBadge`** (`subtitle`, `description?`, **`showDescriptionOnMobile`**), **`onDismissComplete`** al terminar la salida del logo (~1 s).
   - Uso: solo **`App.tsx`** invitado — primero **solo** marca centrada (`splash`); al clic desaparece con transición larga y el padre muestra **`AuthPage`** con **`auth-form-reveal`**.
 - `SidebarSessionBadge`
   - Props: `username`, `avatarUrl`.
-  - Uso: **lateral con sesión** — foto en anillo dorado equivalente al logo GoI; FitSocial y `@usuario`.
+  - Uso: **lateral con sesión** — foto en anillo dorado equivalente al logo GoI; GoI y `@usuario`.
 
 ### Layout (`src/components/layout`)
 - `SidebarNavigation`
@@ -91,7 +91,7 @@
   - Uso: formulario para crear publicacion (ahora se monta dentro de modal en `FeedPage`, no inline en card) en formato **wizard de 3 fases**: (1) Imagen + edición, (2) Texto/menciones + configuración, (3) Revisión. Incluye stepper, navegación `Atrás / Siguiente / Publicar`, validación por pasos, y mantiene validación en vivo, preview, estado de transferencia, adjuntos (reordenar/portada/recorte), menciones priorizadas y plantillas rápidas. Tras añadir imágenes, muestra una vista principal grande de portada durante todo el flujo. El textarea principal usa `resize-none` + `autoGrow`.
 - `postCreateDraft` (`src/utils/postCreateDraft.ts`)
   - API: `readPostCreateDraft`, `writePostCreateDraft`, `clearPostCreateDraft`.
-  - Uso: borrador de creación de post por usuario en `sessionStorage` (`fitsocial:postCreateDraft:v1`); soporte para confirmar cierre del modal con cambios y descarte explícito.
+  - Uso: borrador de creación de post por usuario en `sessionStorage` (`goi:postCreateDraft:v1`); soporte para confirmar cierre del modal con cambios y descarte explícito.
 - `MentionComposer` / `MentionableTextarea`
   - Comentarios y texto del post: sugerencias al escribir **@**, teclado arriba/abajo/Enter/Tab. Prioriza seguidos y recientes; al elegir una mención se actualiza histórico reciente por usuario (persistencia local). `MentionableTextarea` soporta `autoGrow` para crecer con contenido (sin resize manual). En pantallas muy estrechas el botón **Comentar** baja debajo del campo para evitar overflow horizontal.
 - Tests asociados (frontend): `src/utils/mentionAutocomplete.test.ts` valida orden de sugerencias y filtro de query; `src/utils/postComposerTemplates.test.ts` valida inserción/append de plantillas.

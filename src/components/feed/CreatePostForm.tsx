@@ -475,7 +475,7 @@ export function CreatePostForm({
                       ) : null}
                       <PostMediaGallery media={previewMediaItems} />
                       {selectedWorkoutTitle ? (
-                        <div className="mt-0.5 inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-goi-gold/30 bg-goi-gold/[0.09] px-3 py-1.5 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.12)] light:border-goi-gold/35 light:bg-amber-50/90">
+                        <div className="mt-0.5 inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-goi-gold/30 bg-goi-gold/[0.09] px-3 py-1.5 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.12)] light:border-goi-gold/35 light:bg-goi-gold/[0.1] healthy:bg-goi-gold/[0.08]">
                           <PreviewDumbbellIcon className="size-4 shrink-0 text-goi-gold" />
                           <span className="font-semibold uppercase tracking-wide text-[10px] text-goi-gold-dim">
                             Rutina

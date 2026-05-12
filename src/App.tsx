@@ -11,6 +11,7 @@ import {
 } from "./components/layout/SidebarNavigation";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AuthPage } from "./pages/AuthPage";
+import { ExternalUserProfilePage } from "./components/feed/ExternalUserProfilePage";
 import { FeedPage } from "./pages/FeedPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -22,9 +23,11 @@ import { WorkoutsPage } from "./pages/WorkoutsPage";
 import type { Workout } from "./types/workout";
 import { clearWorkoutCreateDraft } from "./utils/workoutCreateDraft";
 
-const TAB_STORAGE_KEY = "fitsocial:activeTab";
+const TAB_STORAGE_KEY = "goi:activeTab";
 type ActiveTab = "feed" | "profile" | "settings" | "statistics" | "workouts";
 type WorkoutsView = "overview" | "catalog" | "exerciseDetail" | "editor";
+/** Desde qué pantalla se abrió la ficha de ejercicio (determina «volver»). */
+type ExerciseDetailReturnTarget = "editor" | "catalog";
 
 function readStoredTab(): ActiveTab | null {
   try {
@@ -85,17 +88,29 @@ function AppContent() {
   const [catalogFromEditor, setCatalogFromEditor] = useState(false);
   /** Si la ficha se abrio desde el catalogo tras pasar por el editor (afecta la miga de pan). */
   const [exerciseDetailFromEditor, setExerciseDetailFromEditor] = useState(false);
+  const [exerciseDetailReturnTarget, setExerciseDetailReturnTarget] = useState<ExerciseDetailReturnTarget>("catalog");
   const [workoutEditorMode, setWorkoutEditorMode] = useState<WorkoutEditorMode>(() => ({ mode: "create" }));
 
   const routineFormBreadcrumbLabel =
     workoutEditorMode.mode === "edit" ? "Editar rutina" : "Nueva rutina";
   /** Desde Perfil: abrir Inicio y centrar esa publicación en el timeline (ids de `Mis publicaciones`). */
   const [feedFocusPostId, setFeedFocusPostId] = useState<string | null>(null);
+  /** Perfil de otro usuario a pantalla completa (desde Inicio → «Ver perfil»). */
+  const [externalProfileVisit, setExternalProfileVisit] = useState<{
+    userId: string;
+    followingIds: string[];
+  } | null>(null);
 
   const goTo = useCallback((tab: ActiveTab) => {
     persistActiveTab(tab);
     setActiveTab(tab);
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== "profile") {
+      setExternalProfileVisit(null);
+    }
+  }, [activeTab]);
 
   const clearFeedFocus = useCallback(() => {
     stripPostQueryFromUrl();
@@ -143,16 +158,17 @@ function AppContent() {
       setCatalogExerciseId(null);
       setCatalogFromEditor(false);
       setExerciseDetailFromEditor(false);
+      setExerciseDetailReturnTarget("catalog");
       setAuthWelcomePhase("splash");
     }
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
+      <div className="flex min-h-screen flex-col bg-black text-neutral-200 encendido:bg-white encendido:text-zinc-900 healthy:bg-white healthy:text-zinc-900 neon:bg-[#030303] neon:text-neutral-200">
         <main className="social-shell relative flex min-h-0 flex-1 flex-col overflow-x-hidden">
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-[min(26rem,52vh)] bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(212,175,55,0.16)_0%,transparent_70%)] light:bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(196,154,26,0.24)_0%,transparent_72%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[min(26rem,52vh)] bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(212,175,55,0.16)_0%,transparent_70%)] neon:bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(120,220,60,0.12)_0%,transparent_70%)] encendido:hidden healthy:hidden"
             aria-hidden
           />
           {authWelcomePhase === "splash" ? (
@@ -178,9 +194,9 @@ function AppContent() {
   return (
     <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-zinc-100 light:text-zinc-900">
       <main className="social-shell grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="auth-session-enter-aside social-sidebar relative sticky top-0 flex h-screen flex-col overflow-hidden border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3 light:border-l-[3px] light:border-l-amber-400/35 light:border-zinc-200 light:bg-white light:shadow-none">
+        <aside className="auth-session-enter-aside social-sidebar relative sticky top-0 flex h-screen flex-col overflow-hidden border-r border-neutral-900 bg-black px-3.5 py-6 max-md:static max-md:h-auto max-md:border-b max-md:border-r-0 max-md:px-2.5 max-md:py-3 light:border-l-[3px] light:border-l-amber-400/35 healthy:border-l-[#2a4034]/70 light:border-zinc-200 light:bg-white light:shadow-none">
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[2px] bg-linear-to-r from-goi-gold/85 via-goi-gold/40 to-transparent light:from-amber-500/90 light:via-amber-400/45"
+            className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[2px] bg-linear-to-r from-goi-gold/85 via-goi-gold/40 to-transparent light:from-amber-500 healthy:from-goi-gold/88 light:via-amber-400/45 healthy:via-goi-gold/38"
             aria-hidden
           />
           <div className="relative z-[2] flex min-h-0 min-w-0 flex-1 flex-col gap-5 max-md:gap-3">
@@ -195,7 +211,10 @@ function AppContent() {
                     : user.bio.trim()
                   : undefined)
               }
-              onNavigateToProfile={() => goTo("profile")}
+              onNavigateToProfile={() => {
+                setExternalProfileVisit(null);
+                goTo("profile");
+              }}
             />
             <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-1">
               <SidebarNavigation
@@ -206,10 +225,14 @@ function AppContent() {
                   setCatalogExerciseId(null);
                   setCatalogFromEditor(false);
                   setExerciseDetailFromEditor(false);
+                  setExerciseDetailReturnTarget("catalog");
                   goTo("workouts");
                 }}
                 onStatistics={() => goTo("statistics")}
-                onProfile={() => goTo("profile")}
+                onProfile={() => {
+                  setExternalProfileVisit(null);
+                  goTo("profile");
+                }}
               />
             </div>
             <div className="mt-auto shrink-0 space-y-2.5 border-t border-neutral-800 pt-4 light:border-zinc-200">
@@ -255,6 +278,7 @@ function AppContent() {
                     : undefined
                 }
                 onOpenExerciseDetail={(id) => {
+                  setExerciseDetailReturnTarget("catalog");
                   setExerciseDetailFromEditor(catalogFromEditor);
                   setCatalogExerciseId(id);
                   setWorkoutsView("exerciseDetail");
@@ -271,11 +295,16 @@ function AppContent() {
                 exerciseId={catalogExerciseId}
                 showRoutineTrail={exerciseDetailFromEditor}
                 routineFormCrumb={exerciseDetailFromEditor ? routineFormBreadcrumbLabel : undefined}
+                listCrumbLabel={exerciseDetailReturnTarget === "editor" ? "Editor" : "Catálogo"}
+                backButtonLabel={
+                  exerciseDetailReturnTarget === "editor" ? "Volver al editor" : "Volver al catálogo"
+                }
                 onNavigateToEditorForm={
                   exerciseDetailFromEditor
                     ? () => {
                         setCatalogExerciseId(null);
                         setExerciseDetailFromEditor(false);
+                        setExerciseDetailReturnTarget("catalog");
                         setWorkoutsView("editor");
                         setCatalogFromEditor(true);
                       }
@@ -284,17 +313,21 @@ function AppContent() {
                 onBackToCatalog={() => {
                   setCatalogExerciseId(null);
                   setExerciseDetailFromEditor(false);
-                  setWorkoutsView("catalog");
+                  const backToEditor = exerciseDetailReturnTarget === "editor";
+                  setExerciseDetailReturnTarget("catalog");
+                  setWorkoutsView(backToEditor ? "editor" : "catalog");
                 }}
                 onBackToRoutines={() => {
                   setCatalogExerciseId(null);
                   setExerciseDetailFromEditor(false);
+                  setExerciseDetailReturnTarget("catalog");
                   setWorkoutsView("overview");
                 }}
                 onNewRoutineWithExerciseIds={(ids) => {
                   setWorkoutEditorMode({ mode: "create", initialExerciseIds: ids });
                   setCatalogExerciseId(null);
                   setExerciseDetailFromEditor(false);
+                  setExerciseDetailReturnTarget("catalog");
                   setCatalogFromEditor(false);
                   setWorkoutsView("editor");
                 }}
@@ -305,32 +338,67 @@ function AppContent() {
                 mode={workoutEditorMode}
                 onBack={() => setWorkoutsView("overview")}
                 onSaved={() => setWorkoutsView("overview")}
-                onBrowseCatalog={() => {
+                onOpenFullCatalog={() => {
                   setCatalogExerciseId(null);
                   setCatalogFromEditor(true);
                   setWorkoutsView("catalog");
                 }}
-              />
-            )}
-            {activeTab === "profile" && (
-              <ProfilePage
-                onOpenPostInFeed={navigateToFeedPost}
-                onGoToFeed={() => goTo("feed")}
-                onGoToStatistics={() => goTo("statistics")}
-                onGoToWorkouts={() => {
-                  setWorkoutsView("overview");
-                  setCatalogExerciseId(null);
-                  setCatalogFromEditor(false);
-                  setExerciseDetailFromEditor(false);
-                  goTo("workouts");
+                onOpenExerciseDetail={(exerciseId: string) => {
+                  setExerciseDetailReturnTarget("editor");
+                  setExerciseDetailFromEditor(true);
+                  setCatalogExerciseId(exerciseId);
+                  setWorkoutsView("exerciseDetail");
                 }}
-                onGoToSettings={() => goTo("settings")}
               />
             )}
+            {activeTab === "profile" &&
+              (externalProfileVisit?.userId && externalProfileVisit.userId !== user?.id ? (
+                <ExternalUserProfilePage
+                  userId={externalProfileVisit.userId}
+                  currentUserId={user?.id}
+                  initialFollowingIds={externalProfileVisit.followingIds}
+                  onOpenPostInFeed={navigateToFeedPost}
+                  onBack={() => setExternalProfileVisit(null)}
+                  onFollowingChanged={(targetUserId, following) => {
+                    setExternalProfileVisit((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            followingIds: following
+                              ? prev.followingIds.includes(targetUserId)
+                                ? prev.followingIds
+                                : [...prev.followingIds, targetUserId]
+                              : prev.followingIds.filter((id) => id !== targetUserId),
+                          }
+                        : null,
+                    );
+                  }}
+                />
+              ) : (
+                <ProfilePage
+                  onOpenPostInFeed={navigateToFeedPost}
+                  onGoToStatistics={() => goTo("statistics")}
+                  onGoToSettings={() => goTo("settings")}
+                />
+              ))}
             {activeTab === "statistics" && <StatisticsPage />}
-            {activeTab === "settings" && <SettingsPage onGoToProfile={() => goTo("profile")} />}
+            {activeTab === "settings" && (
+              <SettingsPage
+                onGoToProfile={() => {
+                  setExternalProfileVisit(null);
+                  goTo("profile");
+                }}
+              />
+            )}
             {activeTab === "feed" && (
-              <FeedPage focusPostId={feedFocusPostId} onFocusPostHandled={clearFeedFocus} />
+              <FeedPage
+                focusPostId={feedFocusPostId}
+                onFocusPostHandled={clearFeedFocus}
+                onNavigateToExternalProfile={(visitUserId, visitFollowingIds) => {
+                  setExternalProfileVisit({ userId: visitUserId, followingIds: visitFollowingIds });
+                  goTo("profile");
+                }}
+              />
             )}
           </PageContainer>
         </section>

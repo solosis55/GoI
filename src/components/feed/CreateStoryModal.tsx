@@ -162,7 +162,7 @@ export function CreateStoryModal({ open, onClose, onCreated }: CreateStoryModalP
         aria-labelledby={titleId}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="h-1 w-full shrink-0 bg-linear-to-r from-goi-gold-dim via-goi-gold to-goi-gold-dim light:from-amber-600 light:via-amber-500 light:to-amber-600" />
+        <div className="h-1 w-full shrink-0 bg-linear-to-r from-goi-gold-dim via-goi-gold to-goi-gold-dim" />
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="grid gap-4 p-4 sm:gap-5 sm:p-5">
@@ -223,12 +223,12 @@ export function CreateStoryModal({ open, onClose, onCreated }: CreateStoryModalP
                     className={[
                       "flex min-h-[10rem] w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45",
                       dropHighlight
-                        ? "border-goi-gold/70 bg-goi-gold/10 light:border-amber-500/70 light:bg-amber-50/90"
-                        : "border-neutral-600/70 bg-neutral-900/40 hover:border-goi-gold/45 hover:bg-goi-gold/[0.06] light:border-zinc-300 light:bg-zinc-50/80 light:hover:border-amber-400/55",
+                        ? "border-goi-gold/70 bg-goi-gold/10 light:border-amber-500/70 healthy:border-goi-gold/42 light:bg-amber-50 healthy:bg-goi-gold/[0.08]"
+                        : "border-neutral-600/70 bg-neutral-900/40 hover:border-goi-gold/45 hover:bg-goi-gold/[0.06] light:border-zinc-300 light:bg-zinc-50/80 light:hover:border-amber-400/55 healthy:hover:border-goi-gold/32",
                       busy ? "pointer-events-none opacity-70" : "",
                     ].join(" ")}
                   >
-                    <PhotoStackIcon className="size-11 text-goi-gold/85 light:text-amber-700" />
+                    <PhotoStackIcon className="size-11 text-goi-gold/85 light:text-amber-700 healthy:text-goi-gold" />
                     <span className="text-sm font-medium text-neutral-200 light:text-zinc-800">
                       Arrastra una foto o elige desde tu dispositivo
                     </span>
@@ -236,7 +236,7 @@ export function CreateStoryModal({ open, onClose, onCreated }: CreateStoryModalP
                       Podrás recortar y aplicar el mismo estilo que en las publicaciones antes de publicar.
                     </span>
                     {busy ? (
-                      <span className="text-xs font-medium text-goi-gold light:text-amber-800">Procesando…</span>
+                      <span className="text-xs font-medium text-goi-gold light:text-amber-800 healthy:text-goi-gold-dim">Procesando…</span>
                     ) : null}
                   </button>
                 ) : (

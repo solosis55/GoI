@@ -20,6 +20,19 @@ export type User = {
   bio: string;
   goal: string;
   avatarUrl: string;
+  /** Imagen de cabecera del perfil (https o data URL de imagen). */
+  bannerUrl: string;
+  /** Si en el futuro el feed muestra la cabecera ajena; preferencia del usuario. */
+  bannerShowInFeed: boolean;
+  websiteUrl: string;
+  instagramUrl: string;
+  stravaUrl: string;
+  /** Texto corto (ciudad, gimnasio); público si el perfil lo es. */
+  location: string;
+  /** Perfil completo visible solo a quien sigue al usuario (además de visibilidad por post). */
+  profileVisibility: "public" | "followers";
+  /** Publicación propia a destacar en el perfil / modal público. */
+  pinnedPostId: string;
   createdAt: string;
   updatedAt: string;
   /** SHA-256 hex del token de un solo uso; no se expone por API. */
@@ -151,9 +164,9 @@ const distBundledSeedPath = resolve(currentDir, "../data/store.json");
 
 /** Ruta del JSON persistido. En Vercel las funciones solo escriben bien en `/tmp` (ver `docs/deploy.md`). */
 function getDataFilePath(): string {
-  const fromEnv = process.env.FITSOCIAL_STORE_PATH?.trim();
+  const fromEnv = process.env.GOI_STORE_PATH?.trim() || process.env.FITSOCIAL_STORE_PATH?.trim();
   if (fromEnv) return resolve(fromEnv);
-  if (process.env.VERCEL) return join("/tmp", "fitsocial-store.json");
+  if (process.env.VERCEL) return join("/tmp", "goi-store.json");
   return defaultRepoStorePath;
 }
 
@@ -357,6 +370,14 @@ export function initializeStore() {
         bio: user.bio ?? "",
         goal: user.goal ?? "",
         avatarUrl: user.avatarUrl ?? "",
+        bannerUrl: user.bannerUrl ?? "",
+        bannerShowInFeed: user.bannerShowInFeed !== false,
+        websiteUrl: user.websiteUrl ?? "",
+        instagramUrl: user.instagramUrl ?? "",
+        stravaUrl: user.stravaUrl ?? "",
+        location: user.location ?? "",
+        profileVisibility: user.profileVisibility === "followers" ? "followers" : "public",
+        pinnedPostId: user.pinnedPostId ?? "",
         updatedAt: user.updatedAt ?? user.createdAt ?? new Date().toISOString(),
       }))
     : [];

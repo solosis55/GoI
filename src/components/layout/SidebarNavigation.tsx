@@ -1,3 +1,4 @@
+import { WorkoutsDumbbellIcon } from "../icons/WorkoutsDumbbellIcon";
 import { Button } from "../ui/Button";
 
 export type SidebarActiveTab = "feed" | "profile" | "statistics" | "settings" | "workouts";
@@ -11,19 +12,6 @@ function IconHome({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M4 10.5 12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z"
-      />
-    </svg>
-  );
-}
-
-function IconDumbbell({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        d="M4 14V10M20 14V10M7 17V7M17 17V7M7 10h10M7 14h10"
       />
     </svg>
   );
@@ -116,7 +104,7 @@ export function SidebarLogoutButton({ onLogout }: { onLogout: () => void }) {
 
 function activeStripe(active: boolean) {
   return active
-    ? "relative overflow-hidden before:pointer-events-none before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-full before:bg-yellow-950/50 light:before:bg-yellow-950/40"
+    ? "relative overflow-hidden before:pointer-events-none before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-full before:bg-yellow-950/50 light:before:bg-yellow-950/40 healthy:before:bg-goi-gold-dim/45"
     : "";
 }
 
@@ -171,7 +159,7 @@ export function SidebarNavigation({
           className={[navItemBase, activeStripe(activeTab === "workouts")].join(" ")}
           onClick={onWorkouts}
         >
-          <IconDumbbell className="size-[1.125rem]" />
+          <WorkoutsDumbbellIcon className="size-[1.125rem]" />
           <span className="min-w-0 font-medium">Rutinas</span>
         </Button>
         <Button

@@ -1,4 +1,6 @@
 import type { ReactNode, Ref } from "react";
+import { useTheme } from "../../context/ThemeContext";
+import { brandingLogoSrc } from "../../utils/brandingLogo";
 
 type GoISidebarBadgeProps = {
   /** Texto debajo del logotipo (ej. @{user}, o texto de onboarding). */
@@ -17,8 +19,6 @@ type GoISidebarBadgeProps = {
   heroHaloRef?: Ref<HTMLDivElement>;
 };
 
-const LOGO_SRC = "/branding/goi-logo.png";
-
 export function GoISidebarBadge({
   subtitle,
   description,
@@ -27,6 +27,8 @@ export function GoISidebarBadge({
   heroHalo = false,
   heroHaloRef,
 }: GoISidebarBadgeProps) {
+  const { theme } = useTheme();
+  const logoSrc = brandingLogoSrc(theme);
   const isHero = presentation === "hero";
   const showHalo = isHero && heroHalo;
 
@@ -64,12 +66,20 @@ export function GoISidebarBadge({
             aria-hidden
           />
           <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${ringClass}`}>
-            <img src={LOGO_SRC} alt="" className={imgClass} width={imgPx} height={imgPx} aria-hidden />
+            <img
+              key={logoSrc}
+              src={logoSrc}
+              alt=""
+              className={imgClass}
+              width={imgPx}
+              height={imgPx}
+              aria-hidden
+            />
           </div>
         </div>
       ) : (
         <div className={`flex shrink-0 items-center justify-center overflow-hidden ${ringClass}`}>
-          <img src={LOGO_SRC} alt="GoI · Group of Iron" className={imgClass} width={imgPx} height={imgPx} />
+          <img key={logoSrc} src={logoSrc} alt="GoI · Group of Iron" className={imgClass} width={imgPx} height={imgPx} />
         </div>
       )}
       <p
@@ -78,7 +88,7 @@ export function GoISidebarBadge({
           isHero ? "pt-0 text-sm tracking-[0.22em] sm:text-[0.8rem]" : "pt-1 text-xs",
         ].join(" ")}
       >
-        FitSocial
+        GoI
       </p>
       <div
         className={

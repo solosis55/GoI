@@ -1,4 +1,4 @@
-export const POST_CREATE_DRAFT_KEY = "fitsocial:postCreateDraft:v1";
+export const POST_CREATE_DRAFT_KEY = "goi:postCreateDraft:v1";
 
 export type PostCreateDraft = {
   userId: string;

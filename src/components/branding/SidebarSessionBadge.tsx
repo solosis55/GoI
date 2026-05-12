@@ -22,7 +22,7 @@ export function SidebarSessionBadge({
   const trimmedTag = tagline?.trim();
 
   const avatarWrapperClass =
-    "relative flex h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-950 ring-2 ring-goi-gold-dim/30 shadow-[0_8px_28px_rgba(0,0,0,0.55)] md:h-[112px] md:w-[112px] light:bg-white light:shadow-[0_8px_28px_rgba(0,0,0,0.12)]";
+    "relative flex h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-950 ring-2 ring-goi-gold-dim/30 shadow-[0_8px_28px_rgba(0,0,0,0.55)] md:h-[112px] md:w-[112px] light:bg-white light:shadow-[0_8px_28px_rgba(0,0,0,0.12)] healthy:ring-[#3d5e4a]/45";
 
   const body = (
     <>
@@ -30,7 +30,7 @@ export function SidebarSessionBadge({
         <Avatar src={avatarUrl.trim() || undefined} alt={label} fill className="ring-0" />
       </div>
       <div className="min-w-0 flex-1 md:w-full md:text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-steel md:pt-1">FitSocial</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-steel md:pt-1">GoI</p>
         <div className="sidebar-user mt-0.5 text-sm font-medium text-neutral-200 light:text-zinc-800 md:text-neutral-400 md:font-normal md:light:text-zinc-600">
           @{label}
         </div>
@@ -55,6 +55,7 @@ export function SidebarSessionBadge({
           "hover:border-neutral-800/70 hover:bg-neutral-900/40 focus-visible:border-goi-gold/45 focus-visible:ring-2 focus-visible:ring-goi-gold/35",
           "md:grid md:justify-items-center md:p-3 md:text-center",
           "light:hover:border-zinc-200 light:hover:bg-zinc-100/90 light:focus-visible:ring-goi-gold/45",
+          "healthy:hover:border-goi-gold/22 healthy:hover:bg-goi-gold/[0.07] healthy:focus-visible:border-goi-gold/38 healthy:focus-visible:ring-goi-gold/30",
         ].join(" ")}
       >
         {body}

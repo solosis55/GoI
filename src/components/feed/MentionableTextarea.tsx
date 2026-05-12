@@ -135,7 +135,7 @@ export function MentionableTextarea({
                 type="button"
                 className={`flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-neutral-800/90 light:hover:bg-zinc-100 ${
                   i === highlightIdx
-                    ? "bg-neutral-800/80 text-goi-gold light:bg-goi-gold/15 light:text-yellow-950"
+                    ? "bg-neutral-800/80 text-goi-gold light:bg-goi-gold/15 light:text-yellow-950 healthy:text-goi-gold-dim"
                     : "text-neutral-200 light:text-zinc-800"
                 }`}
                 onMouseDown={(ev) => {

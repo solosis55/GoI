@@ -101,7 +101,7 @@ export function FeedPostOverflowMenu({
             >
               {linkCopied ? (
                 <>
-                  <MenuCheckIcon className="size-3.5 shrink-0 text-emerald-400" />
+                  <MenuCheckIcon className="size-3.5 shrink-0 text-goi-gold light:text-amber-600 healthy:text-goi-gold" />
                   Enlace copiado
                 </>
               ) : (
@@ -152,7 +152,7 @@ export function FeedPostOverflowMenu({
             <button
               type="button"
               role="menuitem"
-              className="flex w-full px-3 py-2 text-left text-sm text-amber-200/95 hover:bg-white/10 light:text-amber-900 light:hover:bg-zinc-100"
+              className="flex w-full px-3 py-2 text-left text-sm text-amber-200/95 hover:bg-white/10 light:text-amber-900 healthy:text-goi-gold-dim light:hover:bg-zinc-100"
               onClick={() => {
                 onReport();
                 setOpen(false);

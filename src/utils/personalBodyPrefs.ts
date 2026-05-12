@@ -9,8 +9,8 @@ function newId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
-const LEGACY_KEY = (userId: string) => `fitsocial:personalBody:${userId}`;
-const BUNDLE_KEY = (userId: string) => `fitsocial:personalBundle:v2:${userId}`;
+const LEGACY_KEY = (userId: string) => `goi:personalBody:${userId}`;
+const BUNDLE_KEY = (userId: string) => `goi:personalBundle:v2:${userId}`;
 
 const MAX_HISTORY = 150;
 const MAX_PHOTOS = 18;

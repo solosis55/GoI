@@ -8,7 +8,7 @@ Describe el **cliente HTTP tipado**, los **módulos por dominio** y la relación
 
 Archivo: [`src/api/client.ts`](../src/api/client.ts).
 
-- **`apiFetch<T>(path, options?)`**: envuelve **`fetch`** con base URL común, cabecera **`Content-Type: application/json`** y, si hay sesión, **`Authorization: Bearer <JWT>`** leído de `localStorage` (`fit-social-auth`).
+- **`apiFetch<T>(path, options?)`**: envuelve **`fetch`** con base URL común, cabecera **`Content-Type: application/json`** y, si hay sesión, **`Authorization: Bearer <JWT>`** leído de `localStorage` (`goi-auth`).
 - **Base URL:** `import.meta.env.VITE_API_URL` o, por defecto, `http://localhost:4000/api` en desarrollo y **`/api`** en producción (mismo origen que la SPA).
 - **Respuesta tipada:** el genérico **`T`** es el JSON parseado en éxito (`response.ok`).
 - **`ApiError`:** si la respuesta no es OK o hay fallo de red, se lanza `ApiError` con **`status`**, **`code`** (del cuerpo `{ code, message }` del backend o valores como `API_NETWORK_ERROR`) y **`message`** usable en UI.

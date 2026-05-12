@@ -6,7 +6,7 @@ const UPDATED = "6 de mayo de 2026";
 export function LegalNoticePage() {
   return (
     <LegalPageShell title="Aviso legal" lastUpdated={UPDATED}>
-      <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 px-3 py-2 text-sm text-amber-100/95 light:border-amber-600/35 light:bg-amber-50 light:text-amber-950">
+      <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 px-3 py-2 text-sm text-amber-100/95 light:border-amber-600 healthy:border-goi-gold/32 light:bg-amber-50 healthy:bg-goi-gold/[0.09] light:text-amber-950 healthy:text-goi-gold-dim">
         Este texto es una <strong>base orientativa</strong> para un MVP o entorno educativo. Antes de tratar datos
         personales reales o ofrecer el servicio al público, conviene revisarlo y adaptarlo con asesoramiento jurídico.
       </p>
@@ -38,7 +38,7 @@ export function LegalNoticePage() {
 
       <h2 id="objeto">2. Objeto y condiciones de uso</h2>
       <p>
-        FitSocial · GoI es una aplicación web de carácter <strong>experimental / educativo</strong> (MVP) orientada a
+        GoI es una aplicación web de carácter <strong>experimental / educativo</strong> (MVP) orientada a
         compartir actividad en un feed, gestionar rutinas de entrenamiento y funciones relacionadas. El uso del sitio es
         libre dentro de los límites descritos aquí y en las políticas vinculadas.
       </p>

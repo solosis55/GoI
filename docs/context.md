@@ -62,7 +62,7 @@ function App() {
 | Provider | `AuthProvider` |
 | Consumo | `useAuth()` |
 
-**Valor expuesto (resumen):** `token`, `user`, `isAuthenticated`, `setAuth`, `updateUser`, `logout`. La sesión se **persiste** en `localStorage` (`fit-social-auth`). Un listener escucha el evento de sesión caducada (`AUTH_EXPIRED_EVENT`) y limpia el estado.
+**Valor expuesto (resumen):** `token`, `user`, `isAuthenticated`, `setAuth`, `updateUser`, `logout`. La sesión se **persiste** en `localStorage` (`goi-auth`). Un listener escucha el evento de sesión caducada (`AUTH_EXPIRED_EVENT`) y limpia el estado.
 
 **Consumidores:** cualquier componente bajo `App` que llame a `useAuth()` (por ejemplo [`AppContent`](../src/App.tsx), páginas del feed, perfil, formularios).
 
@@ -74,7 +74,7 @@ function App() {
 | Provider | `ThemeProvider` |
 | Consumo | `useTheme()` |
 
-**Valor:** `theme` (`"dark"` \| `"light"`), `setTheme`, `toggleTheme`. Sincroniza **`document.documentElement`** (`data-theme`) y `localStorage` (`fitsocial:theme`) vía `applyThemeDom`.
+**Valor:** `theme` (`"dark"` \| `"light"`), `setTheme`, `toggleTheme`. Sincroniza **`document.documentElement`** (`data-theme`) y `localStorage` (`goi:theme`) vía `applyThemeDom`.
 
 **Consumidores:** componentes que muestran interruptor de tema o dependen del modo (sidebar, footer, etc., según diseño actual).
 

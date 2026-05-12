@@ -44,8 +44,8 @@ export function PostActions({ likedByMe, likesCount, onLike }: PostActionsProps)
         "inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full px-2 py-1.5 text-[13px] font-semibold tabular-nums tracking-tight transition-[color,background-color]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white",
         liked
-          ? "text-goi-gold hover:bg-goi-gold/[0.12] light:text-amber-700 light:hover:bg-amber-100/90"
-          : "text-neutral-500 hover:bg-neutral-800/55 hover:text-goi-gold light:text-zinc-500 light:hover:bg-zinc-200/70 light:hover:text-amber-700",
+          ? "text-goi-gold hover:bg-goi-gold/[0.12] light:text-amber-700 healthy:text-goi-gold light:hover:bg-amber-100/90 healthy:hover:bg-goi-gold/[0.14]"
+          : "text-neutral-500 hover:bg-neutral-800/55 hover:text-goi-gold light:text-zinc-500 light:hover:bg-zinc-200/70 light:hover:text-amber-700 healthy:hover:text-goi-gold",
       ].join(" ")}
     >
       <span

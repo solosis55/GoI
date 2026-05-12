@@ -13,7 +13,7 @@ export function NotFoundPage() {
           >
             ← Volver al inicio
           </Link>
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-gold-dim">FitSocial · GoI</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-goi-gold-dim">GoI</span>
         </div>
       </header>
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">

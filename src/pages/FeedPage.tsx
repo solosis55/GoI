@@ -56,15 +56,16 @@ import { useMentionRecents } from "../hooks/useMentionRecents";
 import {
   appendLocalReport,
   clearMutedUsers,
+  OPEN_FEED_COMPOSER_SESSION_KEY,
   loadMutedUserIds,
   loadSavedPostIds,
   muteUser,
   toggleSavedPost,
 } from "../utils/feedLocalPrefs";
 
-const FEED_SCOPE_STORAGE_KEY = "fitsocial:feedScope";
-const FEED_MODE_LEGACY_KEY = "fitsocial:feedMode";
-const FEED_SIDEBAR_PANEL_KEY = "fitsocial:feedSidebarPanel";
+const FEED_SCOPE_STORAGE_KEY = "goi:feedScope";
+const FEED_MODE_LEGACY_KEY = "goi:feedMode";
+const FEED_SIDEBAR_PANEL_KEY = "goi:feedSidebarPanel";
 
 function readStoredFeedSidebarPanel(): FeedSidebarPanel {
   try {
@@ -132,6 +133,8 @@ type FeedPageProps = {
   /** Desde Perfil: centrar esta publicación en el timeline cuando el feed cargue (el `<li>` usa `feed-post-{id}`). */
   focusPostId?: string | null;
   onFocusPostHandled?: () => void;
+  /** Abre la pestaña Perfil con el perfil público de ese usuario (cierra el modal previo). */
+  onNavigateToExternalProfile?: (userId: string, followingIds: string[]) => void;
 };
 
 function FeedHomeAccentIcon({ className }: { className?: string }) {
@@ -172,8 +175,22 @@ function GymStoriesBrandIcon({ className }: { className?: string }) {
   );
 }
 
-export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPageProps = {}) {
-  const { user } = useAuth();
+export function FeedPage({
+  focusPostId = null,
+  onFocusPostHandled,
+  onNavigateToExternalProfile,
+}: FeedPageProps = {}) {
+  const { user, logout } = useAuth();
+
+  const handleSwitchAccount = useCallback(() => {
+    if (
+      window.confirm(
+        "¿Cambiar de cuenta? Se cerrará la sesión actual y podrás iniciar sesión con otra cuenta.",
+      )
+    ) {
+      logout();
+    }
+  }, [logout]);
   const userId = user?.id;
   const [posts, setPosts] = useState<Post[]>([]);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -229,6 +246,18 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
     null,
   );
   const { recentMentionIds, recordMentionPick: handleMentionPicked } = useMentionRecents(user?.id);
+
+  useEffect(() => {
+    if (!userId) return;
+    try {
+      if (sessionStorage.getItem(OPEN_FEED_COMPOSER_SESSION_KEY) === "1") {
+        sessionStorage.removeItem(OPEN_FEED_COMPOSER_SESSION_KEY);
+        setMobileComposerOpen(true);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [userId]);
 
   const myPostsCount = useMemo(
     () => (user ? posts.filter((post) => post.userId === user.id).length : 0),
@@ -916,16 +945,16 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
         <header className="feed-page-header relative overflow-visible rounded-2xl border border-neutral-800/75 bg-linear-to-b from-neutral-950 via-neutral-950 to-neutral-950/90 px-4 py-5 shadow-[0_14px_44px_-20px_rgba(0,0,0,0.65)] sm:px-6 sm:py-6 light:border-zinc-200/90 light:from-white light:via-white light:to-zinc-50 light:shadow-[0_14px_40px_-18px_rgba(24,24,27,0.12)]">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-20 -top-28 z-0 h-52 w-52 rounded-full bg-goi-gold/[0.07] blur-3xl light:bg-amber-400/14"
+            className="pointer-events-none absolute -right-20 -top-28 z-0 h-52 w-52 rounded-full bg-goi-gold/[0.07] blur-3xl encendido:bg-orange-400/16 healthy:bg-goi-gold/[0.11]"
           />
           <div className="relative flex flex-wrap items-start justify-between gap-4">
             <div className="flex min-w-0 flex-1 gap-3 sm:gap-4">
-              <div className="hidden shrink-0 sm:grid sm:size-14 sm:place-items-center sm:rounded-2xl sm:border sm:border-goi-gold/30 sm:bg-goi-gold/[0.09] sm:shadow-inner sm:shadow-black/20 light:sm:bg-amber-50/90">
+              <div className="hidden shrink-0 sm:grid sm:size-14 sm:place-items-center sm:rounded-2xl sm:border sm:border-goi-gold/30 sm:bg-goi-gold/[0.09] sm:shadow-inner sm:shadow-black/20 light:sm:bg-amber-50/90 healthy:sm:bg-goi-gold/[0.08]">
                 <FeedHomeAccentIcon className="size-8" />
               </div>
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-goi-gold-dim">FitSocial</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-goi-gold-dim">GoI</p>
                   {user?.username ? (
                     <span className="rounded-full border border-neutral-700/85 bg-neutral-900/55 px-2.5 py-0.5 text-[10px] font-medium tabular-nums text-neutral-400 light:border-zinc-200 light:bg-zinc-100 light:text-zinc-600">
                       @{user.username}
@@ -980,7 +1009,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
           <div className="mx-auto w-full min-w-0 max-w-xl sm:max-w-2xl px-4 sm:px-5">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2">
               <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                <span className="flex shrink-0 translate-y-[2px] items-center text-goi-gold light:text-amber-700" aria-hidden>
+                <span className="flex shrink-0 translate-y-[2px] items-center text-goi-gold healthy:text-goi-gold" aria-hidden>
                   <GymStoriesBrandIcon className="size-7 sm:size-8" />
                 </span>
                 <h2
@@ -990,7 +1019,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
                   Historias del gym
                 </h2>
                 {user && gymStoriesActiveCount > 0 ? (
-                  <span className="inline-flex items-center rounded-full border border-goi-gold/25 bg-goi-gold/14 px-2 py-0.5 text-goi-gold light:border-amber-400/45 light:bg-amber-100/95 light:text-amber-950">
+                  <span className="inline-flex items-center rounded-full border border-goi-gold/25 bg-goi-gold/14 px-2 py-0.5 text-goi-gold light:border-goi-gold/40 light:bg-goi-gold/[0.11] healthy:border-goi-gold/32 healthy:bg-goi-gold/[0.11] light:text-goi-gold-dim healthy:text-goi-gold-dim">
                     <span className="inline tabular-nums text-[10px] font-semibold sm:hidden">{gymStoriesActiveCount}</span>
                     <span className="hidden text-[10px] font-semibold uppercase tracking-wide sm:inline">
                       {gymStoriesActiveCount} activa{gymStoriesActiveCount === 1 ? "" : "s"}
@@ -1000,7 +1029,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
               </div>
               <button
                 type="button"
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-neutral-600/55 bg-neutral-900/25 text-[12px] font-semibold leading-none text-neutral-500 transition-colors hover:border-goi-gold/45 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:border-zinc-300 light:bg-white light:text-zinc-600 light:hover:border-amber-400/60"
+                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-neutral-600/55 bg-neutral-900/25 text-[12px] font-semibold leading-none text-neutral-500 transition-colors hover:border-goi-gold/45 hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 light:border-zinc-300 light:bg-white light:text-zinc-600 light:hover:border-amber-400/60 healthy:hover:border-goi-gold/34"
                 title="Desliza horizontalmente. Anillo dorado: contenido nuevo para ti. Las historias son visibles unas ~24 h."
                 aria-label="Ayuda sobre historias del gym"
               >
@@ -1041,6 +1070,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
           onToggleFollow={handleToggleFollow}
           onViewProfile={setProfileUserId}
           onGoToProfile={user?.id ? () => setProfileUserId(user.id) : undefined}
+          onSwitchAccount={handleSwitchAccount}
           panel={feedSidebarPanel}
           onPanelChange={setFeedSidebarPanel}
           className="lg:hidden"
@@ -1219,6 +1249,7 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
         onToggleFollow={handleToggleFollow}
         onViewProfile={setProfileUserId}
         onGoToProfile={user?.id ? () => setProfileUserId(user.id) : undefined}
+        onSwitchAccount={handleSwitchAccount}
         panel={feedSidebarPanel}
         onPanelChange={setFeedSidebarPanel}
         className="hidden lg:block"
@@ -1244,6 +1275,16 @@ export function FeedPage({ focusPostId = null, onFocusPostHandled }: FeedPagePro
                 : [...prev, targetUserId]
               : prev.filter((uid) => uid !== targetUserId),
           )
+        }
+        onGoToFullProfile={
+          profileUserId && onNavigateToExternalProfile
+            ? () => {
+                const uid = profileUserId;
+                const ids = [...followingIds];
+                setProfileUserId(null);
+                onNavigateToExternalProfile(uid, ids);
+              }
+            : undefined
         }
       />
 

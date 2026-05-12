@@ -95,7 +95,7 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
           {urls.length === 1 ? (
             <button
               type="button"
-              className="group relative block w-full cursor-zoom-in border-0 bg-neutral-950 p-0 text-left outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100"
+              className="group relative block w-full cursor-zoom-in border-0 bg-neutral-950 p-0 text-left outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100 healthy:ring-goi-gold/18 healthy:focus-visible:ring-goi-gold/34"
               onClick={() => openLightbox(0)}
               aria-label="Ampliar foto"
             >
@@ -118,7 +118,7 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
                   <div key={`${index}-${url.slice(0, 24)}`} className="w-full shrink-0 snap-center snap-always">
                     <button
                       type="button"
-                      className="group relative block w-full cursor-zoom-in border-0 bg-neutral-950 p-0 text-left outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100"
+                      className="group relative block w-full cursor-zoom-in border-0 bg-neutral-950 p-0 text-left outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100 healthy:ring-goi-gold/18 healthy:focus-visible:ring-goi-gold/34"
                       onClick={() => openLightbox(index)}
                       aria-label={`Foto ${index + 1} de ${urls.length}, ampliar`}
                     >
@@ -139,7 +139,7 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
               <button
                 type="button"
                 aria-label="Foto anterior"
-                className="absolute left-1 top-1/2 z-[1] hidden -translate-y-1/2 rounded-full border border-white/15 bg-black/45 px-2.5 py-2 text-base text-white shadow-md backdrop-blur-sm hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 sm:left-2 md:block"
+                className="absolute left-1 top-1/2 z-[1] hidden -translate-y-1/2 rounded-full border border-white/15 bg-black/45 px-2.5 py-2 text-base text-white shadow-md backdrop-blur-sm hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 healthy:focus-visible:ring-goi-gold/32 sm:left-2 md:block"
                 onClick={(e) => {
                   e.stopPropagation();
                   carouselPrev();
@@ -150,7 +150,7 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
               <button
                 type="button"
                 aria-label="Foto siguiente"
-                className="absolute right-1 top-1/2 z-[1] hidden -translate-y-1/2 rounded-full border border-white/15 bg-black/45 px-2.5 py-2 text-base text-white shadow-md backdrop-blur-sm hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 sm:right-2 md:block"
+                className="absolute right-1 top-1/2 z-[1] hidden -translate-y-1/2 rounded-full border border-white/15 bg-black/45 px-2.5 py-2 text-base text-white shadow-md backdrop-blur-sm hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/45 healthy:focus-visible:ring-goi-gold/32 sm:right-2 md:block"
                 onClick={(e) => {
                   e.stopPropagation();
                   carouselNext();
@@ -169,7 +169,7 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
                     aria-label={`Ir a la foto ${i + 1}`}
                     className={[
                       "h-2 rounded-full transition-[width,background] duration-200",
-                      i === carouselIdx ? "w-6 bg-goi-gold/90" : "w-2 bg-neutral-600 hover:bg-neutral-500 light:bg-zinc-400",
+                      i === carouselIdx ? "w-6 bg-goi-gold/90 healthy:bg-goi-gold/[0.55]" : "w-2 bg-neutral-600 hover:bg-neutral-500 light:bg-zinc-400 healthy:hover:bg-goi-gold/30",
                     ].join(" ")}
                     onClick={() => goToCarouselSlide(i)}
                   />
@@ -215,13 +215,13 @@ export function PostMediaGallery({ media, layout = "inline", feedInteractive = f
       ].join(" ");
 
   const linkClassHeroSingle =
-    "group relative block w-full border-0 bg-neutral-950 outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100";
+    "group relative block w-full border-0 bg-neutral-950 outline-none ring-goi-gold/20 transition hover:brightness-[1.03] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:bg-zinc-100 healthy:ring-goi-gold/18 healthy:focus-visible:ring-goi-gold/34";
 
   const linkClassHeroMulti =
-    "group relative flex min-h-0 w-full items-center justify-center rounded-lg border border-neutral-700/80 bg-neutral-950/90 outline-none ring-goi-gold/25 transition hover:border-goi-gold/50 hover:brightness-[1.03] hover:shadow-md focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:border-zinc-200 light:bg-zinc-100";
+    "group relative flex min-h-0 w-full items-center justify-center rounded-lg border border-neutral-700/80 bg-neutral-950/90 outline-none ring-goi-gold/25 transition hover:border-goi-gold/50 hover:brightness-[1.03] hover:shadow-md focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:border-zinc-200 light:bg-zinc-100 healthy:ring-goi-gold/22 healthy:hover:border-goi-gold/34 healthy:focus-visible:ring-goi-gold/34";
 
   const linkClassInline =
-    "group relative flex min-h-0 w-full items-center justify-center rounded-xl border border-neutral-700/85 bg-neutral-950/90 outline-none ring-goi-gold/25 transition hover:border-goi-gold/55 hover:brightness-[1.03] hover:shadow-[0_8px_28px_rgb(0_0_0_/_0.35)] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:border-zinc-200 light:bg-white light:hover:shadow-[0_8px_26px_rgb(24_24_27_/_0.09)]";
+    "group relative flex min-h-0 w-full items-center justify-center rounded-xl border border-neutral-700/85 bg-neutral-950/90 outline-none ring-goi-gold/25 transition hover:border-goi-gold/55 hover:brightness-[1.03] hover:shadow-[0_8px_28px_rgb(0_0_0_/_0.35)] focus-visible:ring-2 focus-visible:ring-goi-gold/45 light:border-zinc-200 light:bg-white light:hover:shadow-[0_8px_26px_rgb(24_24_27_/_0.09)] healthy:ring-goi-gold/22 healthy:hover:border-goi-gold/36 healthy:focus-visible:ring-goi-gold/34 healthy:hover:shadow-[0_8px_26px_rgb(95_116_107_/_0.1)]";
 
   return (
     <div className={shellClass}>

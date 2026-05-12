@@ -73,7 +73,7 @@ export function OctagonRadarChart({ hits, className = "" }: OctagonRadarChartPro
         />
         <path
           d={pathD}
-          className="fill-goi-gold/22 stroke-goi-gold/75 light:fill-amber-200/45 light:stroke-amber-800/75"
+          className="fill-goi-gold/22 stroke-goi-gold/75 light:fill-goi-gold/[0.14] healthy:fill-goi-gold/18 light:stroke-goi-gold-dim/80 healthy:stroke-goi-gold-dim/75"
           strokeWidth={1.5}
           strokeLinejoin="round"
         />

@@ -16,7 +16,7 @@ type AuthTokenPayload = {
 function vercelAutoJwtSecret(): string {
   const url = process.env.VERCEL_URL ?? "";
   const sha = process.env.VERCEL_GIT_COMMIT_SHA ?? "";
-  return `fitsocial-vercel-auto|${url}|${sha}`;
+  return `goi-vercel-auto|${url}|${sha}`;
 }
 
 function getJwtSecret() {

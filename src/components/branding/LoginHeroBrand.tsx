@@ -115,7 +115,7 @@ export function LoginHeroBrand({
         type="button"
         className={[
           "group login-hero-brand-trigger w-fit max-w-full rounded-2xl px-2 pb-1 pt-2 text-center outline-none",
-          "focus-visible:ring-2 focus-visible:ring-neutral-500/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-zinc-400/50 light:focus-visible:ring-offset-zinc-100",
+          "focus-visible:ring-2 focus-visible:ring-neutral-500/45 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-zinc-400/50 light:focus-visible:ring-offset-white",
           phase !== "idle" ? "cursor-default" : "cursor-pointer",
         ].join(" ")}
         onMouseEnter={onHaloHoverStart}

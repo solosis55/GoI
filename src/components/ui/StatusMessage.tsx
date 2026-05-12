@@ -18,7 +18,7 @@ export function StatusMessage({
     tone === "dark" ? "text-neutral-400 light:text-neutral-600" : "text-neutral-600";
   const errorClass = tone === "dark" ? "text-red-400 light:text-red-700" : "text-red-600";
   const successClass =
-    tone === "dark" ? "text-emerald-400 light:text-emerald-700" : "text-green-700 dark:text-green-400";
+    tone === "dark" ? "text-goi-gold light:text-amber-700 healthy:text-goi-gold" : "text-green-700 dark:text-green-400";
 
   return (
     <>

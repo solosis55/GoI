@@ -115,7 +115,7 @@ function MiniLineChart({ title, points, unit, accentClass = "stroke-goi-gold" }:
             cx={mapX(p.t)}
             cy={mapY(p.v)}
             r={3.5}
-            className="fill-goi-gold light:fill-amber-800"
+            className="fill-goi-gold healthy:fill-goi-gold-dim"
             stroke="rgba(0,0,0,0.35)"
             strokeWidth={0.5}
           />

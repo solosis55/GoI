@@ -193,7 +193,7 @@ export function PostItem({
                 </span>
               )}
               {!isOwner && authorFollowsYou ? (
-                <span className="rounded-full border border-goi-gold/35 bg-goi-gold/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-goi-gold light:border-amber-400/50 light:bg-amber-50 light:text-amber-950">
+                <span className="rounded-full border border-goi-gold/35 bg-goi-gold/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-goi-gold light:border-goi-gold/40 healthy:border-goi-gold/32 light:bg-goi-gold/[0.1] healthy:bg-goi-gold/[0.09] light:text-goi-gold-dim healthy:text-goi-gold-dim">
                   Te sigue
                 </span>
               ) : null}
@@ -304,7 +304,7 @@ export function PostItem({
         )}
 
         {post.workoutId ? (
-          <div className="flex w-full max-w-full flex-col items-start gap-1.5 rounded-2xl border border-goi-gold/30 bg-goi-gold/[0.09] px-3 py-2 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.12)] sm:inline-flex sm:w-auto sm:max-w-full sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 sm:rounded-full sm:py-1.5 light:border-goi-gold/35 light:bg-amber-50/90">
+          <div className="flex w-full max-w-full flex-col items-start gap-1.5 rounded-2xl border border-goi-gold/30 bg-goi-gold/[0.09] px-3 py-2 text-xs shadow-[inset_0_1px_0_0_rgba(212,175,55,0.12)] sm:inline-flex sm:w-auto sm:max-w-full sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 sm:rounded-full sm:py-1.5 light:border-goi-gold/35 light:bg-goi-gold/[0.1] healthy:bg-goi-gold/[0.08]">
             <span className="inline-flex shrink-0 items-center gap-2">
               <DumbbellIcon className="size-4 shrink-0 text-goi-gold" />
               <span className="font-semibold uppercase tracking-wide text-[10px] text-goi-gold-dim">Rutina</span>
@@ -316,15 +316,17 @@ export function PostItem({
           </div>
         ) : null}
 
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-neutral-800/35 pt-3 text-[11px] tabular-nums text-neutral-500 light:border-zinc-200/55 light:text-zinc-600">
-          <span>{post.likesCount === 1 ? "1 me gusta" : `${post.likesCount} me gusta`}</span>
-          <span className="text-neutral-600 light:text-zinc-400" aria-hidden>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-neutral-800/45 pt-4 text-[13px] tabular-nums leading-snug text-neutral-400 light:border-zinc-200/70 light:text-zinc-600">
+          <span className="font-medium text-neutral-300 light:text-zinc-700">
+            {post.likesCount === 1 ? "1 me gusta" : `${post.likesCount} me gusta`}
+          </span>
+          <span className="text-neutral-600 opacity-80 light:text-zinc-400" aria-hidden>
             ·
           </span>
           {commentsCount > 0 ? (
             <button
               type="button"
-              className="font-medium text-neutral-400 underline-offset-2 hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:text-zinc-600 light:hover:text-goi-gold-dim"
+              className="font-semibold text-neutral-400 underline-offset-[3px] transition hover:text-goi-gold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 light:text-zinc-600 light:hover:text-amber-800 healthy:hover:text-goi-gold-dim"
               onClick={() => setCommentsOpen((o) => !o)}
               aria-expanded={commentsOpen}
             >
@@ -333,7 +335,7 @@ export function PostItem({
                 : `${commentsCount} ${commentsCount === 1 ? "comentario" : "comentarios"}`}
             </button>
           ) : (
-            <span>Sin comentarios</span>
+            <span className="text-neutral-500 light:text-zinc-500">Sin comentarios</span>
           )}
         </div>
 
@@ -356,7 +358,7 @@ export function PostItem({
           </button>
         ) : null}
 
-        <div className={showComposerMobile ? "block" : "hidden sm:block"}>
+        <div className={showComposerMobile ? "mt-4 block" : "mt-4 hidden sm:block"}>
           <MentionComposer
             value={commentValue}
             onChange={onChangeComment}

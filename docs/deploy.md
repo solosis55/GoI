@@ -23,20 +23,20 @@ La **salud** del servicio: `GET /api/health`.
 | `JWT_SECRET` | Servidor | **Obligatoria** antes de login/registro en produccion (emisión del JWT falla sin ella; ver `server/src/services/auth.ts`) |
 | `PORT` | Servidor | La asigna casi todo PaaS (Render, Fly, Railway). Por defecto local `4000`. |
 | `VITE_API_URL` | **Build** del cliente | Solo si front y API van en **hosts distintos**; entonces `https://api.tudominio.com/api` y el build debe hacerse con esa variable definida. |
-| `FITSOCIAL_STORE_PATH` | Servidor (opcional) | Ruta absoluta al `store.json` en runtime. Si no se define, en **Vercel** se usa `/tmp/fitsocial-store.json` (ver arriba). |
+| `GOI_STORE_PATH` | Servidor (opcional) | Ruta absoluta al `store.json` en runtime. Si no se define, en **Vercel** se usa `/tmp/goi-store.json` (ver arriba). |
 
 Consulta `server/.env.example` para variables adicionales opcionales (`AUTH_RESET_RETURN_TOKEN`, etc.).
 
 ## Persistencia (importante)
 
-Los datos viven en **`server/data/store.json`** (o en la ruta definida por **`FITSOCIAL_STORE_PATH`**). En contenedores/PaaS sin **volumen persistente**, el fichero se pierde al redesplegar o recrear la instancia.
+Los datos viven en **`server/data/store.json`** (o en la ruta definida por **`GOI_STORE_PATH`** o, por compatibilidad, **`FITSOCIAL_STORE_PATH`**). En contenedores/PaaS sin **volumen persistente**, el fichero se pierde al redesplegar o recrear la instancia.
 
 El **roadmap personal** de la app (`/roadmap`, API **`/api/personal-roadmap`**) va en un fichero aparte: **`server/data/personal-roadmap.json`** en desarrollo y proceso Node con disco (implementacion en **`server/src/services/personalRoadmapFile.ts`**). Con **`VERCEL=1`**, el valor por defecto es un JSON de trabajo bajo **`/tmp`** (no durable entre invocaciones). La SPA solo escribe ese archivo cuando el usuario pulsa **Guardar cambios**; montar volumen en Docker debe incluir **`server/data`** si quieres conservar también este JSON junto al **`store.json`**.
 
 - **Demo / desarrollo**: para recrear las cuatro cuentas `*@test.com` existe **`npm run seed:demo-users`** (solo si falta el email) y **`npm run reset:demo-users`** (**upsert** + password `123456` según `server/src/data/demoUsers.ts`), desde la **raiz del repo** o `server/` (ver **`README.md`**). Los scripts solo escriben disco en **fuera de test**: tras ejecutarlos, **reinicia el proceso del API** para que vuelva a leer el JSON (`GET /api/health` muestra **`devStore.usersLoaded`**).
-- **`FITSOCIAL_STORE_PATH`**: si la defines, debe apuntar a un archivo JSON válido **o estar sin definir**: un fichero vacío o incompleto hace fallar **`JSON.parse`** al arrancar. Usa seeds sobre la misma ruta que usará runtime.
+- **`GOI_STORE_PATH`** (o legacy **`FITSOCIAL_STORE_PATH`**): si la defines, debe apuntar a un archivo JSON válido **o estar sin definir**: un fichero vacío o incompleto hace fallar **`JSON.parse`** al arrancar. Usa seeds sobre la misma ruta que usará runtime.
 - **MVP**: aceptable para pruebas.
-- **Vercel (serverless)**: con `VERCEL=1` el store por defecto se escribe en **`/tmp/fitsocial-store.json`** (copia inicial desde `server/data/store.json` del despliegue). Los datos **no** son duraderos entre instancias ni equivalentes a un disco persistente; sirve para demos. Producción seria: base de datos o almacen gestionado.
+- **Vercel (serverless)**: con `VERCEL=1` el store por defecto se escribe en **`/tmp/goi-store.json`** (copia inicial desde `server/data/store.json` del despliegue). Los datos **no** son duraderos entre instancias ni equivalentes a un disco persistente; sirve para demos. Producción seria: base de datos o almacen gestionado.
 - **Siguiente paso**: volumen Docker, disco persistente en el proveedor, o base de datos.
 
 ## Build y arranque manual (sin Docker)
@@ -62,11 +62,11 @@ node server/dist/server.js
 Desde la raiz del repo:
 
 ```bash
-docker build -t fitsocial-mvp .
-docker run --rm -p 4000:4000 -e NODE_ENV=production -e JWT_SECRET=un_secreto_largo_aleatorio fitsocial-mvp
+docker build -t goi-mvp .
+docker run --rm -p 4000:4000 -e NODE_ENV=production -e JWT_SECRET=un_secreto_largo_aleatorio goi-mvp
 ```
 
-Monta un volumen si quieres conservar datos, por ejemplo `-v fitsocial-data:/app/server/data`.
+Monta un volumen si quieres conservar datos, por ejemplo `-v goi-data:/app/server/data`.
 
 ## Plataformas tipo Render / Railway / Fly
 
@@ -90,7 +90,7 @@ Pasos en Vercel:
 3. **No** hace falta **`VITE_API_URL`** si front y API comparten el mismo dominio de Vercel (el cliente ya usa `/api` en producción).
 4. Tras el deploy, prueba **`GET /api/health`** y login desde la SPA.
 
-**Persistencia en serverless:** Vercel define **`VERCEL=1`**. El código usa **`/tmp/fitsocial-store.json`** como fichero de trabajo y, si no existe, copia el **`server/data/store.json`** empaquetado con la función (solo lectura en el bundle). Los datos pueden **perderse** al crear nuevas instancias o tras cierto tiempo; no sustituye una base de datos.
+**Persistencia en serverless:** Vercel define **`VERCEL=1`**. El código usa **`/tmp/goi-store.json`** como fichero de trabajo y, si no existe, copia el **`server/data/store.json`** empaquetado con la función (solo lectura en el bundle). Los datos pueden **perderse** al crear nuevas instancias o tras cierto tiempo; no sustituye una base de datos.
 
 **Archivos incluidos en la función:** en `vercel.json`, **`includeFiles` debe ser un solo glob (cadena ≤256 caracteres)** según el esquema de Vercel; usamos **`"server/dist/**"`**. Tras compilar el servidor, el script **`server/scripts/copy-store-for-dist.mjs`** copia **`server/data/store.json`** a **`server/dist/data/store.json`** para que el seed viaje dentro de `dist/`.
 

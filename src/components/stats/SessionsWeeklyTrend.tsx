@@ -30,12 +30,12 @@ export function SessionsWeeklyTrend({ data, className = "" }: Props) {
           strokeLinejoin="round"
           strokeLinecap="round"
           points={points.join(" ")}
-          className="stroke-goi-gold light:stroke-amber-700"
+          className="stroke-goi-gold healthy:stroke-goi-gold"
         />
         {data.map((d, i) => {
           const x = pad + i * step;
           const y = pad + innerH - (d.count / max) * innerH;
-          return <circle key={`pt-${i}`} cx={x} cy={y} r={3.5} className="fill-goi-gold light:fill-amber-600" />;
+          return <circle key={`pt-${i}`} cx={x} cy={y} r={3.5} className="fill-goi-gold healthy:fill-goi-gold" />;
         })}
         {data.map((d, i) => {
           const x = pad + i * step;

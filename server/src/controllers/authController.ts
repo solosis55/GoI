@@ -4,6 +4,13 @@ import { createId, saveStore, store, User } from "../services/store.js";
 import { hashPassword, signAuthToken, verifyPassword } from "../services/auth.js";
 import { sendError } from "../services/http.js";
 import { isValidProfileAvatarUrlCandidate } from "../services/postMedia.js";
+import {
+  isValidProfileBannerUrl,
+  normalizeInstagramProfileUrl,
+  normalizeProfileLocation,
+  normalizeStravaProfileUrl,
+  normalizeWebsiteProfileUrl,
+} from "../services/profileFields.js";
 import { isLengthBetween, normalizeEmail, sanitizeText } from "../services/validation.js";
 
 type AuthPayload = {
@@ -17,6 +24,14 @@ type UpdateProfilePayload = {
   bio?: string;
   goal?: string;
   avatarUrl?: string;
+  bannerUrl?: string;
+  bannerShowInFeed?: boolean;
+  websiteUrl?: string;
+  instagramUrl?: string;
+  stravaUrl?: string;
+  location?: string;
+  profileVisibility?: string;
+  pinnedPostId?: string | null;
 };
 
 const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000;
@@ -127,6 +142,14 @@ export async function register(req: Request, res: Response) {
     bio: "",
     goal: "",
     avatarUrl: "",
+    bannerUrl: "",
+    bannerShowInFeed: true,
+    websiteUrl: "",
+    instagramUrl: "",
+    stravaUrl: "",
+    location: "",
+    profileVisibility: "public",
+    pinnedPostId: "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -188,9 +211,30 @@ export function getProfile(req: Request, res: Response) {
     return;
   }
 
-  res.json({
-    user: sanitizeUserForViewer(user, authUserId),
-  });
+  const isOwner = authUserId === user.id;
+  const payload = sanitizeUserForViewer(user, authUserId);
+
+  if (!isOwner && user.profileVisibility === "followers") {
+    const canSee = store.follows.some((f) => f.followerId === authUserId && f.followingId === user.id);
+    if (!canSee) {
+      res.json({
+        user: Object.assign({}, payload, {
+          bio: "",
+          goal: "",
+          location: "",
+          websiteUrl: "",
+          instagramUrl: "",
+          stravaUrl: "",
+          bannerUrl: "",
+          pinnedPostId: "",
+          restrictedToFollowers: true,
+        }),
+      });
+      return;
+    }
+  }
+
+  res.json({ user: payload });
 }
 
 export function updateProfile(req: Request, res: Response) {
@@ -200,7 +244,20 @@ export function updateProfile(req: Request, res: Response) {
     sendError(res, 403, "AUTH_FORBIDDEN", "forbidden");
     return;
   }
-  const { username, bio, goal, avatarUrl } = req.body as UpdateProfilePayload;
+  const {
+    username,
+    bio,
+    goal,
+    avatarUrl,
+    bannerUrl,
+    bannerShowInFeed,
+    websiteUrl,
+    instagramUrl,
+    stravaUrl,
+    location,
+    profileVisibility,
+    pinnedPostId,
+  } = req.body as UpdateProfilePayload;
   const user = store.users.find((item) => item.id === userId);
 
   if (!user) {
@@ -248,6 +305,72 @@ export function updateProfile(req: Request, res: Response) {
     }
     user.avatarUrl = normalizedAvatarUrl;
   }
+
+  if (bannerUrl !== undefined) {
+    const b = sanitizeText(bannerUrl);
+    if (b && !isValidProfileBannerUrl(b)) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "banner must be https URL or image data URL (jpeg/png/webp)");
+      return;
+    }
+    user.bannerUrl = b;
+  }
+
+  if (bannerShowInFeed !== undefined) {
+    user.bannerShowInFeed = Boolean(bannerShowInFeed);
+  }
+
+  if (websiteUrl !== undefined) {
+    const w = normalizeWebsiteProfileUrl(websiteUrl);
+    if (w === null) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "website must be empty or a valid https URL");
+      return;
+    }
+    user.websiteUrl = w;
+  }
+
+  if (instagramUrl !== undefined) {
+    const ig = normalizeInstagramProfileUrl(instagramUrl);
+    if (ig === null) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "instagram must be empty, @usuario, or https on instagram.com");
+      return;
+    }
+    user.instagramUrl = ig;
+  }
+
+  if (stravaUrl !== undefined) {
+    const st = normalizeStravaProfileUrl(stravaUrl);
+    if (st === null) {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "strava must be empty or a valid https URL on strava.com");
+      return;
+    }
+    user.stravaUrl = st;
+  }
+
+  if (location !== undefined) {
+    user.location = normalizeProfileLocation(location);
+  }
+
+  if (profileVisibility !== undefined) {
+    const v = sanitizeText(profileVisibility);
+    if (v !== "public" && v !== "followers") {
+      sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "profileVisibility must be public or followers");
+      return;
+    }
+    user.profileVisibility = v;
+  }
+
+  if (pinnedPostId !== undefined) {
+    const pin = pinnedPostId === null || pinnedPostId === "" ? "" : sanitizeText(String(pinnedPostId));
+    if (pin) {
+      const post = store.posts.find((p) => p.id === pin);
+      if (!post || post.userId !== userId) {
+        sendError(res, 400, "AUTH_PROFILE_INVALID_INPUT", "pinned post must be one of your posts");
+        return;
+      }
+    }
+    user.pinnedPostId = pin;
+  }
+
   user.updatedAt = new Date().toISOString();
 
   saveStore();

@@ -4,7 +4,7 @@ import type { MentionPickUser } from "../utils/mentionAutocomplete";
 const MENTION_RECENTS_LIMIT = 12;
 
 function mentionRecentsStorageKey(userId: string) {
-  return `fitsocial:mentionRecents:v1:${userId}`;
+  return `goi:mentionRecents:v1:${userId}`;
 }
 
 /**

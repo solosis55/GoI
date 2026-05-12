@@ -4,6 +4,9 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import { ThemeProvider } from "./context/ThemeContext";
 import { RootRoutes } from "./RootRoutes";
+import { migrateLegacyLocalStorage } from "./utils/migrateLegacyLocalStorage";
+
+migrateLegacyLocalStorage();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

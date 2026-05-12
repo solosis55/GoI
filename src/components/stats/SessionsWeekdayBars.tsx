@@ -18,7 +18,7 @@ export function SessionsWeekdayBars({ sessions, className = "" }: Props) {
           <span className="text-[10px] font-semibold tabular-nums text-neutral-400 light:text-zinc-700">{c}</span>
           <div className="flex h-16 w-full flex-col justify-end">
             <div
-              className="w-full rounded-sm bg-goi-gold/40 ring-1 ring-goi-gold/30 light:bg-amber-200/90 light:ring-amber-400/40"
+              className="w-full rounded-sm bg-goi-gold/40 ring-1 ring-goi-gold/30 light:bg-goi-gold/[0.22] light:ring-goi-gold/35 healthy:bg-goi-gold/[0.14] healthy:ring-goi-gold/22"
               style={{ height: `${(c / max) * 100}%`, minHeight: c > 0 ? 6 : 0 }}
             />
           </div>

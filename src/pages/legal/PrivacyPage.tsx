@@ -6,7 +6,7 @@ const UPDATED = "6 de mayo de 2026";
 export function PrivacyPage() {
   return (
     <LegalPageShell title="Política de privacidad" lastUpdated={UPDATED}>
-      <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 px-3 py-2 text-sm text-amber-100/95 light:border-amber-600/35 light:bg-amber-50 light:text-amber-950">
+      <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 px-3 py-2 text-sm text-amber-100/95 light:border-amber-600 healthy:border-goi-gold/32 light:bg-amber-50 healthy:bg-goi-gold/[0.09] light:text-amber-950 healthy:text-goi-gold-dim">
         Documento modelo alineado con el RGPD y la LSSI-CE. Debe revisarse ante
         un despliegue con datos personales de personas reales. Identifica siempre claramente al responsable del
         tratamiento.
@@ -24,7 +24,7 @@ export function PrivacyPage() {
       </p>
 
       <h2 id="finalidades">2. ¿Con qué finalidades tratamos los datos?</h2>
-      <p>En función de cómo hayas configurado FitSocial · GoI, pueden aplicarse algunas de las siguientes:</p>
+      <p>En función de cómo hayas configurado GoI, pueden aplicarse algunas de las siguientes:</p>
       <ul>
         <li>
           <strong>Cuenta y autenticación:</strong> registro e inicio de sesión (p. ej. identificadores, nombre de usuario,

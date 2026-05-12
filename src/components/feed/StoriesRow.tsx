@@ -63,7 +63,7 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
             const unseen = hasUnseenStories(author.userId, author.slides, seenMap[author.userId]);
 
             const ringClass = isNewStorySlot
-              ? "border-2 border-dashed border-goi-gold/60 bg-neutral-950/35 shadow-[inset_0_0_0_1px_rgba(212,175,55,0.12)] transition-[border-color,box-shadow] duration-200 group-hover:border-goi-gold group-hover:shadow-[inset_0_0_12px_rgba(212,175,55,0.15)] light:border-amber-500/55 light:bg-white light:shadow-[inset_0_0_0_1px_rgba(196,154,26,0.12)] light:group-hover:border-amber-600 light:group-hover:shadow-[inset_0_0_14px_rgba(196,154,26,0.14)]"
+              ? "border-2 border-dashed border-goi-gold/65 bg-neutral-950/35 shadow-[inset_0_0_0_1px_rgba(212,175,55,0.12)] transition-[border-color,box-shadow] duration-200 group-hover:border-goi-gold group-hover:shadow-[inset_0_0_12px_rgba(212,175,55,0.15)] light:border-goi-gold/60 light:bg-white light:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04)] light:group-hover:border-goi-gold light:group-hover:shadow-[inset_0_0_14px_rgba(0,0,0,0.06)]"
               : hasSlides
                 ? unseen
                   ? "border border-goi-gold shadow-[0_0_12px_-6px_rgba(212,175,55,0.42)]"
@@ -88,7 +88,7 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
                 className={[
                   "story-strip-cell group grid min-h-[44px] min-w-[58px] shrink-0 snap-start place-items-center gap-1.5 px-1.5 py-2 text-center transition-[background-color,border-color,transform] duration-200 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/35 sm:min-w-[68px]",
                   isNewStorySlot
-                    ? "rounded-2xl border border-goi-gold/25 bg-linear-to-b from-goi-gold/[0.07] via-goi-gold/[0.03] to-transparent hover:border-goi-gold/45 hover:from-goi-gold/[0.12] light:border-amber-400/35 light:from-amber-400/[0.12] light:via-amber-400/[0.05] light:hover:border-amber-400/55"
+                    ? "rounded-2xl border border-goi-gold/35 bg-linear-to-b from-goi-gold/[0.22] via-goi-gold/[0.09] to-transparent shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] hover:border-goi-gold/55 hover:from-goi-gold/[0.28] hover:via-goi-gold/[0.12] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] light:border-goi-gold/40 light:bg-linear-to-b light:from-goi-gold/[0.18] light:via-goi-gold/[0.08] light:to-white light:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] light:hover:border-goi-gold/55 light:hover:from-goi-gold/[0.24] light:hover:via-goi-gold/[0.11] light:hover:to-zinc-50/90"
                     : "rounded-xl hover:bg-neutral-900/25 light:hover:bg-zinc-200/45",
                 ].join(" ")}
               >
@@ -104,7 +104,7 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
                   {isNewStorySlot ? (
                     <span
                       aria-hidden
-                      className="absolute -bottom-1 -right-1 grid size-6 place-items-center rounded-full border-2 border-neutral-950 bg-goi-gold text-[15px] font-semibold leading-none text-black shadow-[0_3px_12px_rgba(0,0,0,0.45)] ring-2 ring-goi-gold/35 light:border-white light:ring-amber-200/90"
+                      className="absolute -bottom-1 -right-1 grid size-6 place-items-center rounded-full border-2 border-neutral-950 bg-goi-gold text-[15px] font-semibold leading-none text-black shadow-[0_3px_12px_rgba(0,0,0,0.45)] ring-2 ring-goi-gold/45 light:border-white light:text-neutral-950 light:ring-goi-gold/50 healthy:text-white healthy:ring-[#1a2e22]/35"
                     >
                       +
                     </span>
@@ -114,7 +114,7 @@ export function StoriesRow({ authors, currentUserId, seenRevision, onSelectAutho
                   className={[
                     "max-w-[4.75rem] truncate text-center text-[11px] leading-tight tracking-wide sm:max-w-[6.25rem]",
                     isNewStorySlot
-                      ? "font-semibold text-goi-gold light:text-amber-900"
+                      ? "font-semibold text-goi-gold light:text-goi-gold"
                       : isSelf
                         ? "font-medium text-neutral-200 light:text-zinc-900"
                         : "text-neutral-300 light:text-zinc-800",

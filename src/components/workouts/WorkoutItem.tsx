@@ -34,7 +34,7 @@ export function WorkoutItem({
                 .filter(Boolean)
                 .map((tag) => (
                   <li key={`${workout.id}-tag-${tag}`}>
-                    <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel light:bg-white light:text-yellow-950">
+                    <span className="inline-block rounded-full border border-goi-gold-dim/35 bg-neutral-950 px-2 py-0.5 text-xs text-goi-steel light:bg-white light:text-yellow-950 healthy:text-goi-gold-dim">
                       {tag}
                     </span>
                   </li>

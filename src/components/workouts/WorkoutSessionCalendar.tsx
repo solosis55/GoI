@@ -17,9 +17,10 @@ function mondayWeekday(d: Date) {
 
 type WorkoutSessionCalendarProps = {
   sessions: WorkoutSessionWithTitle[];
+  className?: string;
 };
 
-export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps) {
+export function WorkoutSessionCalendar({ sessions, className = "" }: WorkoutSessionCalendarProps) {
   const now = new Date();
   const [view, setView] = useState(() => ({ y: now.getFullYear(), m: now.getMonth() }));
   const viewYear = view.y;
@@ -72,7 +73,19 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
   }
 
   return (
-    <div className="fs-card-surface flex h-fit w-full min-w-0 flex-col p-3 sm:p-4">
+    <div
+      className={[
+        "fs-card-surface relative flex h-fit w-full min-w-0 flex-col overflow-hidden rounded-2xl p-3 shadow-[0_14px_36px_-22px_rgba(0,0,0,0.55)] sm:p-4 light:shadow-[0_14px_32px_-20px_rgba(24,24,27,0.1)]",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 -top-12 z-0 h-36 w-36 rounded-full bg-goi-gold/[0.06] blur-3xl encendido:bg-orange-400/12 healthy:bg-goi-gold/[0.09]"
+      />
+      <div className="relative z-[1] flex flex-col">
       <p className="text-xs font-medium uppercase tracking-wider text-goi-gold-dim">Calendario</p>
       <div className="mt-2 flex items-center justify-between gap-2 max-[379px]:flex-col max-[379px]:items-stretch">
         <p className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-200 light:text-zinc-900 max-[379px]:text-center">{monthTitle}</p>
@@ -88,9 +101,9 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
           </Button>
         </div>
       </div>
-      <p className="mt-1 text-xs leading-snug text-neutral-500">Dias con entrenamiento registrado.</p>
+      <p className="mt-1 text-xs leading-snug text-neutral-500 light:text-zinc-600">Días con entrenamiento registrado.</p>
 
-      <div className="mt-3 grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-neutral-500 sm:gap-1 sm:text-xs" role="grid" aria-label="Calendario de entrenamientos">
+      <div className="mt-3 grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-neutral-500 sm:gap-1 sm:text-xs light:text-zinc-600" role="grid" aria-label="Calendario de entrenamientos">
         {WEEKDAYS.map((d) => (
           <div key={d} className="px-0.5 py-0.5 sm:py-1" role="columnheader">
             {d}
@@ -118,6 +131,7 @@ export function WorkoutSessionCalendar({ sessions }: WorkoutSessionCalendarProps
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

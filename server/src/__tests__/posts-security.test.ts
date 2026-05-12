@@ -300,6 +300,44 @@ describe("posts security flow", () => {
     expect(strangerList.body[0].content).toBe("public by user");
   });
 
+  it("paginates by-user posts when limit query is set", async () => {
+    const token = await registerAndLogin("page.owner@test.com", "pageowner", "123456");
+    const user = store.users.find((u) => u.email === "page.owner@test.com");
+    if (!user) throw new Error("missing user");
+
+    for (let i = 0; i < 3; i++) {
+      await request(app)
+        .post("/api/posts")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          content: `post num ${i + 1}`,
+          workoutId: null,
+          visibility: "public",
+        })
+        .expect(201);
+    }
+
+    const p1 = await request(app)
+      .get(`/api/posts/by-user/${user.id}?limit=2`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(Array.isArray(p1.body.posts)).toBe(true);
+    expect(p1.body.posts.length).toBe(2);
+    expect(p1.body.total).toBe(3);
+    expect(p1.body.nextCursor).toBeTruthy();
+
+    const p2 = await request(app)
+      .get(`/api/posts/by-user/${user.id}`)
+      .query({ limit: "2", cursor: p1.body.nextCursor })
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(p2.body.posts.length).toBe(1);
+    expect(p2.body.nextCursor).toBeNull();
+    expect(p2.body.total).toBe(3);
+  });
+
   it("returns 404 for by-user when user does not exist", async () => {
     const token = await registerAndLogin("solo.byuser@test.com", "solobyuser", "123456");
     const response = await request(app).get("/api/posts/by-user/nope-nope-id").set("Authorization", `Bearer ${token}`);

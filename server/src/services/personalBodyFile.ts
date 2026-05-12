@@ -14,9 +14,9 @@ export function isSafePersonalBodyUserId(id: string): boolean {
 }
 
 function getDir(): string {
-  const env = process.env.FITSOCIAL_PERSONAL_BODY_DIR?.trim();
+  const env = process.env.GOI_PERSONAL_BODY_DIR?.trim() || process.env.FITSOCIAL_PERSONAL_BODY_DIR?.trim();
   if (env) return resolve(env);
-  if (process.env.VERCEL) return join("/tmp", "fitsocial-personal-body");
+  if (process.env.VERCEL) return join("/tmp", "goi-personal-body");
   return defaultDir;
 }
 
