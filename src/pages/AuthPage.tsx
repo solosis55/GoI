@@ -80,10 +80,14 @@ export function AuthPage() {
       }
 
       if (view === "register") {
-        const response = await register({ username: username.trim(), email, password });
-        const loginResponse = await login({ email, password });
-        if (!loginResponse.token) throw new Error("Login token missing");
-        setAuth(loginResponse.token, response.user);
+        const reg = await register({ username: username.trim(), email, password });
+        if (reg.token && reg.user) {
+          setAuth(reg.token, reg.user);
+        } else {
+          const loginResponse = await login({ email, password });
+          if (!loginResponse.token) throw new Error("Login token missing");
+          setAuth(loginResponse.token, loginResponse.user);
+        }
       } else {
         const response = await login({ email, password });
         if (!response.token) throw new Error("Login token missing");

@@ -1,6 +1,6 @@
 import type { ThemeMode } from "../context/ThemeContext";
 
-/** Logo principal segun tema (PNG: Legacy clásico; Encendido / Healthy / Neon = assets en public/branding). */
+/** Logo principal segun tema (PNG: Legacy = marca circular; Encendido / Healthy / Neon = lockups en public/branding). */
 export function brandingLogoSrc(theme: ThemeMode): string {
   switch (theme) {
     case "encendido":
@@ -10,6 +10,6 @@ export function brandingLogoSrc(theme: ThemeMode): string {
     case "neon":
       return "/branding/goi-logo-theme-neon.png";
     default:
-      return "/branding/goi-logo.png";
+      return "/branding/goi-logo-mark.png";
   }
 }

@@ -165,7 +165,7 @@ function AppContent() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen flex-col bg-black text-neutral-200 encendido:bg-white encendido:text-zinc-900 healthy:bg-white healthy:text-zinc-900 neon:bg-[#030303] neon:text-neutral-200">
+      <div className="flex min-h-screen flex-col bg-black text-neutral-200 light:bg-[var(--goi-page-bg)] light:text-zinc-900 neon:bg-[#030303] neon:text-neutral-200">
         <main className="social-shell relative flex min-h-0 flex-1 flex-col overflow-x-hidden">
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-[min(26rem,52vh)] bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(212,175,55,0.16)_0%,transparent_70%)] neon:bg-[radial-gradient(ellipse_80%_72%_at_50%_-8%,rgba(120,220,60,0.12)_0%,transparent_70%)] encendido:hidden healthy:hidden"
@@ -396,6 +396,10 @@ function AppContent() {
                 onFocusPostHandled={clearFeedFocus}
                 onNavigateToExternalProfile={(visitUserId, visitFollowingIds) => {
                   setExternalProfileVisit({ userId: visitUserId, followingIds: visitFollowingIds });
+                  goTo("profile");
+                }}
+                onGoToOwnProfile={() => {
+                  setExternalProfileVisit(null);
                   goTo("profile");
                 }}
               />

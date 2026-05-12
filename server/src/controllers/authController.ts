@@ -156,9 +156,11 @@ export async function register(req: Request, res: Response) {
 
   store.users.push(user);
   saveStore();
+  const safe = sanitizeUser(user);
   res.status(201).json({
     message: "user registered",
-    user: sanitizeUser(user),
+    user: safe,
+    token: signAuthToken(user.id),
   });
 }
 

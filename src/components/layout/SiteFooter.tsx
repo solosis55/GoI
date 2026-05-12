@@ -10,7 +10,7 @@ export function SiteFooter({ className }: SiteFooterProps = {}) {
   return (
     <footer
       className={[
-        "site-footer border-t border-neutral-900 bg-black px-4 py-6 text-sm text-neutral-500 max-md:px-2.5 neon:border-neutral-900 neon:bg-[#030303] light:border-zinc-200 light:bg-white light:text-zinc-600",
+        "site-footer border-t border-neutral-900 bg-black px-4 py-6 text-sm text-neutral-500 max-md:px-2.5 neon:border-neutral-900 neon:bg-[#030303] light:border-zinc-200 light:bg-[var(--goi-page-bg)] light:text-zinc-600",
         className,
       ]
         .filter(Boolean)
@@ -31,7 +31,7 @@ export function SiteFooter({ className }: SiteFooterProps = {}) {
           aria-label="Pie de página"
         >
           <Link
-            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white neon:focus-visible:ring-offset-[#030303]"
+            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-[var(--goi-page-bg)] neon:focus-visible:ring-offset-[#030303]"
             to="/roadmap"
           >
             Roadmap
@@ -40,7 +40,7 @@ export function SiteFooter({ className }: SiteFooterProps = {}) {
             ·
           </span>
           <Link
-            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white neon:focus-visible:ring-offset-[#030303]"
+            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-[var(--goi-page-bg)] neon:focus-visible:ring-offset-[#030303]"
             to="/aviso-legal"
           >
             Aviso legal
@@ -49,7 +49,7 @@ export function SiteFooter({ className }: SiteFooterProps = {}) {
             ·
           </span>
           <Link
-            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white neon:focus-visible:ring-offset-[#030303]"
+            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-[var(--goi-page-bg)] neon:focus-visible:ring-offset-[#030303]"
             to="/privacidad"
           >
             Privacidad
@@ -58,7 +58,7 @@ export function SiteFooter({ className }: SiteFooterProps = {}) {
             ·
           </span>
           <Link
-            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-white neon:focus-visible:ring-offset-[#030303]"
+            className="transition-colors hover:text-goi-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-goi-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black light:focus-visible:ring-offset-[var(--goi-page-bg)] neon:focus-visible:ring-offset-[#030303]"
             to="/contacto"
           >
             Contacto

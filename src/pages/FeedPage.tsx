@@ -135,6 +135,8 @@ type FeedPageProps = {
   onFocusPostHandled?: () => void;
   /** Abre la pestaña Perfil con el perfil público de ese usuario (cierra el modal previo). */
   onNavigateToExternalProfile?: (userId: string, followingIds: string[]) => void;
+  /** Sidebar «Ir al perfil»: va al perfil propio (el modal público no se usa para la cuenta actual). */
+  onGoToOwnProfile?: () => void;
 };
 
 function FeedHomeAccentIcon({ className }: { className?: string }) {
@@ -179,6 +181,7 @@ export function FeedPage({
   focusPostId = null,
   onFocusPostHandled,
   onNavigateToExternalProfile,
+  onGoToOwnProfile,
 }: FeedPageProps = {}) {
   const { user, logout } = useAuth();
 
@@ -1069,7 +1072,7 @@ export function FeedPage({
           followingIds={followingIds}
           onToggleFollow={handleToggleFollow}
           onViewProfile={setProfileUserId}
-          onGoToProfile={user?.id ? () => setProfileUserId(user.id) : undefined}
+          onGoToProfile={user?.id && onGoToOwnProfile ? onGoToOwnProfile : undefined}
           onSwitchAccount={handleSwitchAccount}
           panel={feedSidebarPanel}
           onPanelChange={setFeedSidebarPanel}
@@ -1248,7 +1251,7 @@ export function FeedPage({
         followingIds={followingIds}
         onToggleFollow={handleToggleFollow}
         onViewProfile={setProfileUserId}
-        onGoToProfile={user?.id ? () => setProfileUserId(user.id) : undefined}
+        onGoToProfile={user?.id && onGoToOwnProfile ? onGoToOwnProfile : undefined}
         onSwitchAccount={handleSwitchAccount}
         panel={feedSidebarPanel}
         onPanelChange={setFeedSidebarPanel}

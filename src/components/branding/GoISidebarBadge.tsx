@@ -46,7 +46,13 @@ export function GoISidebarBadge({
       ].join(" ");
 
   const imgClass = isHero
-    ? "h-[76%] w-[76%] object-contain opacity-[0.98] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:h-[80%] sm:w-[80%] light:drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
+    ? [
+        "pointer-events-none absolute inset-0 block h-full w-full origin-center object-cover object-center",
+        "scale-[1.22] sm:scale-[1.14]",
+        "opacity-[0.98]",
+        "light:mix-blend-multiply",
+        "drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] light:drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]",
+      ].join(" ")
     : "h-[72%] w-[72%] object-contain opacity-95 max-md:h-[68%] max-md:w-[68%]";
 
   const imgPx = isHero ? 180 : 112;
@@ -65,7 +71,7 @@ export function GoISidebarBadge({
             className="goi-hero-halo pointer-events-none absolute left-1/2 top-1/2 h-[188px] w-[188px] rounded-full sm:h-[236px] sm:w-[236px]"
             aria-hidden
           />
-          <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${ringClass}`}>
+          <div className={`relative isolate flex shrink-0 overflow-hidden ${ringClass}`}>
             <img
               key={logoSrc}
               src={logoSrc}
@@ -78,7 +84,7 @@ export function GoISidebarBadge({
           </div>
         </div>
       ) : (
-        <div className={`flex shrink-0 items-center justify-center overflow-hidden ${ringClass}`}>
+        <div className={`relative isolate flex shrink-0 overflow-hidden ${ringClass}`}>
           <img key={logoSrc} src={logoSrc} alt="GoI · Group of Iron" className={imgClass} width={imgPx} height={imgPx} />
         </div>
       )}

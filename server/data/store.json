@@ -94,6 +94,25 @@
       "location": "",
       "profileVisibility": "public",
       "pinnedPostId": ""
+    },
+    {
+      "id": "a0f57533-f5e9-405b-b453-02950317b3f3",
+      "username": "manolo",
+      "email": "manolo@gmail.com",
+      "password": "$2b$10$z.wVW5eB8kFrgmTJvLgSVO0SZN.eScPuw/ehSFzuSVNB9Kz92KsOG",
+      "bio": "",
+      "goal": "",
+      "avatarUrl": "",
+      "bannerUrl": "",
+      "bannerShowInFeed": true,
+      "websiteUrl": "",
+      "instagramUrl": "",
+      "stravaUrl": "",
+      "location": "",
+      "profileVisibility": "public",
+      "pinnedPostId": "",
+      "createdAt": "2026-05-12T13:15:09.054Z",
+      "updatedAt": "2026-05-12T13:15:09.054Z"
     }
   ],
   "exercises": [
